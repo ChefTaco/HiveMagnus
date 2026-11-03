@@ -843,9 +843,7 @@ button:focus-visible {
   gap: 12px;
   font-weight: 700;
   text-align: left;
-  transition:
-    background 0.2s,
-    border-color 0.2s;
+  transition: border-color 0.2s;
 }
 .demo-tabs button[aria-selected="true"],
 .demo-tabs button:hover {

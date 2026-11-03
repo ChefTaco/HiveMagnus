@@ -9,7 +9,7 @@ import "./style.css";
 
 type ProjectId = "hive" | "magnus" | "chattermost" | "emberfold";
 type DemoId = Exclude<ProjectId, "emberfold"> | "ardent";
-type Step = { title: string; text: string; code?: string; note?: string };
+type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
   label: string;
   kicker: string;
@@ -104,6 +104,7 @@ const demos: Record<DemoId, Demo> = {
         title: "Open the console",
         text: "Visit the local HTTPS console and sign in with the initial credentials written by IAM.",
         code: "https://localhost:9443/",
+        kind: "address",
         note: "Read the credentials locally from ~/.hive/iam/initial-credentials.env. Keep that file private.",
       },
     ],
@@ -329,7 +330,7 @@ function renderDemo() {
   panel.innerHTML = `<div class="demo-heading"><span class="mini-label">${d.kicker.toUpperCase()} / WALKTHROUGH</span><h3>${d.title}</h3><p>${d.intro}</p></div>
     <div class="requirements"><span>BEFORE YOU BEGIN</span><ul>${d.requires.map((item) => `<li>${item}</li>`).join("")}</ul></div>
     <div class="step-head"><span>STEP 0${activeStep + 1} / 0${d.steps.length}</span><div class="step-progress" aria-hidden="true">${d.steps.map((_, i) => `<i class="${i <= activeStep ? "done" : ""}"></i>`).join("")}</div></div>
-    <div class="step-content"><h4>${s.title}</h4><p>${s.text}</p>${s.code ? `<div class="code-block"><div class="code-top"><span>HOST TERMINAL</span><button type="button" class="copy-command" aria-label="Copy command for ${s.title}">${icon("copy")} Copy</button></div><pre><code></code></pre></div>` : ""}${s.note ? `<p class="step-note"><strong>Keep in mind</strong> ${s.note}</p>` : ""}</div>
+    <div class="step-content"><h4>${s.title}</h4><p>${s.text}</p>${s.code ? `<div class="code-block"><div class="code-top"><span>${s.kind === "address" ? "BROWSER ADDRESS" : "HOST TERMINAL"}</span><button type="button" class="copy-command" aria-label="Copy ${s.kind === "address" ? "address" : "command"} for ${s.title}">${icon("copy")} Copy</button></div><pre><code></code></pre></div>` : ""}${s.note ? `<p class="step-note"><strong>Keep in mind</strong> ${s.note}</p>` : ""}</div>
     <div class="demo-controls"><button type="button" class="step-button" data-direction="prev" ${activeStep === 0 ? "disabled" : ""}>← Previous</button><span>${activeStep + 1} of ${d.steps.length}</span><button type="button" class="step-button next" data-direction="next" ${activeStep === d.steps.length - 1 ? "disabled" : ""}>Next step →</button></div><a class="guide-link" href="${d.guide}" target="_blank" rel="noopener noreferrer">Continue with the ${d.guideLabel} ${icon("external")}</a>`;
   const code = panel.querySelector("code");
   if (code && s.code) code.textContent = s.code;
