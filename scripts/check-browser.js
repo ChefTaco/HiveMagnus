@@ -30,7 +30,7 @@ async function checkBrowser(page) {
     await page
       .getByRole("tab", { name: new RegExp(name.replace("+", "\\+")) })
       .click();
-    const firstCommand = await page.locator("#demo-panel code").textContent();
+    const firstCommand = await page.locator("#demo-panel pre code").textContent();
     await page.getByRole("button", { name: /^Copy command/ }).click();
     assert(
       (await page.evaluate(() => navigator.clipboard.readText())) ===
@@ -101,20 +101,8 @@ async function checkBrowser(page) {
       "Capture failed to load",
     );
   }
-  const accessibility = await page.evaluate(async () => {
-    const result = await axe.run(document, {
-      runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] },
-    });
-    return result.violations.map((v) => ({
-      id: v.id,
-      impact: v.impact,
-      nodes: v.nodes.map((n) => n.target),
-    }));
-  });
-  assert(
-    !accessibility.length,
-    `Accessibility violations: ${JSON.stringify(accessibility)}`,
-  );
+  // Audit the longest command at every width: code blocks scroll only when narrow.
+  await page.getByRole("tab", { name: /ChatterMost/ }).click();
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     assert(
@@ -123,8 +111,41 @@ async function checkBrowser(page) {
       ),
       `Horizontal overflow at ${width}px`,
     );
+    const accessibility = await page.evaluate(async () => {
+      const result = await axe.run(document, {
+        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] },
+      });
+      return result.violations.map((v) => ({
+        id: v.id,
+        impact: v.impact,
+        nodes: v.nodes.map((n) => n.target),
+      }));
+    });
+    assert(
+      !accessibility.length,
+      `Accessibility violations at ${width}px: ${JSON.stringify(accessibility)}`,
+    );
+    const tinyText = await page.evaluate(() =>
+      [...document.querySelectorAll("body *")]
+        .filter(
+          (el) =>
+            [...el.childNodes].some(
+              (n) => n.nodeType === 3 && n.textContent.trim(),
+            ) && parseFloat(getComputedStyle(el).fontSize) < 11,
+        )
+        .map((el) => el.className || el.tagName),
+    );
+    assert(!tinyText.length, `Text under 11px at ${width}px: ${tinyText}`);
   }
+  await page.getByRole("tab", { name: /01.*Hive/ }).click();
   await page.emulateMedia({ reducedMotion: "reduce" });
+  assert(
+    (await page
+      .locator(".orbit")
+      .first()
+      .evaluate((el) => getComputedStyle(el).animationName)) === "none",
+    "Reduced motion orbit",
+  );
   assert(
     (await page.evaluate(
       () => getComputedStyle(document.documentElement).scrollBehavior,

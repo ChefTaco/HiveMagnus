@@ -6,6 +6,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
+  color-scheme: light;
 }
 * {
   box-sizing: border-box;
@@ -44,7 +45,7 @@ h2,
 h3,
 h4 {
   font-family: "Space Grotesk", sans-serif;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.025em;
 }
 p {
   line-height: 1.65;
@@ -103,7 +104,7 @@ button:focus-visible {
   gap: 14px;
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.02em;
   font-size: 24px;
   white-space: nowrap;
 }
@@ -203,11 +204,11 @@ button:focus-visible {
   background: #d68c42;
 }
 .hero h1 {
-  font-size: clamp(62px, 6.5vw, 104px);
-  line-height: 1.01;
+  font-size: clamp(54px, 5.6vw, 84px);
+  line-height: 1.04;
   max-width: 690px;
   margin: 0 0 30px;
-  letter-spacing: -0.075em;
+  letter-spacing: -0.04em;
 }
 .hero h1 em {
   font-style: normal;
@@ -303,29 +304,48 @@ button:focus-visible {
   mask-image: radial-gradient(circle, #000 40%, transparent 74%);
   z-index: -2;
 }
-.hero-visual::after {
-  content: "";
+.hero-orbits {
   position: absolute;
-  width: 390px;
-  height: 390px;
-  border: 1px solid rgba(56, 129, 129, 0.25);
-  border-radius: 50%;
-  z-index: -2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: visible;
 }
-.hero-orbit {
-  position: absolute;
-  border: 1px dashed rgba(58, 122, 126, 0.44);
-  border-radius: 50%;
-  transform: rotate(-19deg);
+.hero-orbits ellipse,
+.orbit-ring {
+  fill: none;
+  stroke: rgba(58, 122, 126, 0.42);
+  stroke-width: 1;
 }
-.orbit-one {
-  width: 540px;
-  height: 290px;
+.hero-orbits ellipse {
+  stroke-dasharray: 3 5;
 }
-.orbit-two {
-  width: 340px;
-  height: 530px;
-  transform: rotate(27deg);
+.orbit-ring {
+  stroke: rgba(56, 129, 129, 0.22);
+}
+.dot-amber,
+.dot-teal {
+  stroke: #e9f0ef;
+  stroke-width: 3;
+}
+.dot-amber {
+  fill: #dc9957;
+}
+.dot-teal {
+  fill: #2b8584;
+}
+.orbit {
+  animation: orbit-spin 150s linear infinite;
+}
+.orbit-b {
+  animation-duration: 210s;
+  animation-direction: reverse;
+}
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 .hero-core {
   width: 226px;
@@ -369,51 +389,26 @@ button:focus-visible {
   position: absolute;
   background: #f2f7f5;
   border: 1px solid #aec8c5;
-  padding: 9px 11px;
-  font-size: 10px;
+  padding: 8px 11px;
+  font-size: 11px;
   color: #3f6871;
   box-shadow: 4px 4px 0 #d3e3df;
 }
 .tag-a {
-  top: 99px;
-  left: 24%;
+  top: 15%;
+  left: 13%;
 }
 .tag-b {
-  right: 1%;
-  top: 265px;
+  top: 21%;
+  right: 3%;
 }
 .tag-c {
-  bottom: 102px;
-  left: 7%;
+  bottom: 21%;
+  left: 5%;
 }
-.orbit-dot {
-  position: absolute;
-  width: 13px;
-  height: 13px;
-  background: #e6a463;
-  border: 3px solid #e9f0ef;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px #b9783f;
-}
-.dot-a {
-  top: 162px;
-  left: 23%;
-}
-.dot-b {
-  top: 170px;
-  right: 18%;
-  background: #318e89;
-  box-shadow: 0 0 0 1px #318e89;
-}
-.dot-c {
-  bottom: 156px;
-  left: 15%;
-  background: #318e89;
-  box-shadow: 0 0 0 1px #318e89;
-}
-.dot-d {
-  bottom: 114px;
-  right: 22%;
+.tag-d {
+  bottom: 14%;
+  right: 9%;
 }
 .section-intro {
   border-top: 1px solid #b7c9c8;
@@ -434,7 +429,7 @@ button:focus-visible {
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(25px, 2.6vw, 39px);
   line-height: 1.35;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
   max-width: 860px;
   color: #547078;
   margin: 0;
@@ -457,7 +452,7 @@ button:focus-visible {
 }
 .section-kicker {
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 400;
   color: #216d69;
   margin-bottom: 17px;
@@ -470,7 +465,7 @@ button:focus-visible {
   line-height: 1.06;
   margin: 0;
   font-weight: 600;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.035em;
 }
 .section-head h2 span {
   color: #6a8586;
@@ -530,8 +525,8 @@ button:focus-visible {
   left: 50%;
   top: 49%;
   transform: translate(-50%, -50%);
-  width: 125px;
-  height: 125px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   background: #e4efeb;
   color: #173246;
@@ -553,8 +548,8 @@ button:focus-visible {
 }
 .atlas-node {
   position: absolute;
-  width: 170px;
-  min-height: 87px;
+  width: 190px;
+  min-height: 100px;
   background: #234b5a;
   border: 1px solid #4b7680;
   color: #e9f3f0;
@@ -592,16 +587,15 @@ button:focus-visible {
 .node-index {
   display: block;
   color: #ffd2a3;
-  font-size: 10px;
+  font-size: 11px;
   margin-bottom: 4px;
 }
 .node-name {
   display: block;
   font: 600 18px "Space Grotesk";
-  letter-spacing: -0.04em;
+  letter-spacing: -0.015em;
 }
 .node-role {
-  font-size: 9px;
   color: #cde2df;
   white-space: nowrap;
 }
@@ -609,7 +603,7 @@ button:focus-visible {
   position: absolute;
   bottom: 12px;
   left: 18px;
-  font-size: 9px;
+  font-size: 11px;
   color: #9ac1bc;
 }
 .atlas-annotation span {
@@ -622,21 +616,45 @@ button:focus-visible {
   padding: 35px 34px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 28px;
   min-width: 0;
 }
 .detail-meta {
-  font-size: 10px;
+  font-size: 11px;
   color: #a8d9cc;
 }
 .detail-body h3 {
-  font-size: 50px;
+  font-size: 46px;
   margin-bottom: 16px;
 }
 .detail-body p {
   color: #c6d9d6;
-  font-size: 16px;
-  line-height: 1.75;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.detail-body h4 {
+  font: 11px "IBM Plex Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #a8d9cc;
+  margin: 22px 0 10px;
+}
+.detail-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.detail-links li {
+  border-top: 1px solid #3f6875;
+  padding: 10px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #c6d9d6;
+}
+.detail-links strong {
+  display: block;
+  color: #f1f8f6;
+  font-weight: 600;
 }
 .detail-body a {
   display: inline-flex;
@@ -683,14 +701,17 @@ button:focus-visible {
   gap: 10px;
 }
 .project-number {
-  font-size: 9px;
+  font-size: 11px;
   color: #4d777e;
   line-height: 1.5;
 }
 .project-glyph {
-  font: 38px "Space Grotesk";
-  color: #2b8b86;
+    color: #2b8b86;
   line-height: 1;
+}
+.project-glyph svg {
+  width: 34px;
+  height: 34px;
 }
 .project-card h3 {
   font-size: 36px;
@@ -698,12 +719,12 @@ button:focus-visible {
 }
 .project-summary {
   font: 600 17px/1.4 "Space Grotesk";
-  letter-spacing: -0.025em;
+  letter-spacing: -0.01em;
   min-height: 70px;
   margin-bottom: 13px;
 }
 .project-detail {
-  font-size: 13px;
+  font-size: 14px;
   color: #5b737b;
   line-height: 1.65;
 }
@@ -761,7 +782,7 @@ button:focus-visible {
   color: #e7a562;
 }
 .mini-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #216d69;
 }
 .ardent-note h3 {
@@ -769,7 +790,7 @@ button:focus-visible {
   margin: 5px 0 4px;
 }
 .ardent-note p {
-  font-size: 13px;
+  font-size: 14px;
   color: #47656d;
   margin: 0;
 }
@@ -788,6 +809,12 @@ button:focus-visible {
 .screen-card {
   min-width: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.screen-emberfold .screen-frame {
+  aspect-ratio: auto;
+  flex: 1;
 }
 .screen-frame {
   background: #173246;
@@ -807,7 +834,7 @@ button:focus-visible {
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  font-size: 10px;
+  font-size: 12px;
   color: #3d6269;
   margin-top: 18px;
 }
@@ -857,11 +884,11 @@ button:focus-visible {
   height: 15px;
 }
 .tab-counter {
-  font: 400 11px "IBM Plex Mono";
+  font: 400 12px "IBM Plex Mono";
   color: #8e5525;
 }
 .demo-disclaimer {
-  font-size: 12px;
+  font-size: 13px;
   color: #46656e;
   margin-top: auto;
   padding: 20px 4px 0;
@@ -889,7 +916,7 @@ button:focus-visible {
   background: #e9f2ef;
 }
 .requirements > span {
-  font-size: 10px;
+  font-size: 11px;
   color: #216d69;
 }
 .requirements ul {
@@ -901,7 +928,7 @@ button:focus-visible {
   list-style: none;
 }
 .requirements li {
-  font-size: 12px;
+  font-size: 13px;
   color: #365b66;
 }
 .requirements li::before {
@@ -916,7 +943,7 @@ button:focus-visible {
   align-items: center;
   border-bottom: 1px solid #c9d8d5;
   padding-bottom: 12px;
-  font-size: 10px;
+  font-size: 11px;
   color: #52747b;
 }
 .step-progress {
@@ -958,7 +985,7 @@ button:focus-visible {
   background: #28495a;
   color: #a7c9c5;
   padding: 10px 16px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .code-top button {
   border: 0;
@@ -967,7 +994,7 @@ button:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 12px;
   padding: 2px;
 }
 .code-top svg {
@@ -981,7 +1008,7 @@ pre {
   overflow: auto;
   line-height: 1.65;
   font:
-    12px "IBM Plex Mono",
+    13px "IBM Plex Mono",
     monospace;
   white-space: pre;
 }
@@ -992,8 +1019,15 @@ code {
   background: #e7f1ed;
   border-left: 3px solid #d99d58;
   padding: 10px 14px;
-  font-size: 12px !important;
+  font-size: 13px !important;
   margin-top: 19px;
+}
+.step-content > p.step-note {
+  max-width: none;
+}
+.step-note code {
+  font: 12px "IBM Plex Mono", monospace;
+  overflow-wrap: anywhere;
 }
 .step-note strong {
   color: #173246;
@@ -1011,7 +1045,7 @@ code {
   border: 1px solid #9abbb8;
   background: transparent;
   color: #204c5c;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   padding: 10px 14px;
 }
@@ -1025,7 +1059,7 @@ code {
   cursor: not-allowed;
 }
 .demo-controls > span {
-  font-size: 10px;
+  font-size: 11px;
   color: #526f78;
 }
 .guide-link {
@@ -1083,17 +1117,24 @@ code {
   color: #fff;
 }
 .site-footer p {
-  font-size: 12px;
+  font-size: 13px;
   margin: 0;
   color: #a6c3c0;
 }
 .footer-inner > div {
   display: flex;
-  gap: 19px;
+  flex-wrap: wrap;
+  gap: 8px 19px;
+}
+.site-footer .footer-legal {
+  grid-column: 1 / -1;
+  border-top: 1px solid #36586a;
+  padding-top: 18px;
+  max-width: none;
 }
 .footer-inner > div a {
   text-decoration: none;
-  font-size: 12px;
+  font-size: 13px;
 }
 .footer-inner > div a:hover {
   color: #e5a563;
@@ -1102,14 +1143,14 @@ code {
   .shell {
     width: min(100% - 56px, 1280px);
   }
-  .hero h1 {
-    font-size: clamp(58px, 7vw, 86px);
-  }
   .hero-visual {
     height: 570px;
   }
   .project-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .screen-grid {
+    grid-template-columns: 1fr;
   }
   .project-card {
     min-height: 340px;
@@ -1120,14 +1161,8 @@ code {
   .atlas-detail {
     min-height: 220px;
   }
-  .detail-body {
-    display: flex;
-    gap: 30px;
-    align-items: end;
-    justify-content: space-between;
-  }
   .detail-body p {
-    max-width: 600px;
+    max-width: 680px;
   }
   .ardent-note {
     grid-template-columns: 80px 1fr;
@@ -1141,10 +1176,12 @@ code {
     width: calc(100% - 38px);
   }
   .site-header {
-    height: 74px;
+    height: auto;
   }
   .header-inner {
+    flex-wrap: wrap;
     gap: 10px;
+    padding: 14px 0 10px;
   }
   .brand {
     font-size: 20px;
@@ -1153,7 +1190,13 @@ code {
     display: none;
   }
   .main-nav {
-    display: none;
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+    gap: 22px;
+  }
+  .main-nav a {
+    padding: 6px 0;
   }
   .header-github {
     margin-left: auto;
@@ -1166,10 +1209,10 @@ code {
     min-height: 0;
   }
   .hero-copy {
-    padding: 74px 0 15px;
+    padding: 56px 0 15px;
   }
   .hero h1 {
-    font-size: clamp(58px, 13vw, 82px);
+    font-size: clamp(46px, 13vw, 76px);
   }
   .hero-lede {
     font-size: 17px;
@@ -1197,26 +1240,23 @@ code {
     font-size: 18px;
   }
   .hero-tag {
-    font-size: 8px;
+    padding: 6px 8px;
   }
   .tag-a {
-    top: 57px;
-    left: 8%;
+    top: 7%;
+    left: 0;
   }
   .tag-b {
+    top: 17%;
     right: 0;
-    top: 200px;
   }
   .tag-c {
-    bottom: 52px;
+    bottom: 17%;
+    left: 0;
   }
-  .orbit-one {
-    width: 400px;
-    height: 210px;
-  }
-  .orbit-two {
-    width: 240px;
-    height: 400px;
+  .tag-d {
+    bottom: 7%;
+    right: 0;
   }
   .section-intro {
     grid-template-columns: 1fr;
@@ -1245,19 +1285,18 @@ code {
     padding-bottom: 80px;
   }
   .atlas-map {
-    min-height: 420px;
+    min-height: 380px;
   }
   .atlas-node {
-    width: 128px;
-    min-height: 72px;
+    width: 132px;
+    min-height: 64px;
     padding: 8px 9px;
   }
   .node-name {
     font-size: 16px;
   }
   .node-role {
-    white-space: normal;
-    font-size: 8px;
+    display: none !important;
   }
   .node-hive {
     left: 5%;
@@ -1282,9 +1321,6 @@ code {
   }
   .atlas-detail {
     padding: 24px;
-  }
-  .detail-body {
-    display: block;
   }
   .detail-body h3 {
     font-size: 38px;
@@ -1315,7 +1351,7 @@ code {
     grid-template-columns: 1fr;
   }
   .install-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .demo-tabs {
     display: grid;
@@ -1350,7 +1386,7 @@ code {
     padding-bottom: 25px;
   }
   pre {
-    font-size: 11px;
+    font-size: 12px;
   }
   .closing-inner {
     display: block;
@@ -1372,9 +1408,9 @@ code {
 .atlas-center small {
   display: block;
   font:
-    8px "IBM Plex Mono",
+    11px "IBM Plex Mono",
     monospace;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   margin-top: 6px;
 }
 .ardent-symbol {
@@ -1405,14 +1441,14 @@ code {
   justify-content: space-between;
   gap: 12px;
   font:
-    9px "IBM Plex Mono",
+    11px "IBM Plex Mono",
     monospace;
   letter-spacing: 0.06em;
   color: #8fbbb7;
 }
 .screen-terminal p {
   font:
-    10px/1.5 "IBM Plex Mono",
+    12px/1.5 "IBM Plex Mono",
     monospace;
   margin: 18px 0 12px;
   color: #e9c49c;
@@ -1422,38 +1458,32 @@ code {
   color: #7bc7b7;
 }
 .screen-terminal pre {
+  overflow-x: auto;
   padding: 0;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.38;
   max-height: none;
-  overflow: visible;
 }
 .terminal-foot {
   margin-top: auto;
   padding-top: 10px;
-  font-size: 8px;
 }
 .demo-panel:focus-visible {
   outline: 2px solid #cb853d;
   outline-offset: 3px;
 }
 @media (max-width: 720px) {
-  .screen-emberfold .screen-frame {
-    aspect-ratio: auto;
-    min-height: 300px;
-  }
   .screen-terminal {
-    min-height: 278px;
     padding: 18px;
   }
   .atlas-center small {
-    font-size: 7px;
+    display: none;
   }
 }
 .node-role {
   white-space: normal;
   display: block;
-  font-size: 8px;
+  font-size: 11px;
   line-height: 1.4;
 }
 .no-script {
@@ -1469,7 +1499,7 @@ code {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
+    animation: none !important;
     transition-duration: 0.01ms !important;
   }
 }
