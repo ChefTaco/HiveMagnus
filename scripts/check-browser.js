@@ -120,8 +120,14 @@ async function checkBrowser(page) {
   }
   // Audit the longest command at every width: code blocks scroll only when narrow.
   await page.getByRole("tab", { name: /ChatterMost/ }).click();
+  // Keep hover stable while axe scrolls and samples contrast at each viewport.
+  await page.mouse.move(0, 0);
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    });
     assert(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,
