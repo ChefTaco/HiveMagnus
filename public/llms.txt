@@ -1,0 +1,22 @@
+# Hive:Magnus
+
+> Open source tools for self-hosted agents: Hive for shared identity, memory, and model routing; Magnus for Linux fleet operations and the Ardent runtime; ChatterMost for conversation; Emberfold for context continuity.
+
+These projects can be used independently. Integrations are optional and require configuration. Ardent belongs to the Magnus repository and bundles the Emberfold library; a separate Emberfold HTTP service is not required. This website publishes documentation and sample UI captures, not a hosted agent service or installation endpoint. All four repositories use Apache-2.0.
+
+Guides include prerequisites, documented commands, expected results, and the public source revision reviewed. Follow the linked current repository documentation for upgrades and configuration changes. Before editing a repository, read its AGENTS.md.
+
+## Start here
+
+- [Site overview](https://hivemagnus.com/index.md): Project selection, optional connections, and documentation links in Markdown.
+- [Hive guide](https://hivemagnus.com/guides/hive.md): Install shared identity, long-term memory, and model routing.
+- [Magnus and Ardent guide](https://hivemagnus.com/guides/magnus.md): Install the fleet manager or run Ardent independently with bundled Emberfold.
+- [ChatterMost guide](https://hivemagnus.com/guides/chattermost.md): Verify and install the versioned Compose distribution and connect an agent.
+- [Emberfold guide](https://hivemagnus.com/guides/emberfold.md): Run a synthetic CLI dry run or use the TypeScript library; optional HTTP and Hermes interfaces.
+
+## Repository instructions
+
+- [Hive AGENTS.md](https://raw.githubusercontent.com/ChefTaco/hive/main/AGENTS.md): Repository setup, checks, and contribution guidance.
+- [Magnus AGENTS.md](https://raw.githubusercontent.com/ChefTaco/magnus/main/AGENTS.md): Repository setup, checks, and contribution guidance for Magnus and Ardent.
+- [ChatterMost AGENTS.md](https://raw.githubusercontent.com/ChefTaco/ChatterMost/main/AGENTS.md): Installation runbook and repository checks.
+- [Emberfold AGENTS.md](https://raw.githubusercontent.com/ChefTaco/emberfold/main/AGENTS.md): Repository setup, contracts, and verification.

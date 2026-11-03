@@ -25,7 +25,92 @@
     <meta property="og:site_name" content="Hive:Magnus" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href="https://hivemagnus.com/" />
+    <link rel="describedby" href="/llms.txt" type="text/plain" />
+    <link rel="alternate" href="/index.md" type="text/markdown" title="Hive:Magnus in Markdown" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="application/ld+json" id="project-metadata">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-hive",
+      "name": "Hive",
+      "description": "Shared identity, long-term memory, and OpenAI-compatible model routing.",
+      "codeRepository": "https://github.com/ChefTaco/hive",
+      "url": "https://github.com/ChefTaco/hive",
+      "programmingLanguage": "TypeScript",
+      "license": "https://github.com/ChefTaco/hive/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/hive.md",
+        "encodingFormat": "text/markdown"
+      }
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-magnus",
+      "name": "Magnus",
+      "description": "Linux fleet inventory, operations, jobs, skills, and agent management.",
+      "codeRepository": "https://github.com/ChefTaco/magnus",
+      "url": "https://github.com/ChefTaco/magnus",
+      "programmingLanguage": "TypeScript",
+      "license": "https://github.com/ChefTaco/magnus/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/magnus.md",
+        "encodingFormat": "text/markdown"
+      },
+      "hasPart": {
+        "@id": "https://hivemagnus.com/#source-ardent"
+      }
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-chattermost",
+      "name": "ChatterMost",
+      "description": "Self-hosted Mattermost-compatible conversation and agent integration.",
+      "codeRepository": "https://github.com/ChefTaco/ChatterMost",
+      "url": "https://github.com/ChefTaco/ChatterMost",
+      "programmingLanguage": "TypeScript",
+      "license": "https://github.com/ChefTaco/ChatterMost/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/chattermost.md",
+        "encodingFormat": "text/markdown"
+      }
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-emberfold",
+      "name": "Emberfold",
+      "description": "Portable context continuity through a TypeScript library, CLI, optional HTTP service, and Hermes plugin.",
+      "codeRepository": "https://github.com/ChefTaco/emberfold",
+      "url": "https://github.com/ChefTaco/emberfold",
+      "programmingLanguage": "TypeScript",
+      "license": "https://github.com/ChefTaco/emberfold/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/emberfold.md",
+        "encodingFormat": "text/markdown"
+      }
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-ardent",
+      "name": "Ardent",
+      "description": "Durable headless agent runtime shipped within Magnus, with bundled Emberfold context fitting.",
+      "codeRepository": "https://github.com/ChefTaco/magnus/tree/main/packages/ardent",
+      "url": "https://github.com/ChefTaco/magnus/tree/main/packages/ardent",
+      "programmingLanguage": "TypeScript",
+      "license": "https://github.com/ChefTaco/magnus/blob/main/LICENSE",
+      "isPartOf": {
+        "@id": "https://hivemagnus.com/#source-magnus"
+      }
+    }
+  ]
+}
+    </script>
     <title>Hive:Magnus — an open system for agents</title>
   </head>
   <body>
@@ -59,6 +144,14 @@
               >Emberfold — context continuity</a
             >
           </li>
+        </ul>
+        <h2>For agents</h2>
+        <p><a href="/llms.txt">Agent index (llms.txt)</a> · <a href="/index.md">Site overview in Markdown</a></p>
+        <ul>
+          <li><a href="/guides/hive.md">Hive Markdown guide</a></li>
+          <li><a href="/guides/magnus.md">Magnus and Ardent Markdown guide</a></li>
+          <li><a href="/guides/chattermost.md">ChatterMost Markdown guide</a></li>
+          <li><a href="/guides/emberfold.md">Emberfold Markdown guide</a></li>
         </ul>
       </main></noscript
     >

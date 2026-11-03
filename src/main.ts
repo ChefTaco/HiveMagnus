@@ -264,7 +264,7 @@ app.innerHTML = `
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><div class="shell header-inner">
     <a class="brand" href="#top" aria-label="Hive:Magnus home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>Hive<span class="brand-colon">:</span>Magnus</span></a>
-    <nav class="main-nav" aria-label="Main navigation"><a href="#atlas">The system</a><a href="#projects">Projects</a><a href="#install">Install lab</a></nav>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#atlas">The system</a><a href="#projects">Projects</a><a href="#install">Install lab</a><a href="#agents">For agents</a></nav>
     <a class="header-github" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">GitHub ${icon("external")}</a>
   </div></header>
   <main id="main">
@@ -320,6 +320,11 @@ app.innerHTML = `
     </div></div></section>
     <section class="install-section shell" id="install" aria-labelledby="install-title"><div class="section-head"><div><span class="section-kicker">INSTALL LAB / 04</span><h2 id="install-title">Try it on your host.</h2></div><p>Follow the first steps here, then continue with each project’s full guide. These walkthroughs explain commands; they do not run them for you.</p></div>
       <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span class="tab-counter">0${i + 1}</span><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh environment for a first install. Existing installations follow their own upgrade guides.</p></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
+    </section>
+    <section class="agents-section shell" id="agents" aria-labelledby="agents-title">
+      <div class="section-head"><div><span class="section-kicker">FOR AGENTS / 05</span><h2 id="agents-title">A direct path into the docs.</h2></div><p>Plain Markdown guides with prerequisites, commands, expected results, and reviewed source revisions. Start with the part you need.</p></div>
+      <div class="agent-index-links"><a class="text-link" href="/llms.txt" type="text/plain">Read llms.txt ${icon("arrow")}</a><a class="text-link" href="/index.md" type="text/markdown">Site overview in Markdown ${icon("arrow")}</a></div>
+      <ul class="agent-guides" aria-label="Project guides in Markdown">${projectOrder.map((id, i) => `<li><a href="/guides/${id}.md" type="text/markdown"><span class="mini-label">0${i + 1} / MARKDOWN GUIDE</span><span class="agent-guide-title">${projects[id].name}${id === "magnus" ? " + Ardent" : ""} ${icon("arrow")}</span><span>${projects[id].role}</span></a></li>`).join("")}</ul>
     </section>
     <section class="closing"><div class="shell closing-inner"><div><span class="section-kicker">YOUR INFRASTRUCTURE. YOUR CHOICE.</span><h2>Start with one piece.<br/><em>Make it yours.</em></h2></div><a class="button button-light" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">Explore the repositories ${icon("arrow")}</a></div></section>
   </main>

@@ -93,6 +93,23 @@ async function checkBrowser(page) {
         .map((link) => link.hash),
     );
   assert(!brokenAnchors.length, `Missing anchor targets: ${brokenAnchors}`);
+  const guideLinks = page.locator(".agent-guides a");
+  assert((await guideLinks.count()) === 4, "Four agent guides");
+  for (const link of await guideLinks.all()) {
+    const response = await page.request.get(new URL(await link.getAttribute("href"), page.url()).href);
+    assert(response.ok(), "Agent guide response");
+    assert((await response.text()).includes("## Source review"), "Agent guide provenance");
+  }
+  for (const path of ["/llms.txt", "/index.md"]) {
+    const response = await page.request.get(new URL(path, page.url()).href);
+    assert(response.ok(), `${path} response`);
+    assert((await response.text()).startsWith("# Hive:Magnus"), `${path} Markdown`);
+  }
+  assert(await page.locator('link[rel="describedby"][href="/llms.txt"]').count(), "Agent index discovery");
+  assert(await page.locator('link[rel="alternate"][type="text/markdown"][href="/index.md"]').count(), "Markdown discovery");
+  const metadata = JSON.parse(await page.locator("#project-metadata").textContent());
+  assert(metadata["@context"] === "https://schema.org", "Schema.org context");
+  assert(metadata["@graph"].filter((item) => item["@type"] === "SoftwareSourceCode").length === 5, "Five SoftwareSourceCode entries");
   for (const image of await page.locator(".screen-frame img").all()) {
     await image.scrollIntoViewIfNeeded();
     await image.evaluate((img) => img.decode());
@@ -162,6 +179,8 @@ async function checkBrowser(page) {
     walkthroughs: 4,
     steps: 12,
     clipboardChecks: 4,
+    agentGuides: 4,
+    sourceCodeEntries: 5,
     accessibilityViolations: 0,
     viewportWidths: [1440, 390, 320],
     pageErrors: errors.length,
