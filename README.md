@@ -16,6 +16,8 @@ See [media provenance](docs/media.md) for screenshot sources and the verified CL
 
 Cloudflare Pages builds the public GitHub repository's `main` branch with `npm run build` and publishes `dist/`. The production domain is `hivemagnus.com`.
 
+See the [deployment and rollback guide](docs/deployment.md).
+
 ## License
 
 Apache-2.0. Product names and screenshots belong to their respective open source projects.
