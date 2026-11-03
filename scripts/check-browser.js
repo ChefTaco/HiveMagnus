@@ -5,7 +5,9 @@ async function checkBrowser(page) {
     if (!ok) throw new Error(message);
   };
   const errors = [];
+  const consoleErrors = [];
   page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
   await page.addInitScript({ path: "node_modules/axe-core/axe.min.js" });
   await page.reload();
   await page.locator(".atlas-node").first().waitFor();
@@ -130,6 +132,7 @@ async function checkBrowser(page) {
     "Reduced motion scroll",
   );
   assert(!errors.length, `Page errors: ${errors.join("; ")}`);
+  assert(!consoleErrors.length, `Console errors: ${consoleErrors.join("; ")}`);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator(".atlas-node").first().click();
   await page.evaluate(() => window.scrollTo(0, 0));
@@ -141,5 +144,6 @@ async function checkBrowser(page) {
     accessibilityViolations: 0,
     viewportWidths: [1440, 390, 320],
     pageErrors: errors.length,
+    consoleErrors: consoleErrors.length,
   };
 }
