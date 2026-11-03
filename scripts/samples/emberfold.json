@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "namespace": "demo:conversation",
+  "instructions": "Help with a sample task.",
+  "history": [],
+  "exchanges": [],
+  "current": [{ "id": "message-1", "role": "user", "content": "Continue the task." }],
+  "budget": { "context_tokens": 16000, "output_reserve_tokens": 4000 }
+}

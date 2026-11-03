@@ -1,0 +1,23 @@
+{
+  "name": "hivemagnus-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@fontsource/dm-sans": "^5.2.7",
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "@fontsource/space-grotesk": "^5.2.7",
+    "axe-core": "4.14.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}
