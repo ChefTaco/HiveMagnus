@@ -6,6 +6,7 @@ async function checkBrowser(page) {
   };
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
+  await page.addInitScript({ path: "node_modules/axe-core/axe.min.js" });
   await page.reload();
   await page.locator(".atlas-node").first().waitFor();
   for (const name of ["Hive", "Magnus", "ChatterMost", "Emberfold"]) {
@@ -98,7 +99,6 @@ async function checkBrowser(page) {
       "Capture failed to load",
     );
   }
-  await page.addScriptTag({ path: "node_modules/axe-core/axe.min.js" });
   const accessibility = await page.evaluate(async () => {
     const result = await axe.run(document, {
       runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] },
