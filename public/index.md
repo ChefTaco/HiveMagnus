@@ -18,7 +18,7 @@
 ## How they connect
 
 - Hive provides optional IAM sign-in, Router model routing, and HiveMem memory integrations for Magnus. Ardent can use HiveMem for long-term memory.
-- Cindertrace runs standalone with local login. Hive can add IAM sign-in and scoped security audit metadata; Magnus can add fleet context and explicitly approved host response. Cindertrace owns investigations and evidence; Magnus retains host execution.
+- Cindertrace runs standalone with local login. Hive can add IAM sign-in and scoped security audit metadata; Magnus can add fleet context and explicitly approved host response. Cindertrace owns investigations and evidence; Magnus retains host execution. Its optional [evolving investigation lab](https://hivemagnus.com/guides/cindertrace.md#try-the-evolving-investigation-lab) uses a separate disposable installation to compare hypotheses, citations, confidence changes, and human-approved simulated containment over three evidence releases.
 - Magnus ships Ardent and can manage it on fleet hosts. Ardent also runs standalone; it does not require a Magnus server.
 - Ardent imports a pinned Emberfold library for context fitting. The separate Emberfold HTTP service is optional. Ardent retains its authoritative history and task journal.
 - ChatterMost implements Mattermost-compatible REST and WebSocket interfaces. Hermes Agent connects through its Mattermost gateway; Ardent has an optional Mattermost channel.

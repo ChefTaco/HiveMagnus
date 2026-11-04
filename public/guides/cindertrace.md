@@ -34,6 +34,33 @@ docker compose --profile collector up -d collector
 
 Do not publish `.env`, credentials, certificates, state, incident records, or live case captures. For an isolated synthetic demonstration, follow the repository's [demo instructions](https://github.com/ChefTaco/cindertrace#synthetic-demo) in a separate installation with no operational sources or credentials.
 
+## Try the evolving investigation lab
+
+The optional lab is a disposable three-stage investigation for people and external agents. It runs without Hive, Magnus, external sources, or a model provider. Use a **fresh separate checkout**; never initialize it over an operational installation. The first release tag above predates this feature, so these commands pin the reviewed lab implementation:
+
+```bash
+git clone https://github.com/ChefTaco/cindertrace.git cindertrace-lab
+cd cindertrace-lab
+git checkout --detach 0368abb6779c0c715e1dc00f7f346b2253f5f040
+npm ci
+npm run init -- --lab
+npm run lab -- up
+```
+
+Open `https://localhost:3445`, sign in using this checkout's private `state/initial-credentials.txt`, then choose **Lab → Start investigation**. Initialization creates separate credentials, state, database volumes, and a dedicated Compose project; it refuses existing configuration. The console binds to loopback.
+
+1. **Suspicious login:** repeated authentication failures invite competing hypotheses; failures alone do not establish compromise.
+2. **Benign explanation:** an approved automation change explains the retries. Revisit confidence while keeping other activity open to investigation.
+3. **Corroborating activity:** a separate successful session, unauthorized privilege change, and suspicious outbound activity call for another revision and narrowly scoped containment review.
+
+Save a revision before each evidence release and before completion. Record compromise confidence, what changed, structured assertions with evidence citations, next checks, and a containment choice. Freeform reasoning is unscored. Completion compares supported and unsupported assertions, tentative hypotheses, retractions, confidence changes, and unnecessary containment across revisions. It uses only evidence available at each revision and has no aggregate score. Existing case confidence is labeled **correlation confidence** separately from investigator compromise confidence.
+
+Containment remains an explicitly labeled simulation: an ADMIN reviews the exact target, effect, evidence and expiry, then approves or rejects it. Approval expires after ten minutes and is consumed once; newer evidence or a revision invalidates pending plans. Simulated decisions never contact Magnus or enter the production action outbox. External collection, integrations, notifications and dispatch are disabled, and synthetic evidence does not alter integration health.
+
+External agents use separate server-side read, draft and lab-control credentials through `CindertraceClient`. They can investigate and advance evidence, but cannot start runs or approve containment. Keep generated agent credentials in the lab's private state directory. See the [complete lab workflow and API](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/INVESTIGATION-LAB.md).
+
+`npm run lab -- stop` preserves history; `npm run lab -- up` resumes it. Restarting an investigation creates a new run while retaining prior results. Destruction requires `npm run lab -- destroy NAME`, with the exact generated `COMPOSE_PROJECT_NAME`, and removes only that lab's containers and volumes. Local state and credentials remain until separately removed.
+
 ## Investigate and approve
 
 ADMIN can access evidence and approve response plans. OPERATOR can investigate and request response review. VIEWER cannot enumerate sensitive security data. Agent read and investigation-draft credentials cannot approve containment.
@@ -72,4 +99,4 @@ Rollback keeps current state and requires reviewed application compatibility. Af
 
 ## Source review
 
-Reviewed 2026-11-04 against public revision `a92c12a4e7386be6099e6becebc115fc146b91b1`: [README](https://github.com/ChefTaco/cindertrace/blob/a92c12a4e7386be6099e6becebc115fc146b91b1/README.md), [installation](https://github.com/ChefTaco/cindertrace/blob/a92c12a4e7386be6099e6becebc115fc146b91b1/docs/INSTALLATION.md), [integrations](https://github.com/ChefTaco/cindertrace/blob/a92c12a4e7386be6099e6becebc115fc146b91b1/docs/INTEGRATIONS.md), [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/a92c12a4e7386be6099e6becebc115fc146b91b1/docs/UPGRADING.md), and [Node engines](https://github.com/ChefTaco/cindertrace/blob/a92c12a4e7386be6099e6becebc115fc146b91b1/package.json). The `v0.1.0` application release resolves to `576f4b4e7ba4ef5f0524deb213137b3fd643aa88`; only documentation differs at the reviewed main revision. There is no npm installer in this release. License: Apache-2.0.
+Reviewed 2026-11-04 against public revision `0368abb6779c0c715e1dc00f7f346b2253f5f040`: [README](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/README.md), [lab workflow and API](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/INVESTIGATION-LAB.md), [installation](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/INSTALLATION.md), and [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/UPGRADING.md). The normal installation example retains `v0.1.0` (`576f4b4e7ba4ef5f0524deb213137b3fd643aa88`); the lab example pins the newer implementation explicitly. This release adds schema profile `cindertrace-v2` and disables automatic incompatible rollback; existing installations require the upgrade tool's verified restore rehearsal. License: Apache-2.0.

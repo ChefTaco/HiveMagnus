@@ -37,3 +37,7 @@ Reviewed public Cindertrace `a92c12a4e7386be6099e6becebc115fc146b91b1`: README, 
 Magnus security ownership was checked against public `7a6782d2085702ef14e1bc997df65fe37d2b5673`. The Magnus guide links Cindertrace and identifies the retired embedded security runtime. Existing installation examples for the other projects are unchanged and retain their original review records.
 
 The metadata graph now contains six SoftwareSourceCode entries: five projects and Ardent within Magnus. The Cindertrace captures come from a new disposable Compose installation, documented in media.md.
+
+## Cindertrace evolving lab, 2026-11-04
+
+Reviewed the public lab workflow at `0368abb6779c0c715e1dc00f7f346b2253f5f040` and the matching README, initialization and lifecycle scripts, API contracts, and upgrade guidance. The lab commands explicitly check out that revision in a new directory; `v0.1.0` predates the lab and remains the normal installation example. Documentation covers evidence-bound revisions, structured comparisons, separate progression credentials, human-approved simulation, and history-preserving restarts. The site links the lab from Cindertrace's interface panel; existing captures continue to depict the original synthetic demo, not the new lab. No screenshots or source metadata changed.

@@ -159,6 +159,12 @@ async function checkBrowser(page) {
       assert(await interfaces.getByRole("tab", {selected:true}).textContent().then(t => t.includes(name)), `${area} opens ${name}`);
     }
   }
+  await interfaces.getByRole("tab", {name: /Cindertrace/}).click();
+  const labLink = cindertrace.getByRole("link", {name: /Try the disposable investigation lab/});
+  assert(await labLink.isVisible(), "Cindertrace lab entry");
+  assert(await labLink.getAttribute("href") === "/guides/cindertrace.md#try-the-evolving-investigation-lab", "Lab instructions link");
+  const labGuide = await page.request.get(new URL(await labLink.getAttribute("href"), page.url()).href);
+  assert(labGuide.ok() && (await labGuide.text()).includes("git checkout --detach 0368abb6779c0c715e1dc00f7f346b2253f5f040"), "Lab guide pins implementation");
   // Legacy deep links still lead to Cindertrace after a different gallery is selected.
   await page.goto(new URL("/#security", page.url()).href);
   await cindertrace.waitFor({state:"visible"});
