@@ -1,6 +1,6 @@
 # Agent documentation maintenance
 
-`public/llms.txt` indexes the Markdown overview and four project guides. The visual site links them in its For agents section and no-JavaScript fallback. The HTML head advertises `llms.txt` with `rel="describedby"` and the overview with `rel="alternate" type="text/markdown"`. Markdown responses also advertise the index through an HTTP Link header.
+`public/llms.txt` indexes the Markdown overview and five project guides. The visual site links them in its For agents section and no-JavaScript fallback. The HTML head advertises `llms.txt` with `rel="describedby"` and the overview with `rel="alternate" type="text/markdown"`. Markdown responses also advertise the index through an HTTP Link header.
 
 ## Public source review, 2026-11-03
 
@@ -26,6 +26,14 @@ Command review does not install or reconfigure Hive, Magnus, ChatterMost, or a H
 
 Fetch current public docs, record their commit IDs, and compare commands and prerequisites before changing examples. Preserve exact release pins where shown; never substitute mutable image tags. Recheck the interactive install lab if any documented command changes. Update each guide's source review date and immutable source links.
 
-The static JSON-LD graph in `index.html` describes four repositories and Ardent as a part of Magnus using Schema.org `SoftwareSourceCode`. It includes descriptions, repository URLs, TypeScript language, license links, and links to the guides. Keep its CSP SHA-256 hash in `public/_headers` synchronized with the exact script text, including whitespace. Do not loosen the policy to allow arbitrary inline scripts.
+The static JSON-LD graph in `index.html` describes five repositories and Ardent as a part of Magnus using Schema.org `SoftwareSourceCode`. It includes descriptions, repository URLs, TypeScript language, license links, and links to the guides. Keep its CSP SHA-256 hash in `public/_headers` synchronized with the exact script text, including whitespace. Do not loosen the policy to allow arbitrary inline scripts.
 
 Before publishing, build, check local Markdown links and shell syntax, validate the JSON-LD and CSP hash, run the browser check, and inspect the For agents section at desktop/mobile widths. Review the Pages preview before promotion to `main`; verify live Markdown content types, discovery headers, assets, and the intended source revision after deployment.
+
+## Cindertrace addition, 2026-11-04
+
+Reviewed public Cindertrace `a92c12a4e7386be6099e6becebc115fc146b91b1`: README, installation, integrations, upgrade runbook, and package Node engines. The release pin `v0.1.0` resolves to application commit `576f4b4e7ba4ef5f0524deb213137b3fd643aa88`. The installation walkthrough uses that release's documented source/Compose path; no npm installer is advertised. The upgrade guide uses an explicit immutable commit and a dry run before activation. Current-state rollback and uncertain-effect handling follow the owning repository's runbook.
+
+Magnus security ownership was checked against public `7a6782d2085702ef14e1bc997df65fe37d2b5673`. The Magnus guide links Cindertrace and identifies the retired embedded security runtime. Existing installation examples for the other projects are unchanged and retain their original review records.
+
+The metadata graph now contains six SoftwareSourceCode entries: five projects and Ardent within Magnus. The Cindertrace captures come from a new disposable Compose installation, documented in media.md.

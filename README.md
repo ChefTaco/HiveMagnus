@@ -1,6 +1,6 @@
 # Hive:Magnus site
 
-Public home for the Hive ecosystem at [hivemagnus.com](https://hivemagnus.com).
+Public home for Hive, Magnus, Cindertrace, ChatterMost, and Emberfold at [hivemagnus.com](https://hivemagnus.com).
 
 ## Develop
 
@@ -9,6 +9,8 @@ Use Node.js 24.22.1, then run `npm ci` and `npm run dev`. `npm run build` typech
 The interactive walkthroughs are browser-only explanations. Commands are sourced from the linked repository installation guides and must be rechecked when releases change. UI captures use synthetic or disposable data; never publish a live operator screen, credential, or private endpoint.
 
 With the site open in Playwright CLI, run `playwright-cli run-code --filename scripts/check-browser.js` to check the atlas, all walkthrough steps, clipboard, keyboard navigation, image loading, accessibility and minimum text size at each viewport, narrow viewports, and reduced motion. The check uses the local `axe-core` development dependency. Save review screenshots under the ignored `output/playwright/` directory.
+
+Cindertrace has a dedicated security section, synthetic overview and investigation captures, a Compose installation walkthrough, and an agent guide covering its upgrade path. The system atlas distinguishes its optional Hive and Magnus integrations.
 
 See [media provenance](docs/media.md) for screenshot sources and the verified CLI example. Font licenses are included in `public/licenses/`.
 

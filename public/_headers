@@ -4,7 +4,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Cross-Origin-Opener-Policy: same-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
-  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-JCZfgsje0vFWk2NvBlrig2PA5KvdGA+G0tjKMdjnPoY='; style-src 'self'; font-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-6C3WeQiwLGWCsJnEM4r9RP+suqlLaXUjIz/Ty/OIeGs='; style-src 'self'; font-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
 
 /
   Cache-Control: public, max-age=0, must-revalidate, no-transform

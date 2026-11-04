@@ -8,6 +8,8 @@
 
 Use Magnus for fleet inventory, health, jobs, skills, rollouts, and audit. Use Ardent alone if you need a durable headless agent without a fleet server. Hive sign-in, memory, and model routing are optional integrations. ChatterMost is an optional Mattermost-compatible conversation endpoint.
 
+Cindertrace is the separate security product for correlated cases, evidence, investigations, and approvals. Magnus can export observations and provide fleet context and approved host execution; embedded security runtime is retired in Magnus 2.0. See the [Cindertrace guide](https://hivemagnus.com/guides/cindertrace.md) and the repository migration guidance before upgrading an existing local-security installation.
+
 ## Install Magnus
 
 Prerequisites: Linux with systemd, npm, Node.js 24.22.1+ in the 24 series or 26.13.0+ in the 26 series, and Docker Compose or existing PostgreSQL and Redis. The docs recommend PostgreSQL 17 (15+ works) and Redis 7.
@@ -72,3 +74,5 @@ Ardent imports its pinned Emberfold library directly. No separate Emberfold acco
 ## Source review
 
 Reviewed 2026-11-03 against public revision `c53cbf3915a679c6545a4cea7fc4dce76ff00f7d`: [root README](https://github.com/ChefTaco/magnus/blob/c53cbf3915a679c6545a4cea7fc4dce76ff00f7d/README.md) and [Ardent README](https://github.com/ChefTaco/magnus/blob/c53cbf3915a679c6545a4cea7fc4dce76ff00f7d/packages/ardent/README.md). Commands follow those docs; npm resolves current published packages. Follow current instructions for upgrades. License: Apache-2.0.
+
+Security ownership reviewed 2026-11-04 against the [Magnus 2.0 release source](https://github.com/ChefTaco/magnus/tree/7a6782d2085702ef14e1bc997df65fe37d2b5673) and Cindertrace integration guide. The earlier command review above remains the provenance for the unchanged installation and Ardent examples.

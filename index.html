@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#e9f0ef" />
     <meta
       name="description"
-      content="Meet the open source tools behind a self-hosted agent stack: Hive, Magnus, ChatterMost, Ardent, and Emberfold. Explore the system and follow real install guides."
+      content="Meet the open source tools behind a self-hosted agent stack: Hive, Magnus, Cindertrace, ChatterMost, Ardent, and Emberfold. Explore the system and follow real install guides."
     />
     <meta
       property="og:title"
@@ -14,7 +14,7 @@
     />
     <meta
       property="og:description"
-      content="Explore the open source control plane, fleet manager, chat service, agent runtime, and context engine."
+      content="Explore the open source control plane, fleet manager, security console, chat service, agent runtime, and context engine."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://hivemagnus.com/" />
@@ -63,6 +63,21 @@
       },
       "hasPart": {
         "@id": "https://hivemagnus.com/#source-ardent"
+      }
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-cindertrace",
+      "name": "Cindertrace",
+      "description": "Standalone security investigations, correlated cases, hashed evidence, and explicitly approved response through optional Magnus integration.",
+      "codeRepository": "https://github.com/ChefTaco/cindertrace",
+      "url": "https://github.com/ChefTaco/cindertrace",
+      "programmingLanguage": "TypeScript",
+      "license": "https://github.com/ChefTaco/cindertrace/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/cindertrace.md",
+        "encodingFormat": "text/markdown"
       }
     },
     {
@@ -145,11 +160,13 @@
             >
           </li>
         </ul>
+        <p><a href="https://github.com/ChefTaco/cindertrace">Cindertrace — standalone security investigations, cases, and evidence</a></p>
         <h2>For agents</h2>
         <p><a href="/llms.txt">Agent index (llms.txt)</a> · <a href="/index.md">Site overview in Markdown</a></p>
         <ul>
           <li><a href="/guides/hive.md">Hive Markdown guide</a></li>
           <li><a href="/guides/magnus.md">Magnus and Ardent Markdown guide</a></li>
+          <li><a href="/guides/cindertrace.md">Cindertrace Markdown guide</a></li>
           <li><a href="/guides/chattermost.md">ChatterMost Markdown guide</a></li>
           <li><a href="/guides/emberfold.md">Emberfold Markdown guide</a></li>
         </ul>

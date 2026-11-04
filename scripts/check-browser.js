@@ -11,9 +11,9 @@ async function checkBrowser(page) {
   await page.addInitScript({ path: "node_modules/axe-core/axe.min.js" });
   await page.reload();
   await page.locator(".atlas-node").first().waitFor();
-  for (const name of ["Hive", "Magnus", "ChatterMost", "Emberfold"]) {
+  for (const name of ["Hive", "Magnus", "Cindertrace", "ChatterMost", "Emberfold"]) {
     const node = page.getByRole("button", {
-      name: new RegExp(`0[1-4] ${name}`),
+      name: new RegExp(`0[1-5] ${name}`),
     });
     await node.click();
     assert(
@@ -26,7 +26,7 @@ async function checkBrowser(page) {
     );
   }
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
-  for (const name of ["Hive", "Magnus", "ChatterMost", "Ardent + Emberfold"]) {
+  for (const name of ["Hive", "Magnus", "Cindertrace", "ChatterMost", "Ardent + Emberfold"]) {
     await page
       .getByRole("tab", { name: new RegExp(name.replace("+", "\\+")) })
       .click();
@@ -94,7 +94,7 @@ async function checkBrowser(page) {
     );
   assert(!brokenAnchors.length, `Missing anchor targets: ${brokenAnchors}`);
   const guideLinks = page.locator(".agent-guides a");
-  assert((await guideLinks.count()) === 4, "Four agent guides");
+  assert((await guideLinks.count()) === 5, "Five agent guides");
   for (const link of await guideLinks.all()) {
     const response = await page.request.get(new URL(await link.getAttribute("href"), page.url()).href);
     assert(response.ok(), "Agent guide response");
@@ -109,7 +109,7 @@ async function checkBrowser(page) {
   assert(await page.locator('link[rel="alternate"][type="text/markdown"][href="/index.md"]').count(), "Markdown discovery");
   const metadata = JSON.parse(await page.locator("#project-metadata").textContent());
   assert(metadata["@context"] === "https://schema.org", "Schema.org context");
-  assert(metadata["@graph"].filter((item) => item["@type"] === "SoftwareSourceCode").length === 5, "Five SoftwareSourceCode entries");
+  assert(metadata["@graph"].filter((item) => item["@type"] === "SoftwareSourceCode").length === 6, "Six SoftwareSourceCode entries");
   for (const image of await page.locator(".screen-frame img").all()) {
     await image.scrollIntoViewIfNeeded();
     await image.evaluate((img) => img.decode());
@@ -118,6 +118,8 @@ async function checkBrowser(page) {
       "Capture failed to load",
     );
   }
+  assert(await page.locator('#security h2').textContent().then(t => t.includes('Keep the evidence.')), "Cindertrace feature heading");
+  assert((await page.locator('.security-captures img').count()) === 2, "Two synthetic Cindertrace captures");
   // Audit the longest command at every width: code blocks scroll only when narrow.
   await page.getByRole("tab", { name: /ChatterMost/ }).click();
   // Keep hover stable while axe scrolls and samples contrast at each viewport.
@@ -134,6 +136,11 @@ async function checkBrowser(page) {
       ),
       `Horizontal overflow at ${width}px`,
     );
+    const overlaps = await page.locator('.atlas-node, .atlas-center').evaluateAll(nodes => nodes.flatMap((a, i) => nodes.slice(i + 1).filter(b => {
+      const x = a.getBoundingClientRect(), y = b.getBoundingClientRect();
+      return x.left < y.right && x.right > y.left && x.top < y.bottom && x.bottom > y.top;
+    }).map(b => `${a.textContent.trim()} / ${b.textContent.trim()}`)));
+    assert(!overlaps.length, `Atlas nodes overlap at ${width}px: ${overlaps}`);
     const accessibility = await page.evaluate(async () => {
       const result = await axe.run(document, {
         runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] },
@@ -181,12 +188,12 @@ async function checkBrowser(page) {
   await page.locator(".atlas-node").first().click();
   await page.evaluate(() => window.scrollTo(0, 0));
   return {
-    atlasSelections: 4,
-    walkthroughs: 4,
-    steps: 12,
-    clipboardChecks: 4,
-    agentGuides: 4,
-    sourceCodeEntries: 5,
+    atlasSelections: 5,
+    walkthroughs: 5,
+    steps: 15,
+    clipboardChecks: 5,
+    agentGuides: 5,
+    sourceCodeEntries: 6,
     accessibilityViolations: 0,
     viewportWidths: [1440, 390, 320],
     pageErrors: errors.length,
