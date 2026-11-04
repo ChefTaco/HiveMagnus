@@ -1241,7 +1241,7 @@ code {
   }
   .hero-visual {
     width: 100%;
-    height: 420px;
+    height: 450px;
   }
   .hero-core {
     width: 170px;
@@ -1265,11 +1265,11 @@ code {
     right: 0;
   }
   .tag-c {
-    bottom: 17%;
+    bottom: 21%;
     left: 0;
   }
   .tag-d {
-    bottom: 7%;
+    bottom: 10%;
     right: 0;
   }
   .section-intro {
@@ -1591,7 +1591,7 @@ code {
   .project-cindertrace { grid-column: 1 / -1; }
 }
 @media (max-width: 720px) {
-  .tag-e { top: 49%; right: 0; }
+  .tag-e { top: auto; bottom: 0; right: 0; }
   .security-section { padding: 75px 0 80px; }
   .security-heading { grid-template-columns: 1fr; gap: 24px; }
   .security-heading h2 { font-size: 43px; }
