@@ -92,6 +92,7 @@ const projects: Record<
       "ChatterMost channel conversation in a disposable sample environment",
     connections: [
       { to: "Hermes Agent", how: "documented setup through its Mattermost gateway" },
+      { to: "Ardent", how: "optional Mattermost channel, configured in the Ardent profile" },
     ],
   },
   emberfold: {
@@ -303,6 +304,26 @@ const projectOrder: ProjectId[] = [
   "emberfold",
 ];
 const demoOrder: DemoId[] = ["hive", "magnus", "cindertrace", "chattermost", "ardent"];
+type AtlasId = ProjectId | "ardent";
+const atlasEdges: { from: AtlasId; to: AtlasId; bundled?: boolean }[] = [
+  { from: "hive", to: "magnus" },
+  { from: "hive", to: "ardent" },
+  { from: "magnus", to: "ardent", bundled: true },
+  { from: "emberfold", to: "ardent", bundled: true },
+  { from: "chattermost", to: "ardent" },
+  { from: "cindertrace", to: "hive" },
+  { from: "cindertrace", to: "magnus" },
+];
+const interfaceNotes: Record<ProjectId, { title: string; copy: string; points: string[] }> = {
+  hive: { title: "Shared services, in view.", copy: "Inspect identity, memory, and model routing from the Hive console.", points: ["Check the services you host", "Manage identity and scoped access", "Connect models and shared memory"] },
+  magnus: { title: "Know your fleet.", copy: "Move from host inventory to the jobs, agents, and rollouts running across it.", points: ["Review host health and inventory", "Operate jobs and managed agents", "Inspect changes in the audit log"] },
+  cindertrace: { title: "Follow the evidence.", copy: "Connect security observations to a case, inspect affected entities, and preserve the evidence.", points: ["Correlate signed observations", "Save investigations and hashed evidence", "Approve an exact response plan"] },
+  chattermost: { title: "Keep the conversation together.", copy: "Channels, direct messages, and threads for people and agents, in a Mattermost-compatible service.", points: ["Talk in channels and threads", "Connect an agent gateway", "Use compatible mobile and desktop apps"] },
+  emberfold: { title: "See what fits the next turn.", copy: "Inspect a context preparation result before using it in an agent. This excerpt is from a real synthetic CLI dry run.", points: ["Review the token budget", "Check protected spans", "Use the library, CLI, or optional HTTP service"] },
+};
+let activeInterface: ProjectId = "cindertrace";
+const initialInterface = location.hash.replace("#interface-", "");
+if (projectOrder.includes(initialInterface as ProjectId)) activeInterface = initialInterface as ProjectId;
 let activeProject: ProjectId = "hive";
 let activeDemo: DemoId = "hive";
 let activeStep = 0;
@@ -314,60 +335,46 @@ app.innerHTML = `
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><div class="shell header-inner">
     <a class="brand" href="#top" aria-label="Hive:Magnus home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>Hive<span class="brand-colon">:</span>Magnus</span></a>
-    <nav class="main-nav" aria-label="Main navigation"><a href="#atlas">The system</a><a href="#projects">Projects</a><a href="#security">Security</a><a href="#install">Install lab</a><a href="#agents">For agents</a></nav>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#atlas">The system</a><a href="#projects">Projects</a><a href="#interfaces">Interfaces</a><a href="#install">Install lab</a><a href="#agents">For agents</a></nav>
     <a class="header-github" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">GitHub ${icon("external")}</a>
   </div></header>
   <main id="main">
     <section class="hero shell" id="top" aria-labelledby="hero-title">
       <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-line"></span> OPEN SOURCE · SELF HOSTED</div>
-        <h1 id="hero-title">An open system <em>for agents.</em></h1>
-        <p class="hero-lede">The pieces you need to run agents on your own terms: shared identity and memory, fleet operations, security investigations, conversation, and context that carries forward.</p>
-        <div class="hero-actions"><a class="button button-primary" href="#atlas">Explore the system ${icon("arrow")}</a><a class="text-link" href="#install">Try it on your host ${icon("down")}</a></div>
-        <div class="hero-proof"><span class="proof-pulse"></span><span>Five public projects. Choose the pieces you need.</span></div>
+        <h1 id="hero-title">Run your stack.<br/><em>On your terms.</em></h1>
+        <p class="hero-lede">Identity, fleet operations, security, conversation, and context. Five open source projects you can run independently and connect on your terms.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#interfaces">See the interfaces ${icon("arrow")}</a><a class="text-link" href="#install">Find your starting point ${icon("down")}</a></div>
+        <p class="hero-proof">Apache-2.0 · Your host · Your choice of integrations</p>
       </div>
-      <div class="hero-visual" aria-hidden="true"><svg class="hero-orbits" viewBox="-320 -315 640 630"><g class="orbit orbit-a"><ellipse rx="285" ry="150" transform="rotate(-19)"/><circle class="dot-amber" cx="-269" cy="93" r="6"/><circle class="dot-teal" cx="269" cy="-93" r="6"/></g><g class="orbit orbit-b"><ellipse rx="165" ry="275" transform="rotate(27)"/><circle class="dot-teal" cx="125" cy="-245" r="6"/><circle class="dot-amber" cx="-125" cy="245" r="6"/></g><circle class="orbit-ring" r="205"/></svg><div class="hero-core"><span class="core-small">HIVE</span><span class="core-colon">:</span><span class="core-large">MAGNUS</span></div><div class="hero-tag tag-a">IDENTITY + MEMORY</div><div class="hero-tag tag-b">FLEET OPERATIONS</div><div class="hero-tag tag-c">CONVERSATION</div><div class="hero-tag tag-d">CONTEXT CONTINUITY</div><div class="hero-tag tag-e">SECURITY + EVIDENCE</div></div>
+      <div class="stack-index"><div class="stack-index-heading"><span class="mini-label">CHOOSE A PIECE</span><span class="stack-index-caption">Five independent projects</span></div>
+        ${projectOrder.map((id, i) => `<a class="stack-entry project-${id}" href="#interface-${id}" data-interface-link="${id}"><span class="stack-number">0${i + 1}</span><span class="stack-icon">${icon(id)}</span><span class="stack-name">${projects[id].name}<small>${projects[id].role}</small></span>${icon("arrow")}</a>`).join("")}
+        <p class="stack-index-foot">Start with one. Connect the rest when you need them.</p>
+      </div>
     </section>
-    <section class="section-intro shell"><div class="intro-label">THE IDEA <span>↘</span></div><p>Every agent has a place to run, a way to remember, a way to reach people, and a way to investigate what happens. These projects make those parts <strong>visible, inspectable, and yours to host.</strong></p></section>
     <section class="atlas-section" id="atlas" aria-labelledby="atlas-title"><div class="shell">
-      <div class="section-head"><div><span class="section-kicker">SYSTEM ATLAS / 01</span><h2 id="atlas-title">See how the pieces fit.</h2></div><p>Explore each part of the stack. Lines show possible connections; you choose which integrations to configure.</p></div>
+      <div class="section-head"><div><span class="section-kicker">SYSTEM ATLAS / 01</span><h2 id="atlas-title">See how the pieces fit.</h2></div><p>Explore each part of the stack. Dashed lines are optional integrations. Solid lines show Ardent within Magnus and its bundled Emberfold library.</p></div>
       <div class="atlas-layout"><div class="atlas-map" role="group" aria-label="Interactive system atlas">
-        <div class="atlas-grid" aria-hidden="true"></div><svg class="atlas-lines" viewBox="0 0 800 620" preserveAspectRatio="none" aria-hidden="true"><path d="M400 236 144 100M400 236 656 100M400 236 656 390M400 522 144 100M400 522 656 100"/><path class="atlas-line-active" d="M400 236 144 100"/></svg>
+        <div class="atlas-grid" aria-hidden="true"></div><svg class="atlas-lines" aria-hidden="true">${atlasEdges.map(edge => `<path data-from="${edge.from}" data-to="${edge.to}" class="${edge.bundled ? "atlas-line-bundled" : ""}"/>`).join("")}</svg>
         <a href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" class="atlas-center" target="_blank" rel="noopener noreferrer" aria-label="Ardent agent runtime, part of Magnus"><span>ARDENT<small>AGENT RUNTIME</small></span><i></i></a>
         ${projectOrder.map((id, i) => `<button type="button" class="atlas-node node-${id}${i === 0 ? " is-active" : ""}" data-project="${id}" aria-pressed="${i === 0}"><span class="node-index">0${i + 1}</span><span class="node-name">${projects[id].name}</span><span class="node-role">${projects[id].role}</span></button>`).join("")}
-        <div class="atlas-annotation">A SELF-HOSTED AGENT STACK</div>
+        <div class="atlas-annotation"><span class="line-key"></span> OPTIONAL <span class="line-key bundled"></span> BUNDLED</div>
       </div><div class="atlas-detail" id="atlas-detail" aria-live="polite"></div></div>
     </div></section>
-    <section class="projects-section shell" id="projects" aria-labelledby="projects-title"><div class="section-head"><div><span class="section-kicker">OPEN PROJECTS / 02</span><h2 id="projects-title">Built to work together.<br/><span>Useful on their own.</span></h2></div><p>Start with the part you need. Each project has its own repository and installation guide.</p></div>
-      <div class="project-grid">${projectOrder
-        .map((id, i) => {
-          const p = projects[id];
-          return `<article class="project-card project-${id}"><div class="project-top"><span class="project-number">0${i + 1} / ${p.role.toUpperCase()}</span><span class="project-glyph">${icon(id)}</span></div><h3>${p.name}</h3><p class="project-summary">${p.summary}</p><p class="project-detail">${p.detail}</p><div class="project-bottom"><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} GitHub repository">View repository ${icon("external")}</a></div></article>`;
-        })
-        .join("")}</div>
+    <section class="projects-section shell" id="projects" aria-labelledby="projects-title"><div class="section-head"><div><span class="section-kicker">OPEN PROJECTS / 02</span><h2 id="projects-title">Pick the tool<br/><span>for the work.</span></h2></div><p>Every project has its own source and installation path. Choose the capability you need first.</p></div>
+      <div class="project-grid">${projectOrder.map((id, i) => {
+        const p = projects[id];
+        return `<article class="project-card project-${id}"><div class="project-identity"><span class="project-number">0${i + 1}</span><span class="project-glyph">${icon(id)}</span><div><h3>${p.name}</h3><span class="project-role">${p.role}</span></div></div><p class="project-summary">${p.summary}</p><div class="project-actions"><a href="#interface-${id}" data-interface-link="${id}">See interface ${icon("arrow")}</a><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} GitHub repository">Source ${icon("external")}</a></div></article>`;
+      }).join("")}</div>
       <div class="ardent-note"><span class="ardent-symbol" aria-hidden="true">A<span>:</span>E</span><div><span class="mini-label">INSIDE MAGNUS</span><h3>Ardent runs the work. Emberfold carries the context.</h3><p>Ardent is Magnus’s headless agent runtime. It can run on its own or under Magnus management; its pinned Emberfold library helps fit context for the next turn.</p></div><a class="text-link" href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" target="_blank" rel="noopener noreferrer">Explore Ardent ${icon("external")}</a></div>
     </section>
-    <section class="security-section" id="security" aria-labelledby="security-title"><div class="shell">
-      <div class="security-heading"><div><span class="section-kicker">CINDERTRACE / SECURITY OPERATIONS</span><h2 id="security-title">Follow the signal.<br/><span>Keep the evidence.</span></h2></div><div><p>Bring endpoint, network, identity, and application observations into one investigation. Cindertrace runs on its own, with local login and signed ingestion.</p><a class="text-link" href="https://github.com/ChefTaco/cindertrace" target="_blank" rel="noopener noreferrer">Explore Cindertrace ${icon("external")}</a></div></div>
-      <ol class="security-workflow" aria-label="Cindertrace investigation workflow">
-        <li><span class="mini-label">OBSERVE</span><h3>Connect the activity.</h3><p>Admit signed observations from configured sources and correlate related events into cases.</p></li>
-        <li><span class="mini-label">INVESTIGATE</span><h3>Preserve what matters.</h3><p>Review entities, save investigation drafts, and preserve evidence with content hashes and an audit trail.</p></li>
-        <li><span class="mini-label">APPROVE</span><h3>Decide before response.</h3><p>Review the exact response plan. Administrator approval expires after ten minutes and can be used once. Configured Magnus executes host actions.</p></li>
-      </ol>
-      <div class="screen-grid security-captures">
-        <figure class="screen-card"><div class="screen-frame"><a href="/captures/cindertrace-overview.webp" target="_blank" rel="noopener noreferrer" aria-label="Open full Cindertrace overview capture"><img src="/captures/cindertrace-overview.webp" alt="Cindertrace overview with a synthetic authentication case and source posture" loading="lazy" decoding="async" width="1440" height="900" /></a></div><figcaption><span>OVERVIEW / Sources and cases</span><span>Synthetic data ↗</span></figcaption></figure>
-        <figure class="screen-card"><div class="screen-frame"><a href="/captures/cindertrace-case.webp" target="_blank" rel="noopener noreferrer" aria-label="Open full Cindertrace investigation capture"><img src="/captures/cindertrace-case.webp" alt="Cindertrace synthetic case showing the evidence braid, affected entities, and recommended investigation" loading="lazy" decoding="async" width="1440" height="900" /></a></div><figcaption><span>INVESTIGATION / Evidence in context</span><span>Synthetic data ↗</span></figcaption></figure>
-      </div>
-      <p class="security-boundary">Hive can add sign-in and security audit metadata. Magnus can add fleet context and approved response. Both are optional; response controls require a configured Magnus bridge.</p>
-      <div class="security-links"><a class="text-link" href="/guides/cindertrace.md">Installation and upgrade guide ${icon("arrow")}</a><a class="text-link" href="https://github.com/ChefTaco/cindertrace/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy and data handling ${icon("external")}</a></div>
-    </div></section>
-    <section class="screens-section" aria-labelledby="screens-title"><div class="shell"><div class="section-head"><div><span class="section-kicker">IN THE INTERFACE / 03</span><h2 id="screens-title">From diagram to daily use.</h2></div><p>Real project interfaces, captured from disposable environments with sample information.</p></div><div class="screen-grid">
-      ${(["hive", "magnus", "chattermost", "emberfold"] as ProjectId[])
-        .map((id, i) => {
-          const p = projects[id];
-          return `<figure class="screen-card screen-${id}"><div class="screen-frame">${
-            p.image
-              ? `<a href="${p.image}" target="_blank" rel="noopener noreferrer" aria-label="Open full ${p.name} capture"><img src="${p.image}" alt="${p.imageAlt}" loading="lazy" decoding="async" width="1280" height="720" /></a>`
-              : `<div class="screen-terminal"><div class="terminal-top"><span>EMBERFOLD / CLI</span><span>SYNTHETIC INPUT</span></div><p><span>$</span> emberfold prepare --input emberfold.json --dry-run</p><pre tabindex="0" aria-label="Excerpt from actual Emberfold dry run output">{
+    <section class="screens-section" id="interfaces" aria-labelledby="screens-title"><div class="shell">
+      <div class="section-head"><div><span class="section-kicker">IN THE INTERFACE / 03</span><h2 id="screens-title">See the tools at work.</h2></div><p>Five projects. Real interfaces and a verified CLI example. All captures use synthetic or disposable data.</p></div>
+      <div class="interface-tabs" role="tablist" aria-label="Choose a project interface">${projectOrder.map((id, i) => `<button type="button" role="tab" class="project-${id}" id="interface-tab-${id}" aria-controls="interface-${id}" aria-selected="${id === activeInterface}" tabindex="${id === activeInterface ? 0 : -1}" data-interface="${id}"><span class="interface-tab-number">0${i + 1}</span><span>${projects[id].name}</span><span class="interface-tab-icon">${icon(id)}</span></button>`).join("")}</div>
+      ${projectOrder.map(id => {
+        const p = projects[id], note = interfaceNotes[id];
+        return `<section class="interface-panel project-${id}" id="interface-${id}" role="tabpanel" aria-labelledby="interface-tab-${id}" tabindex="0" ${id !== activeInterface ? "hidden" : ""}>
+          <div class="interface-toolbar"><span>${id === "emberfold" ? "CLI / VERIFIED DRY RUN" : "CONSOLE / SYNTHETIC DATA"}</span>${id === "cindertrace" ? `<div class="capture-switch" role="group" aria-label="Cindertrace capture"><button type="button" data-capture="overview" aria-pressed="true">Overview</button><button type="button" data-capture="case" aria-pressed="false">Investigation</button></div>` : `<span>${id === "emberfold" ? "NO MODEL CALLS" : "SELECT IMAGE TO OPEN FULL SIZE"}</span>`}</div>
+          <figure class="interface-figure"><div class="interface-visual"><div class="screen-frame">${p.image ? `<a class="capture-link" href="${p.image}" target="_blank" rel="noopener noreferrer" aria-label="Open full ${p.name} capture"><img src="${p.image}" alt="${p.imageAlt}" loading="lazy" decoding="async" width="${id === "cindertrace" ? 1440 : 1280}" height="${id === "cindertrace" ? 900 : 720}" /></a>` : `<div class="screen-terminal"><div class="terminal-top"><span>EMBERFOLD / CLI</span><span>SYNTHETIC INPUT</span></div><p><span>$</span> emberfold prepare --input emberfold.json --dry-run</p><pre tabindex="0" aria-label="Excerpt from actual Emberfold dry run output">{
   "tokens": {
     "input_tokens": 100,
     "max_input_tokens": 12000,
@@ -377,11 +384,12 @@ app.innerHTML = `
   "protected_spans_verified": 0,
   "compacted": false,
   "fits": true
-}</pre><div class="terminal-foot">OUTPUT EXCERPT · NO MODEL CALLS</div></div>`
-          }</div><figcaption><span>0${i + 1} / ${p.name}</span><span>${id === "emberfold" ? "Verified dry run · output excerpt" : "Sample data · open full capture ↗"}</span></figcaption></figure>`;
-        })
-        .join("")}
-    </div></div></section>
+}</pre><div class="terminal-foot">OUTPUT EXCERPT · NO MODEL CALLS</div></div>`}</div><p class="capture-caption">${id === "emberfold" ? "Actual output excerpt · synthetic input" : `${p.name} · ${id === "cindertrace" ? '<span class="capture-name">Overview</span>' : 'sample environment'} · <a class="capture-full-link" href="${p.image}" target="_blank" rel="noopener noreferrer">Open full capture ${icon("external")}</a>`}</p></div>
+          <figcaption class="interface-story"><span class="mini-label">${p.role}</span><h3>${note.title}</h3><p>${note.copy}</p><ul>${note.points.map(point => `<li>${point}</li>`).join("")}</ul><a class="text-link" href="/guides/${id}.md">${p.name} guide ${icon("arrow")}</a>${id === "cindertrace" ? `<div class="response-note" id="security"><h4>Response stays deliberate.</h4><p>Administrator approval binds the exact plan, expires after ten minutes, and is used once. Optional Magnus executes host actions; response controls require its configured bridge.</p><a href="https://github.com/ChefTaco/cindertrace/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy and data handling ${icon("external")}</a></div>` : ""}${id === "chattermost" ? '<p class="interface-limit">Background mobile push, calls, and SSO are not implemented.</p>' : ""}</figcaption></figure>
+        </section>`;
+      }).join("")}
+      <p class="interface-footnote">You are viewing documentation and sample captures. This site does not connect to an operational fleet or security installation.</p>
+    </div></section>
     <section class="install-section shell" id="install" aria-labelledby="install-title"><div class="section-head"><div><span class="section-kicker">INSTALL LAB / 04</span><h2 id="install-title">Try it on your host.</h2></div><p>Follow the first steps here, then continue with each project’s full guide. These walkthroughs explain commands; they do not run them for you.</p></div>
       <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span class="tab-counter">0${i + 1}</span><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh environment for a first install. Existing installations follow their own upgrade guides.</p></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
     </section>
@@ -407,17 +415,81 @@ function renderAtlas() {
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-pressed", String(active));
     });
-  const paths: Record<ProjectId, string> = {
-    hive: "M400 236 144 100",
-    magnus: "M400 236 656 100",
-    cindertrace: "M400 522 144 100M400 522 656 100",
-    chattermost: "",
-    emberfold: "M400 236 656 390",
-  };
-  document
-    .querySelector(".atlas-line-active")
-    ?.setAttribute("d", paths[activeProject]);
+  renderAtlasLines();
 }
+
+function renderAtlasLines() {
+  const map = document.querySelector<HTMLElement>(".atlas-map")!;
+  const svg = map.querySelector<SVGSVGElement>(".atlas-lines")!;
+  const bounds = map.getBoundingClientRect();
+  svg.setAttribute("viewBox", `0 0 ${bounds.width} ${bounds.height}`);
+  const center = (id: string) => {
+    const node = map.querySelector<HTMLElement>(id === "ardent" ? ".atlas-center" : `.node-${id}`)!;
+    const rect = node.getBoundingClientRect();
+    return [rect.left - bounds.left + rect.width / 2, rect.top - bounds.top + rect.height / 2];
+  };
+  svg.querySelectorAll<SVGPathElement>("path").forEach(path => {
+    const from = path.dataset.from!, to = path.dataset.to!;
+    path.setAttribute("d", `M${center(from).join(" ")} L${center(to).join(" ")}`);
+    path.classList.toggle("atlas-line-active", from === activeProject || to === activeProject);
+  });
+}
+
+function selectInterface(id: ProjectId, focus = false) {
+  activeInterface = id;
+  document.querySelectorAll<HTMLButtonElement>("[data-interface]").forEach(button => {
+    const active = button.dataset.interface === id;
+    button.setAttribute("aria-selected", String(active));
+    button.tabIndex = active ? 0 : -1;
+    if (active && focus) button.focus();
+  });
+  projectOrder.forEach(project => {
+    document.querySelector<HTMLElement>(`#interface-${project}`)!.hidden = project !== id;
+  });
+}
+
+document.querySelectorAll<HTMLButtonElement>("[data-interface]").forEach(button => {
+  button.addEventListener("click", () => selectInterface(button.dataset.interface as ProjectId));
+  button.addEventListener("keydown", event => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const index = projectOrder.indexOf(activeInterface);
+    const next = event.key === "Home" ? 0 : event.key === "End" ? projectOrder.length - 1
+      : (index + (event.key === "ArrowRight" ? 1 : -1) + projectOrder.length) % projectOrder.length;
+    selectInterface(projectOrder[next], true);
+  });
+});
+document.querySelectorAll<HTMLAnchorElement>("[data-interface-link]").forEach(link => {
+  link.addEventListener("click", event => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    const id = link.dataset.interfaceLink as ProjectId;
+    selectInterface(id);
+    history.pushState(null, "", `#interface-${id}`);
+    document.querySelector<HTMLElement>("#interfaces")!.scrollIntoView();
+    document.querySelector<HTMLElement>(`#interface-${id}`)!.focus({ preventScroll: true });
+  });
+});
+window.addEventListener("hashchange", () => {
+  const id = location.hash === "#security" ? "cindertrace" : location.hash.replace("#interface-", "");
+  if (projectOrder.includes(id as ProjectId)) {
+    selectInterface(id as ProjectId);
+    document.querySelector<HTMLElement>("#interfaces")!.scrollIntoView();
+  }
+});
+document.querySelectorAll<HTMLButtonElement>("[data-capture]").forEach(button => {
+  button.addEventListener("click", () => {
+    const investigation = button.dataset.capture === "case";
+    const panel = document.querySelector<HTMLElement>("#interface-cindertrace")!;
+    const src = `/captures/cindertrace-${investigation ? "case" : "overview"}.webp`;
+    const img = panel.querySelector<HTMLImageElement>("img")!;
+    img.src = src;
+    img.alt = investigation ? "Cindertrace synthetic case showing the evidence braid, affected entities, and recommended investigation" : projects.cindertrace.imageAlt!;
+    panel.querySelectorAll<HTMLAnchorElement>(".capture-link, .capture-full-link").forEach(link => { link.href = src; });
+    panel.querySelector(".capture-name")!.textContent = investigation ? "Investigation" : "Overview";
+    panel.querySelectorAll<HTMLButtonElement>("[data-capture]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+  });
+});
 
 function renderDemo() {
   const d = demos[activeDemo];
@@ -460,7 +532,7 @@ function renderDemo() {
       }),
     );
   document
-    .querySelectorAll<HTMLButtonElement>('[role="tab"]')
+    .querySelectorAll<HTMLButtonElement>('.demo-tabs [role="tab"]')
     .forEach((button) => {
       const active = button.dataset.demo === activeDemo;
       button.setAttribute("aria-selected", String(active));
@@ -475,7 +547,7 @@ document.querySelectorAll<HTMLButtonElement>(".atlas-node").forEach((button) =>
   }),
 );
 document
-  .querySelectorAll<HTMLButtonElement>('[role="tab"]')
+  .querySelectorAll<HTMLButtonElement>('.demo-tabs [role="tab"]')
   .forEach((button) => {
     button.addEventListener("click", () => {
       activeDemo = button.dataset.demo as DemoId;
@@ -512,4 +584,9 @@ document
     });
   });
 renderAtlas();
+new ResizeObserver(renderAtlasLines).observe(document.querySelector(".atlas-map")!);
+void document.fonts.ready.then(renderAtlasLines);
 renderDemo();
+if (location.hash === "#security" || location.hash.startsWith("#interface-")) {
+  requestAnimationFrame(() => document.querySelector("#interfaces")!.scrollIntoView());
+}

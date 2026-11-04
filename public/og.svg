@@ -1,1 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#e9f0ef"/><g stroke="#a9bdbc" opacity=".6"><path d="M0 100h1200M0 200h1200M0 300h1200M0 400h1200M0 500h1200M100 0v630M300 0v630M500 0v630M700 0v630M900 0v630M1100 0v630"/></g><path d="M767 304 904 209l159 76M767 304l94 170 202-189" fill="none" stroke="#2d8a87" stroke-width="4"/><circle cx="767" cy="304" r="18" fill="#e9a45e"/><circle cx="904" cy="209" r="15" fill="#2d8a87"/><circle cx="1063" cy="285" r="15" fill="#2d8a87"/><circle cx="861" cy="474" r="15" fill="#2d8a87"/><text x="85" y="320" font-family="Arial,sans-serif" font-size="92" font-weight="700" fill="#173246">Hive:Magnus</text><text x="91" y="380" font-family="Arial,sans-serif" font-size="29" fill="#375363">An open system for agents</text><rect x="87" y="445" width="148" height="8" rx="4" fill="#e9a45e"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#e9f0ef"/>
+  <g font-family="Arial,sans-serif" fill="#173246">
+    <text x="62" y="76" font-size="27" font-weight="700">Hive:Magnus</text>
+    <path d="M62 111h1076" stroke="#bdceca"/>
+    <text x="62" y="254" font-size="67" font-weight="700" letter-spacing="-2">Run your stack.</text>
+    <text x="62" y="335" font-size="67" font-weight="700" letter-spacing="-2" fill="#216d69">On your terms.</text>
+    <text x="65" y="398" font-size="21" fill="#46656e">Open source tools for self-hosted agents.</text>
+    <text x="65" y="539" font-size="17" fill="#46656e">APACHE-2.0 · FIVE INDEPENDENT PROJECTS</text>
+    <rect x="695" y="155" width="443" height="382" fill="#d1e1dc"/>
+    <rect x="685" y="145" width="443" height="382" fill="#f6f9f7" stroke="#bdceca"/>
+    <g font-size="23" font-weight="700">
+      <text x="714" y="189" fill="#216d69">01</text><text x="765" y="189">Hive</text>
+      <text x="714" y="265" fill="#966022">02</text><text x="765" y="265">Magnus</text>
+      <text x="714" y="341" fill="#a14f40">03</text><text x="765" y="341">Cindertrace</text>
+      <text x="714" y="417" fill="#41677e">04</text><text x="765" y="417">ChatterMost</text>
+      <text x="714" y="493" fill="#526890">05</text><text x="765" y="493">Emberfold</text>
+    </g>
+    <g stroke="#bdceca"><path d="M685 221h443M685 297h443M685 373h443M685 449h443"/></g>
+  </g>
+</svg>

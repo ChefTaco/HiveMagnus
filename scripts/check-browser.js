@@ -11,6 +11,8 @@ async function checkBrowser(page) {
   await page.addInitScript({ path: "node_modules/axe-core/axe.min.js" });
   await page.reload();
   await page.locator(".atlas-node").first().waitFor();
+  const walkthroughs = page.locator(".demo-tabs");
+  const interfaces = page.locator(".interface-tabs");
   for (const name of ["Hive", "Magnus", "Cindertrace", "ChatterMost", "Emberfold"]) {
     const node = page.getByRole("button", {
       name: new RegExp(`0[1-5] ${name}`),
@@ -27,7 +29,7 @@ async function checkBrowser(page) {
   }
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
   for (const name of ["Hive", "Magnus", "Cindertrace", "ChatterMost", "Ardent + Emberfold"]) {
-    await page
+    await walkthroughs
       .getByRole("tab", { name: new RegExp(name.replace("+", "\\+")) })
       .click();
     const firstCommand = await page.locator("#demo-panel pre code").textContent();
@@ -66,10 +68,10 @@ async function checkBrowser(page) {
       `${name} previous step`,
     );
   }
-  await page.getByRole("tab").first().focus();
+  await walkthroughs.getByRole("tab").first().focus();
   await page.keyboard.press("End");
   assert(
-    await page
+    await walkthroughs
       .getByRole("tab", { selected: true })
       .textContent()
       .then((v) => v.includes("Ardent")),
@@ -78,13 +80,13 @@ async function checkBrowser(page) {
   await page.keyboard.press("Home");
   await page.keyboard.press("ArrowDown");
   assert(
-    await page
+    await walkthroughs
       .getByRole("tab", { selected: true })
       .textContent()
       .then((v) => v.includes("Magnus")),
     "Arrow tab navigation",
   );
-  await page.getByRole("tab", { name: /01.*Hive/ }).click();
+  await walkthroughs.getByRole("tab", { name: /01.*Hive/ }).click();
   const brokenAnchors = await page
     .locator('a[href^="#"]')
     .evaluateAll((links) =>
@@ -110,21 +112,62 @@ async function checkBrowser(page) {
   const metadata = JSON.parse(await page.locator("#project-metadata").textContent());
   assert(metadata["@context"] === "https://schema.org", "Schema.org context");
   assert(metadata["@graph"].filter((item) => item["@type"] === "SoftwareSourceCode").length === 6, "Six SoftwareSourceCode entries");
-  for (const image of await page.locator(".screen-frame img").all()) {
-    await image.scrollIntoViewIfNeeded();
-    await image.evaluate((img) => img.decode());
-    assert(
-      await image.evaluate((img) => img.naturalWidth > 0),
-      "Capture failed to load",
-    );
+  const expectedProjects = ["Hive", "Magnus", "Cindertrace", "ChatterMost", "Emberfold"];
+  assert(await page.locator("#interfaces .section-kicker").textContent().then(t => t.includes("IN THE INTERFACE / 03")), "Section 3 retains its interface heading");
+  assert((await interfaces.getByRole("tab").count()) === 5, "Section 3 includes all five projects");
+  assert((await page.locator(".interface-panel").count()) === 5, "One gallery panel per project");
+  for (const name of expectedProjects) {
+    const tab = interfaces.getByRole("tab", { name: new RegExp(name) });
+    await tab.click();
+    assert(await tab.getAttribute("aria-selected") === "true", `${name} interface selected`);
+    assert((await page.locator(".interface-panel:visible").count()) === 1, "Exactly one visible interface");
+    const panel = page.locator(`#${await tab.getAttribute("aria-controls")}`);
+    assert(await panel.isVisible(), `${name} correct gallery panel`);
+    assert(await panel.locator(".interface-story .text-link").textContent().then(t => t.includes(name)), `${name} guide matches capture`);
+    for (const image of await panel.locator("img").all()) {
+      await image.scrollIntoViewIfNeeded();
+      await image.evaluate(img => img.decode());
+      assert(await image.evaluate(img => img.naturalWidth > 0), `${name} capture decoded`);
+    }
+    if (name === "Emberfold") assert(await panel.locator("pre").textContent().then(t => t.includes('"fits": true')), "Verified Emberfold output");
   }
-  assert(await page.locator('#security h2').textContent().then(t => t.includes('Keep the evidence.')), "Cindertrace feature heading");
-  assert((await page.locator('.security-captures img').count()) === 2, "Two synthetic Cindertrace captures");
+  await interfaces.getByRole("tab", { name: /Cindertrace/ }).click();
+  const cindertrace = page.locator("#interface-cindertrace");
+  for (const [name, suffix] of [["Investigation", "case"], ["Overview", "overview"]]) {
+    const button = cindertrace.getByRole("button", {name, exact: true});
+    await button.click();
+    assert(await button.getAttribute("aria-pressed") === "true", `${name} capture selection`);
+    await cindertrace.locator("img").evaluate(img => img.decode());
+    assert(await cindertrace.locator("img").getAttribute("src").then(s => s.endsWith(`cindertrace-${suffix}.webp`)), `${name} image`);
+    assert(await cindertrace.locator(".capture-full-link").getAttribute("href").then(s => s.endsWith(`cindertrace-${suffix}.webp`)), `${name} full capture link`);
+  }
+  await interfaces.getByRole("tab", { name: /Cindertrace/ }).focus();
+  await page.keyboard.press("End");
+  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("Emberfold")), "Interface End key");
+  await page.keyboard.press("ArrowRight");
+  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("Hive")), "Interface arrow wraps");
+  await page.keyboard.press("ArrowLeft");
+  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("Emberfold")), "Interface previous wraps");
+  await page.keyboard.press("Home");
+  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("Hive")), "Interface Home key");
+  // Every entry in the hero and project directory opens the matching section 3 panel.
+  for (const area of [".stack-index", ".project-grid"]) {
+    for (const name of expectedProjects) {
+      const link = page.locator(area).getByRole("link", {name: area === ".stack-index" ? new RegExp(name) : "See interface"});
+      const target = area === ".stack-index" ? link : page.locator(area).locator(`.project-${name.toLowerCase()} [data-interface-link]`);
+      await target.click();
+      assert(await interfaces.getByRole("tab", {selected:true}).textContent().then(t => t.includes(name)), `${area} opens ${name}`);
+    }
+  }
+  // Legacy deep links still lead to Cindertrace after a different gallery is selected.
+  await page.goto(new URL("/#security", page.url()).href);
+  await cindertrace.waitFor({state:"visible"});
+  assert(await cindertrace.isVisible(), "Legacy security anchor selects Cindertrace");
   // Audit the longest command at every width: code blocks scroll only when narrow.
-  await page.getByRole("tab", { name: /ChatterMost/ }).click();
+  await walkthroughs.getByRole("tab", { name: /ChatterMost/ }).click();
   // Keep hover stable while axe scrolls and samples contrast at each viewport.
   await page.mouse.move(0, 0);
-  for (const width of [1440, 390, 320]) {
+  for (const width of [1440, 1024, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     await page.evaluate(async () => {
       await document.fonts.ready;
@@ -141,6 +184,12 @@ async function checkBrowser(page) {
       return x.left < y.right && x.right > y.left && x.top < y.bottom && x.bottom > y.top;
     }).map(b => `${a.textContent.trim()} / ${b.textContent.trim()}`)));
     assert(!overlaps.length, `Atlas nodes overlap at ${width}px: ${overlaps}`);
+    for (const name of ["Cindertrace", "Emberfold"]) {
+      await interfaces.getByRole("tab", {name: new RegExp(name)}).click();
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${name} gallery overflow at ${width}px`);
+    }
+    await interfaces.getByRole("tab", {name: /Cindertrace/}).click();
+    await page.mouse.move(0, 0);
     const accessibility = await page.evaluate(async () => {
       const result = await axe.run(document, {
         runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] },
@@ -167,15 +216,8 @@ async function checkBrowser(page) {
     );
     assert(!tinyText.length, `Text under 11px at ${width}px: ${tinyText}`);
   }
-  await page.getByRole("tab", { name: /01.*Hive/ }).click();
+  await walkthroughs.getByRole("tab", { name: /01.*Hive/ }).click();
   await page.emulateMedia({ reducedMotion: "reduce" });
-  assert(
-    (await page
-      .locator(".orbit")
-      .first()
-      .evaluate((el) => getComputedStyle(el).animationName)) === "none",
-    "Reduced motion orbit",
-  );
   assert(
     (await page.evaluate(
       () => getComputedStyle(document.documentElement).scrollBehavior,
@@ -195,7 +237,10 @@ async function checkBrowser(page) {
     agentGuides: 5,
     sourceCodeEntries: 6,
     accessibilityViolations: 0,
-    viewportWidths: [1440, 390, 320],
+    interfaces: 5,
+    cindertraceCaptures: 2,
+    directoryLinks: 10,
+    viewportWidths: [1440, 1024, 768, 390, 320],
     pageErrors: errors.length,
     consoleErrors: consoleErrors.length,
   };

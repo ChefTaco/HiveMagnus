@@ -30,7 +30,9 @@ Enable only the integrations you configure. Installing every project is not a pr
 
 Each linked guide gives prerequisites, copyable commands, expected results, and full repository instructions. The visual site's install lab explains the first steps for Hive, Magnus, Cindertrace, ChatterMost, and Ardent with Emberfold. Commands shown on the site do not execute in visitors' environments.
 
-The visual system atlas lets you select a project to inspect its role and possible integrations. UI captures show real interfaces in disposable environments with sample data. Emberfold's terminal panel shows an excerpt from an actual synthetic dry run.
+The hero and project directory link directly to each project's interface. Section 3, In the interface, contains all five projects in one selectable gallery. Cindertrace is selected initially, with separate overview and investigation views; Emberfold shows actual synthetic CLI dry-run output. All UI captures use disposable sample environments. The atlas distinguishes optional integrations from bundled components.
+
+Use `#interface-hive`, `#interface-magnus`, `#interface-cindertrace`, `#interface-chattermost`, or `#interface-emberfold` on the visual site to select an interface directly. The earlier `#security` link still opens Cindertrace.
 
 ## Limits and licensing
 

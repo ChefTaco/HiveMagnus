@@ -17,7 +17,7 @@ Reproduce the Emberfold output from the site checkout:
 npx --package @hivemagnus/emberfold-cli@0.1.0 emberfold prepare --input scripts/samples/emberfold.json --dry-run
 ```
 
-The system atlas, brand mark, project icons, and orbit illustration are original SVG/CSS artwork. DM Sans, Space Grotesk, and IBM Plex Mono are self-hosted; their licenses ship in `public/licenses/`.
+The system atlas, brand mark, and project icons are original SVG/CSS artwork. DM Sans, Space Grotesk, and IBM Plex Mono are self-hosted; their licenses ship in `public/licenses/`.
 
 ## Cindertrace, 2026-11-04
 
@@ -26,3 +26,9 @@ The system atlas, brand mark, project icons, and orbit illustration are original
 The public `scripts/demo.mjs --preserve` fixture ingested one synthetic Wazuh authentication observation and preserved its evidence. The examples use `app-1.example.com` and `operator@example.com`. Source health represents this local synthetic ingestion, not a live Wazuh deployment. Host response is visibly unconfigured. Captures contain no operational records, credentials, private hostnames, or browser chrome. Product styling and content were not modified for the screenshots.
 
 To reproduce, follow Cindertrace's isolated demo instructions in a separate checkout with generated configuration. Sign in privately, then run this site's `scripts/capture-cindertrace.js` with Playwright CLI. It waits for the case heading before capture to avoid recording the preceding overview during navigation. Screenshots are 1440 × 900; reviewed PNGs were encoded to WebP at quality 92 with no crop or content edits. Review the images before copying them into `public/captures/`.
+
+## Unified interface gallery
+
+Section 3 includes Hive, Magnus, Cindertrace, ChatterMost, and Emberfold using the shared project registry. Cindertrace’s two captures are selectable views of the same project. The full-size assets and their provenance above are unchanged; the gallery preserves their aspect ratios and links the original images. Emberfold retains its verified CLI excerpt. The hero now links to these interfaces instead of displaying the decorative orbit illustration. No new product screenshots or generated product imagery were introduced for this restructuring.
+
+The social preview (`og.svg` and `og.png`) now names all five projects and follows the page’s project chooser. It is original SVG artwork, rendered in Chromium at 1200 × 630 for the PNG; it contains only public project names and website copy.
