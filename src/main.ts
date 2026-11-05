@@ -8,7 +8,11 @@ import "@fontsource/ibm-plex-mono/latin-400.css";
 import "./style.css";
 
 type ProjectId = "hive" | "emberpath" | "oathweave" | "hivemem" | "hiveskills" | "hivexui" | "magnus" | "cindertrace" | "chattermost" | "emberfold";
+type GalleryId = Exclude<ProjectId, "emberfold">;
 type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
+// The suite's release version is not final. Fill this one constant, and the same token in
+// public/guides/hive.md, when the release is published. See docs/deployment.md.
+const HIVE_RELEASE = "__HIVE_RELEASE__";
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
   label: string;
@@ -29,75 +33,70 @@ const projects: Record<
     summary: string;
     detail: string;
     href: string;
-    candidate?: boolean;
-    image?: string;
-    imageAlt?: string;
     connections: { to: string; how: string }[];
   }
 > = {
   hive: {
     name: "Hive",
     role: "Install · upgrade · recover",
-    summary: "A tested deployment of independent products.",
+    summary: "Install a tested, signed set of independent products.",
     detail:
-      "Hive is becoming the Bash installer and recovery controller for the ecosystem. It pins tested product versions, coordinates Compose deployments per host, and preserves installation boundaries. The new suite is a candidate; published legacy packages remain available for recovery.",
+      "Hive is the Bash installer and controller. <code>hive.sh</code> deploys signed, digest-pinned releases to one or more hosts, then handles upgrades, backups and restore rehearsals. Every installation also runs a mandatory Hive Registry: its own install catalog and lookup API, which is separate from the HiveSkills registry.",
     href: "https://github.com/ChefTaco/hive",
-    image: "/captures/hive-console.webp",
-    imageAlt:
-      "Retained legacy Hive console with sample data; the shared console is moving to HiveXUI",
     connections: [
-      { to: "Oathweave / Emberpath / HiveMem / HiveSkills", how: "core API products with independent data and credentials" },
-      { to: "HiveXUI", how: "static TypeScript console behind HTTPS ingress" },
-      { to: "Magnus", how: "authenticated host jobs and native agent execution" },
+      { to: "Oathweave / Emberpath / HiveMem / HiveSkills", how: "the core profile; each keeps its own data and credentials" },
+      { to: "HiveXUI", how: "static console behind the HTTPS ingress Hive assembles" },
+      { to: "Hive Registry", how: "what this installation offers and runs: written by hive.sh, read through /api/registry" },
+      { to: "Magnus / Cindertrace / ChatterMost", how: "added by the full or custom profile" },
       { to: "External inference", how: "verified endpoints and protected references; no model or runtime provisioning" },
     ],
   },
   emberpath: {
-    name: "Emberpath", role: "Models · routing · telemetry", candidate: true,
-    summary: "Route requests to the providers you choose.",
-    detail: "Emberpath owns external providers, aliases, quotas, inference requests and routing telemetry. Ollama, llama.cpp and hosted APIs remain independently operated dependencies. Hive verifies endpoints; it never installs or stores inference services or models.",
-    href: "/guides/emberpath.md",
-    connections: [{ to: "HiveXUI", how: "models, providers, tests and traces through authorized APIs" }, { to: "Oathweave", how: "resource-specific suite access; native API keys remain separate" }, { to: "External inference", how: "OpenAI-compatible and native provider protocols" }],
+    name: "Emberpath", role: "Models · routing · telemetry",
+    summary: "Route model requests to the providers you choose.",
+    detail: "An OpenAI-compatible model gateway with a separate administration API. Clients talk to one endpoint; Emberpath picks an upstream provider, fails over when it is safe to, enforces per-key quotas and records a trace for every request. Inference services stay external: it routes to them and never installs or manages them.",
+    href: "https://github.com/ChefTaco/Emberpath",
+    connections: [{ to: "HiveXUI", how: "models, providers, tests and traces through its administration API" }, { to: "Oathweave", how: "resource-specific suite access; native API keys remain separate" }, { to: "External inference", how: "OpenAI-compatible and native provider protocols" }],
   },
   oathweave: {
-    name: "Oathweave", role: "Identity · access · enrollment", candidate: true,
+    name: "Oathweave", role: "Identity · access · enrollment",
     summary: "One sign-in, explicit access to each product.",
-    detail: "Oathweave owns identity, browser sign-in, MFA, passkeys, recovery, roles and service identities. Product accounts link explicitly by issuer and subject. Each receiving API validates its own audience and permissions; identities are never merged by email.",
-    href: "/guides/oathweave.md",
+    detail: "Identity and access management: OAuth 2.0 and OpenID Connect, role-based access, MFA and passkeys, service identities and an append-only audit trail. Product accounts link explicitly by issuer and subject. Each receiving API validates its own audience and permissions; identities are never merged by email.",
+    href: "https://github.com/ChefTaco/Oathweave",
     connections: [{ to: "HiveXUI", how: "public clients with Authorization Code and PKCE; browser tokens stay in memory" }, { to: "Product APIs", how: "independent resource authorization and explicit account links" }, { to: "Magnus", how: "identity mappings; approved host changes remain Magnus jobs" }],
   },
   hivemem: {
-    name: "HiveMem", role: "Memory · retrieval · workspaces", candidate: true,
+    name: "HiveMem", role: "Memory · retrieval · workspaces",
     summary: "Keep durable memory within its workspace.",
-    detail: "HiveMem owns memory storage and retrieval, sessions, graph evidence, consolidation, webhooks and workspace access. Existing storage formats and native SDKs remain available. Its credentials and backup lifecycle stay independent of model routing.",
-    href: "/guides/hivemem.md",
+    detail: "Long-term memory for agents, backed by Qdrant: storage and retrieval, sessions, a knowledge graph, consolidation, webhooks and per-account workspace access. Native SDKs and the Hermes memory provider share one REST API. Its credentials and backups stay independent of model routing.",
+    href: "https://github.com/ChefTaco/HiveMem",
     connections: [{ to: "HiveXUI", how: "memory, workspace and operation workflows through scoped APIs" }, { to: "Ardent / Hermes", how: "separate workspace-scoped memory credentials" }, { to: "Oathweave", how: "explicit identity links and resource authorization" }],
   },
   hiveskills: {
-    name: "HiveSkills", role: "Registry · archives · assignments", candidate: true,
+    name: "HiveSkills", role: "Skills registry · archives · assignments",
     summary: "Distribute reviewed, immutable skills.",
-    detail: "HiveSkills owns the registry, versioned archives, channels, assignments and distribution contracts. Privileged deployment execution belongs to Magnus authenticated jobs and agents. Existing native compatibility paths remain until replacement acceptance passes.",
-    href: "/guides/hiveskills.md",
+    detail: "The skills registry for agents: a digest-verified archive API with immutable releases, channels, assignments and audited distribution. It is unrelated to the Hive Registry, which catalogs one installation. Approved host deployment runs through Magnus jobs and agents.",
+    href: "https://github.com/ChefTaco/HiveSkills",
     connections: [{ to: "HiveXUI", how: "catalogue, archive and assignment administration" }, { to: "Magnus", how: "approved host deployment execution" }, { to: "Agents", how: "authenticated manifests and immutable archive distribution" }],
   },
   hivexui: {
-    name: "HiveXUI", role: "Shared console · browser only", candidate: true,
-    summary: "A common workspace across the product APIs.",
-    detail: "HiveXUI is a strict TypeScript, React and Vite browser application served as static assets. HTTPS ingress routes same-origin API calls without administrator credential injection. Identity, models, memory, skills, security and chat share one shell. Magnus remains a linked console until a later merge.",
-    href: "/guides/hivexui.md",
-    connections: [{ to: "Oathweave", how: "browser sign-in and resource-specific access" }, { to: "Product APIs", how: "released browser-safe contracts; no database access or signing keys" }, { to: "Magnus", how: "separate console, prepared for later integration" }],
+    name: "HiveXUI", role: "The console · browser only",
+    summary: "One browser console for every product you install.",
+    detail: "The single browser UI of a Hive installation: fleet, identity, models, memory, skills, security and chat in one shell, with sections only for the products you installed. It is a static TypeScript and React application, dark only for now, with no backend of its own. Every call goes to the owning product's API with your own credentials.",
+    href: "https://github.com/ChefTaco/HiveXUI",
+    connections: [{ to: "Oathweave", how: "one sign-in and resource-specific access" }, { to: "Product APIs", how: "same-origin HTTPS ingress; no database access or signing keys" }, { to: "Magnus", how: "the fleet console, as the module at /fleet" }],
   },
   magnus: {
     name: "Magnus",
     role: "Fleet · operations · Ardent",
     summary: "See and operate the hosts where your agents live.",
     detail:
-      "Magnus brings fleet inventory, jobs, skills, rollouts, and audit into one web console. Its Ardent runtime runs durable agent tasks on a host or under fleet management.",
+      "Fleet inventory, jobs, skills, rollouts and audit for Linux hosts. In a Hive installation its console is the Magnus section of HiveXUI, signed in through Oathweave. Its Ardent runtime runs durable agent tasks on a host or under fleet management. The web terminal is a separate gateway requiring step-up, off unless you deploy it.",
     href: "https://github.com/ChefTaco/magnus",
-    image: "/captures/magnus-console.webp",
-    imageAlt: "Magnus fleet console with synthetic host information",
     connections: [
       { to: "Ardent", how: "ships the runtime and can manage it on fleet hosts" },
+      { to: "HiveXUI", how: "the fleet console, through an allowlist of browser routes" },
+      { to: "Fleet gateway", how: "holds the restricted SSH key for the optional web terminal" },
       { to: "Oathweave / Emberpath / HiveMem", how: "optional sign-in, model routing and shared memory" },
       { to: "Cindertrace", how: "optional observations, fleet context, and approved host response" },
     ],
@@ -107,11 +106,10 @@ const projects: Record<
     role: "Security · cases · evidence",
     summary: "Turn security observations into an investigation.",
     detail:
-      "A standalone security console for correlated cases, hashed evidence, investigations, policies, and audit. Use local administrator login, then optionally connect Oathweave identity or Magnus fleet context and approved response. A separate disposable lab lets people and agents revise an investigation as evidence arrives.",
+      "Correlated cases, hashed evidence, investigations, policies and audit. In a Hive installation it is a section of HiveXUI, signed in through Oathweave. It also runs on its own with its retained console and local administrator login, then optionally connects Magnus fleet context and approved response. A separate disposable lab lets people and agents revise an investigation as evidence arrives.",
     href: "https://github.com/ChefTaco/cindertrace",
-    image: "/captures/cindertrace-overview.webp",
-    imageAlt: "Cindertrace security overview showing a synthetic authentication case and source posture",
     connections: [
+      { to: "HiveXUI", how: "the suite's security console, using resource tokens" },
       { to: "Oathweave / Emberpath", how: "optional sign-in and scoped identity and routing security metadata" },
       { to: "Magnus", how: "optional fleet context and execution of explicitly approved host responses" },
       { to: "Configured sources", how: "signed observations from endpoint, network, identity, and application adapters" },
@@ -122,12 +120,10 @@ const projects: Record<
     role: "Conversation · channels",
     summary: "A self-hosted place to talk with people and agents.",
     detail:
-      "A Mattermost-compatible chat backend for channels, direct messages, threads, and agent conversations. It includes a compact web UI and connects to the official Mattermost mobile and desktop apps. Background mobile push and calls are not implemented. Suite browser identity is a candidate integration; native Mattermost sessions remain available.",
+      "A Mattermost-compatible chat backend for channels, direct messages, threads, and agent conversations. In a Hive installation its browser interface is a section of HiveXUI. The official Mattermost mobile and desktop apps connect directly, and the product keeps a small web UI that the desktop app loads and recovery relies on. Background mobile push and calls are not implemented.",
     href: "https://github.com/ChefTaco/ChatterMost",
-    image: "/captures/chattermost-chat.webp",
-    imageAlt:
-      "ChatterMost channel conversation in a disposable sample environment",
     connections: [
+      { to: "HiveXUI", how: "an explicitly linked identity exchanged for a short native session" },
       { to: "Hermes Agent", how: "documented setup through its Mattermost gateway" },
       { to: "Ardent", how: "optional Mattermost channel, configured in the Ardent profile" },
     ],
@@ -137,7 +133,7 @@ const projects: Record<
     role: "Context · continuity",
     summary: "Carry the right context into the next agent turn.",
     detail:
-      "A portable context engine with a TypeScript library, CLI, HTTP service, and Hermes plugin. Ardent uses its library for context fitting while retaining its own authoritative history.",
+      "A portable context engine with a TypeScript library, CLI, HTTP service, and Hermes plugin. It has no console section. Ardent uses its library for context fitting while retaining its own authoritative history.",
     href: "https://github.com/ChefTaco/emberfold",
     connections: [
       { to: "Ardent", how: "pinned library for context fitting; the HTTP service is optional" },
@@ -148,39 +144,39 @@ const projects: Record<
 
 const demos: Record<DemoId, Demo> = {
   hive: {
-    label: "Hive (published legacy)",
-    kicker: "Recovery-compatible release",
-    title: "Explore the published launcher",
+    label: "Hive",
+    kicker: "Suite installer",
+    title: "Install from a signed release",
     intro:
-      "This walkthrough describes the existing published launcher. The new Bash/Compose suite is under isolated acceptance and has no official signed release bundle yet. Preserve existing installations and use their upgrade procedures.",
+      `Hive's Bash controller installs what a signed release lists and refuses anything it cannot verify. Check <a href="https://github.com/ChefTaco/hive/releases" target="_blank" rel="noopener noreferrer">Hive's releases page</a> for what is published. Choose the core, full or custom profile; inference stays external and Hive only verifies endpoints.`,
     requires: [
-      "Linux or macOS",
-      "Node.js 24.22.1+ or 26.13.0+",
-      "OpenSSL",
-      "Docker, or your own Qdrant and Redis",
-      "flock for HiveMem (macOS: brew install flock)",
+      "Bash, jq, OpenSSL and sha256sum on the controller",
+      "Docker Compose on each host; ss, df and coreutils on the console host",
+      "A signed release manifest, its signature and the publisher key",
+      "An HTTPS origin with existing certificate and key files",
     ],
     steps: [
       {
-        title: "Initialize",
-        text: "Choose the services for this host. The launcher asks before it installs packages or starts containers, then prepares local configuration and TLS.",
-        code: "npx @hivemagnus/hive init",
-        note: "For the optional Skills registry, use <code>npx @hivemagnus/hive init --services all</code>.",
+        title: "Start setup",
+        text: "Run the controller with the exact release. It verifies the manifest signature first, then asks for the installation name, hosts, console origin, profile and certificate references. It never asks for a password on the command line.",
+        code: `./hive.sh --release ${HIVE_RELEASE}`,
+        note: "The manifest defaults to <code>releases/VERSION.json</code>, its signature to the same path plus <code>.sig</code>, and the publisher key to <code>trust/publisher.pub</code>. Use <code>--manifest</code>, <code>--signature</code> and <code>--trust-key</code> for other paths.",
       },
       {
-        title: "Start the stack",
-        text: "Run the selected services in the foreground for your first look. Ctrl-C stops them.",
-        code: "npx @hivemagnus/hive start",
+        title: "Review the plan",
+        text: "Setup shows a plan and applies it only after you confirm. To repeat or automate it, keep the installation JSON and run the same reviewed configuration. Planning does not contact hosts, and retries check the exact inputs.",
+        code: "./hive.sh plan --config installation.json\n./hive.sh install --config installation.json",
+        note: "Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten.",
       },
       {
         title: "Open the console",
-        text: "Visit the local HTTPS console and sign in as admin with the password IAM writes on its first start.",
-        code: "https://localhost:9443/",
+        text: "Visit the HTTPS origin you configured and sign in through Oathweave. HiveXUI shows a section for each product in this installation, so a core install has no Magnus, Cindertrace or ChatterMost section.",
+        code: "https://console.example.com/",
         kind: "address",
-        note: "The password is in <code>~/.hive/iam/initial-credentials.env</code>; keep that file private. The certificate comes from a local CA that <code>hive init</code> creates, so your browser warns the first time.",
+        note: "Initial sign-in instructions are in <code>config/initial-credentials.env</code> on the identity host. <code>./hive.sh status --config installation.json</code> and <code>./hive.sh registry list --config installation.json</code> report what is running.",
       },
     ],
-    guide: "https://github.com/ChefTaco/hive#quick-start-with-npm",
+    guide: "/guides/hive.md",
     guideLabel: "Hive installation guide",
   },
   magnus: {
@@ -188,7 +184,7 @@ const demos: Record<DemoId, Demo> = {
     kicker: "Fleet manager",
     title: "Start with one host",
     intro:
-      "The managed installer starts the server and console on a single host, then gives you a path to add managed nodes.",
+      "Hive's full profile adds Magnus with HiveXUI as its console, at /fleet. To run Magnus without Hive, this published installer sets up the server and its own Next.js console on a single host, then gives you a path to add managed nodes.",
     requires: [
       "Linux with systemd",
       "Node.js 24.22.1+ or 26.13.0+",
@@ -204,7 +200,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Open the console",
         text: "Use the URL and login printed by the installer. The generated password is printed once, so save it. The self-signed certificate is for evaluation.",
-        note: "The console URL depends on your host name, so use the one the installer prints.",
+        note: "This is the standalone path. In a Hive installation there is no separate console to open: sign in to HiveXUI and choose Magnus.",
       },
       {
         title: "Add a node",
@@ -218,9 +214,9 @@ const demos: Record<DemoId, Demo> = {
   cindertrace: {
     label: "Cindertrace",
     kicker: "Security investigations",
-    title: "Start a standalone security console",
+    title: "Run it on its own",
     intro:
-      "Run the console, API, PostgreSQL, and Redis together. Local administrator login works without Hive or Magnus; collectors and integrations are opt-in.",
+      "In a Hive installation, Cindertrace is a section of HiveXUI. To run it alone, start its retained console, API, PostgreSQL, and Redis together. Local administrator login works without Hive or Magnus; collectors and integrations are opt-in.",
     requires: ["Node.js 24.22.1+ (24.x) or 26.13.0+ (26.x)", "npm and Git", "OpenSSL", "Docker Engine and Compose v2"],
     steps: [
       {
@@ -237,7 +233,7 @@ const demos: Record<DemoId, Demo> = {
       },
       {
         title: "Open and configure",
-        text: "Sign in with the generated local administrator login. The console binds to loopback. Trust the generated local certificate for development; use your own certificate and explicit network settings for remote access.",
+        text: "Sign in to this standalone console with the generated local administrator login. It binds to loopback. Trust the generated local certificate for development; use your own certificate and explicit network settings for remote access.",
         code: "https://localhost:3444",
         kind: "address",
         note: "Source adapters start disabled. Configure sources before starting the optional collector. For later releases, use the dedicated upgrade command and recovery runbook linked in the guide.",
@@ -328,6 +324,11 @@ const icon = (name: string) => {
     magnus: '<rect x="3" y="4" width="18" height="6.5" rx="1.5"/><rect x="3" y="13.5" width="18" height="6.5" rx="1.5"/><path d="M7 7.25h.01M7 16.75h.01M11 7.25h6M11 16.75h6"/>',
     cindertrace: '<path d="m12 3 8 3v6c0 4-3.7 7.5-8 9-4.3-1.5-8-5-8-9V6z"/><path d="M8 12h3l2-4 1 8 2-4h2"/>',
     chattermost: '<path d="M4 5h16v11H10l-6 4.5z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/>',
+    hivexui: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M3 9h6"/>',
+    oathweave: '<path d="m12 3 8 3v6c0 4-3.7 7.5-8 9-4.3-1.5-8-5-8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+    emberpath: '<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/>',
+    hivemem: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+    hiveskills: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
     emberfold: '<path d="M12 3c.6 3.8 6 6.1 6 11.2A6 6 0 0 1 6 14.2c0-2.9 1.9-4.1 2.9-6.7 1.1.8 2 1.9 2.4 3.4.7-2.2.9-5.1.7-7.9z"/><path d="M12 21a2.8 2.8 0 0 1-2.8-2.8c0-1.6 1.7-2.4 2.8-4 1.1 1.6 2.8 2.4 2.8 4A2.8 2.8 0 0 1 12 21z"/>',
   };
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] ?? paths.hive}</svg>`;
@@ -351,24 +352,96 @@ const atlasEdges: { from: AtlasId; to: AtlasId; bundled?: boolean }[] = [
   { from: "hive", to: "hivexui" }, { from: "hivexui", to: "oathweave" },
   { from: "hivexui", to: "emberpath" }, { from: "hivexui", to: "hivemem" },
   { from: "hivexui", to: "hiveskills" }, { from: "hivexui", to: "cindertrace" },
-  { from: "hivexui", to: "chattermost" }, { from: "magnus", to: "ardent", bundled: true },
+  { from: "hivexui", to: "chattermost" }, { from: "hivexui", to: "magnus" }, { from: "magnus", to: "ardent", bundled: true },
   { from: "emberfold", to: "ardent", bundled: true }, { from: "cindertrace", to: "magnus" },
 ];
-const interfaceNotes: Record<ProjectId, { title: string; copy: string; points: string[] }> = {
-  hive: { title: "Preserve the recovery path.", copy: "This capture shows the retained legacy console. Hive is becoming the suite installer; HiveXUI owns the shared browser application. Replacement workflows and recovery gates must pass before legacy frontends retire.", points: ["Pin independent product releases", "Plan, install, upgrade and recover", "Keep existing installations separate"] },
-  emberpath: { title: "Routing has one owner.", copy: "A standalone model API, extracted from Hive. The model module belongs in HiveXUI; inference services remain external.", points: ["Manage providers and aliases", "Apply quotas and inspect traces", "Keep model and memory endpoints distinct"] },
-  oathweave: { title: "Identity, with explicit boundaries.", copy: "A standalone identity API with browser authentication and explicit product account links.", points: ["Use PKCE and resource audiences", "Manage MFA, passkeys and recovery", "Preserve native identities and memberships"] },
-  hivemem: { title: "Memory stays with its workspace.", copy: "A standalone memory API and native SDKs. HiveXUI provides search, sessions, graph evidence and operations.", points: ["Control workspace access", "Inspect consolidation and queued work", "Retain independent storage and backups"] },
-  hiveskills: { title: "Review, assign, distribute.", copy: "An independent skills registry. Immutable archives and assignments stay here; approved host execution belongs to Magnus.", points: ["Keep release archives immutable", "Distribute scoped pull manifests", "Track deployment outcomes through jobs"] },
-  hivexui: { title: "One shell. Authorized product APIs.", copy: "The shared console is a static browser application. Its candidate modules are under workflow and migration acceptance; the Magnus console remains separate.", points: ["Identity, models, memory and skills", "Security investigations and chat", "No infrastructure credentials in the browser"] },
-  magnus: { title: "Know your fleet.", copy: "Move from host inventory to the jobs, agents, and rollouts running across it.", points: ["Review host health and inventory", "Operate jobs and managed agents", "Inspect changes in the audit log"] },
-  cindertrace: { title: "Follow the evidence.", copy: "Connect security observations to a case, preserve evidence, and revise hypotheses. Try the evolving investigation lab in a separate disposable installation.", points: ["Correlate signed observations", "Compare revisions as evidence arrives", "Keep containment under human approval"] },
-  chattermost: { title: "Keep the conversation together.", copy: "Channels, direct messages, and threads for people and agents, in a Mattermost-compatible service.", points: ["Talk in channels and threads", "Connect an agent gateway", "Use compatible mobile and desktop apps"] },
-  emberfold: { title: "See what fits the next turn.", copy: "Inspect a context preparation result before using it in an agent. This excerpt is from a real synthetic CLI dry run.", points: ["Review the token budget", "Check protected spans", "Use the library, CLI, or optional HTTP service"] },
+// One console, shown across its product areas. The order follows HiveXUI's sidebar; HiveXUI itself
+// comes last because its capture shows the shell rather than a section. Emberfold has no console
+// section, so it appears separately below the gallery.
+const galleryOrder: GalleryId[] = ["hive", "magnus", "oathweave", "emberpath", "hivemem", "hiveskills", "cindertrace", "chattermost", "hivexui"];
+type Capture = { label: string; file: string; alt: string };
+const gallery: Record<GalleryId, { path: string; captures: Capture[]; title: string; copy: string; points: string[]; extra?: string }> = {
+  hive: {
+    path: "HIVE > INSTALLATION",
+    captures: [{ label: "Installation", file: "hive-overview", alt: "HiveXUI installation overview showing seven synthetic products passing their readiness checks" }],
+    title: "See the whole installation.",
+    copy: "Hive's section checks that each installed product answers. Readiness shows availability; migration and workflow acceptance are recorded separately by the controller.",
+    points: ["Readiness across installed products", "Incidents gathered from product APIs", "Configured products only"],
+    extra: '<p class="interface-limit">The Hive Registry has no screen here. Use <code>hive.sh registry</code>, or the read-only lookups at <code>/api/registry</code>.</p>',
+  },
+  magnus: {
+    path: "MAGNUS > FLEET",
+    captures: [
+      { label: "Overview", file: "fleet-overview", alt: "HiveXUI fleet overview with a radar of nineteen synthetic nodes, gauges and recent commands" },
+      { label: "Fleet map", file: "fleet-map", alt: "HiveXUI fleet map showing synthetic nodes grouped by documentation subnet" },
+      { label: "Mission control", file: "fleet-mission", alt: "HiveXUI mission control showing fleet posture, dependency health and synthetic fleet figures" },
+    ],
+    title: "Know your fleet.",
+    copy: "Magnus's console is this section of HiveXUI, at /fleet: move from host inventory to the jobs, agents, and rollouts running across it.",
+    points: ["Review host health and the fleet map", "Operate jobs and managed agents", "Inspect changes in the audit log"],
+    extra: `<div class="response-note"><h4>The web terminal stays off.</h4><p>It runs through a separate fleet gateway that holds the SSH key, so neither the browser nor the Magnus API does. Until you deploy it, the console offers no terminal. Opening one needs an ADMIN link, the terminal permission, identity verified in the last five minutes and an approved host key.</p><a href="https://github.com/ChefTaco/magnus/tree/main/services/fleet-gateway" target="_blank" rel="noopener noreferrer">Fleet gateway security model ${icon("external")}</a></div>`,
+  },
+  oathweave: {
+    path: "OATHWEAVE > USERS",
+    captures: [{ label: "Users", file: "identity", alt: "HiveXUI identity directory listing synthetic example.com users with roles and status" }],
+    title: "One sign-in. Explicit links.",
+    copy: "Users, roles, clients, service accounts, sessions and audit, alongside the identity that signs you in to everything else.",
+    points: ["Use PKCE and resource audiences", "Manage MFA, passkeys and recovery", "Link accounts by issuer and subject, never by email"],
+  },
+  emberpath: {
+    path: "EMBERPATH > TRACES",
+    captures: [{ label: "Traces", file: "models", alt: "HiveXUI request traces showing synthetic model requests, outcomes and status codes" }],
+    title: "Routing has one owner.",
+    copy: "Providers, routing rules, tests, client keys and a trace for every request. The inference services themselves stay external.",
+    points: ["Manage providers and aliases", "Apply quotas and inspect traces", "Keep model and memory endpoints distinct"],
+  },
+  hivemem: {
+    path: "HIVEMEM > MEMORIES",
+    captures: [{ label: "Memories", file: "memories", alt: "HiveXUI memory page showing synthetic memory records, sessions and agents" }],
+    title: "Memory stays with its workspace.",
+    copy: "Search and create memories, then open sessions, webhooks, graph evidence, conflicts, consolidation and the reasoning queue.",
+    points: ["Control workspace access", "Inspect consolidation and queued work", "Retain independent storage and backups"],
+  },
+  hiveskills: {
+    path: "HIVESKILLS",
+    captures: [{ label: "Skills", file: "skills", alt: "HiveXUI skills catalogue listing synthetic skills with their descriptions" }],
+    title: "Review, assign, distribute.",
+    copy: "Versioned archives, channels and assignments. This is the skills registry; approved host execution belongs to Magnus.",
+    points: ["Keep release archives immutable", "Distribute scoped pull manifests", "Track deployment outcomes through jobs"],
+  },
+  cindertrace: {
+    path: "CINDERTRACE",
+    captures: [
+      { label: "Overview", file: "cindertrace-overview", alt: "HiveXUI security overview showing synthetic open cases, confidence and source posture" },
+      { label: "Investigation", file: "cindertrace-case", alt: "HiveXUI synthetic case showing the evidence braid, affected entities, and recommended investigation" },
+    ],
+    title: "Follow the evidence.",
+    copy: "Connect security observations to a case, preserve evidence, and revise hypotheses, signed in through Oathweave like every other section.",
+    points: ["Correlate signed observations", "Compare revisions as evidence arrives", "Keep containment under human approval"],
+    extra: `<div class="response-note"><h4>The lab runs apart from this console.</h4><p>The investigation lab is a separate disposable installation with synthetic evidence. It forbids external identity and integrations, so it keeps its own console with local login and is not reached through HiveXUI. Containment there is a human-approved simulation.</p><a href="/guides/cindertrace.md#try-the-evolving-investigation-lab">Try the disposable investigation lab ${icon("arrow")}</a></div><div class="response-note" id="security"><h4>Response stays deliberate.</h4><p>Administrator approval binds the exact plan, expires after ten minutes, and is used once. Optional Magnus executes host actions; response controls require its configured bridge.</p><a href="https://github.com/ChefTaco/cindertrace/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy and data handling ${icon("external")}</a></div>`,
+  },
+  chattermost: {
+    path: "CHATTERMOST",
+    captures: [{ label: "Channels", file: "chat", alt: "HiveXUI chat showing a synthetic operations channel between fictional users" }],
+    title: "Keep the conversation together.",
+    copy: "Channels, direct messages, threads, files and search for people and agents, in a Mattermost-compatible service.",
+    points: ["Talk in channels and threads", "Connect an agent gateway", "Use compatible mobile and desktop apps"],
+    extra: '<p class="interface-limit">Background mobile push and calls are not implemented. Native Mattermost sessions remain available for the official apps.</p>',
+  },
+  hivexui: {
+    path: "SEARCH EVERY SCREEN",
+    captures: [{ label: "Command palette", file: "palette", alt: "HiveXUI command palette open over the console, listing screens across products" }],
+    title: "One shell. Your own credentials.",
+    copy: "Press Ctrl or Cmd + K to reach any screen you can use. Sections appear only for installed products. The console is dark only for now.",
+    points: ["No backend, database access or signing keys", "Access tokens stay in memory", "Each call goes to the owning product's API"],
+    extra: '<p class="interface-limit">HiveXUI\'s README tracks the workflows still under acceptance. Synthetic screenshots do not establish backend authorization or workflow parity.</p>',
+  },
 };
-let activeInterface: ProjectId = "cindertrace";
-const initialInterface = location.hash.replace("#interface-", "");
-if (projectOrder.includes(initialInterface as ProjectId)) activeInterface = initialInterface as ProjectId;
+const captureSrc = (capture: Capture) => `/captures/${capture.file}.webp`;
+let activeInterface: GalleryId = "magnus";
+const isGalleryId = (id: string): id is GalleryId => (galleryOrder as string[]).includes(id);
+const initialInterface = location.hash === "#security" ? "cindertrace" : location.hash.replace("#interface-", "");
+if (isGalleryId(initialInterface)) activeInterface = initialInterface;
 let activeProject: ProjectId = "hive";
 let activeDemo: DemoId = "hive";
 let activeStep = 0;
@@ -380,15 +453,15 @@ app.innerHTML = `
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><div class="shell header-inner">
     <a class="brand" href="#top" aria-label="Hive:Magnus home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>Hive<span class="brand-colon">:</span>Magnus</span></a>
-    <nav class="main-nav" aria-label="Main navigation"><a href="#atlas">The system</a><a href="#projects">Projects</a><a href="#interfaces">Interfaces</a><a href="#install">Install lab</a><a href="#agents">For agents</a></nav>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#atlas">The system</a><a href="#projects">Projects</a><a href="#interfaces">The console</a><a href="#install">Install lab</a><a href="#agents">For agents</a></nav>
     <a class="header-github" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">GitHub ${icon("external")}</a>
   </div></header>
   <main id="main">
     <section class="hero shell" id="top" aria-labelledby="hero-title">
-      <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-line"></span> OPEN SOURCE · SELF HOSTED</div>
+      <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-prompt" aria-hidden="true">&gt;_</span> OPEN SOURCE · SELF HOSTED</div>
         <h1 id="hero-title">Run your stack.<br/><em>On your terms.</em></h1>
-        <p class="hero-lede">Identity, fleet operations, security, conversation, and context. Independent products, a shared console, and an installer that keeps their boundaries clear.</p>
-        <div class="hero-actions"><a class="button button-primary" href="#interfaces">See the interfaces ${icon("arrow")}</a><a class="text-link" href="#install">Find your starting point ${icon("down")}</a></div>
+        <p class="hero-lede">Identity, fleet operations, security, conversation, and context. Independent products, one browser console, and a signed installer that keeps their boundaries clear.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#interfaces">See the console ${icon("arrow")}</a><a class="text-link" href="#install">Find your starting point ${icon("down")}</a></div>
         <p class="hero-proof">Apache-2.0 · Your host · Your choice of integrations</p>
       </div>
       <div class="stack-index"><div class="stack-index-heading"><span class="mini-label">CHOOSE A PIECE</span><span class="stack-index-caption">Independent product boundaries</span></div>
@@ -397,29 +470,33 @@ app.innerHTML = `
       </div>
     </section>
     <section class="atlas-section" id="atlas" aria-labelledby="atlas-title"><div class="shell">
-      <div class="section-head"><div><span class="section-kicker">SYSTEM ATLAS / 01</span><h2 id="atlas-title">See how the pieces fit.</h2></div><p>Explore each part of the stack. Dashed lines are optional integrations. Solid lines show Ardent within Magnus and its bundled Emberfold library.</p></div>
+      <div class="section-head"><div><span class="section-kicker">SYSTEM ATLAS / 01</span><h2 id="atlas-title">See how the pieces fit.</h2></div><p>Explore each part of the stack. Dashed lines are connections you select or configure. Solid lines show Ardent within Magnus and its bundled Emberfold library.</p></div>
       <div class="atlas-layout"><div class="atlas-map" role="group" aria-label="Interactive system atlas">
         <div class="atlas-grid" aria-hidden="true"></div><svg class="atlas-lines" aria-hidden="true">${atlasEdges.map(edge => `<path data-from="${edge.from}" data-to="${edge.to}" class="${edge.bundled ? "atlas-line-bundled" : ""}"/>`).join("")}</svg>
         <a href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" class="atlas-center" target="_blank" rel="noopener noreferrer" aria-label="Ardent agent runtime, part of Magnus"><span>ARDENT<small>AGENT RUNTIME</small></span><i></i></a>
         ${projectOrder.map((id, i) => `<button type="button" class="atlas-node node-${id}${i === 0 ? " is-active" : ""}" data-project="${id}" aria-pressed="${i === 0}"><span class="node-index">${String(i + 1).padStart(2, "0")}</span><span class="node-name">${projects[id].name}</span><span class="node-role">${projects[id].role}</span></button>`).join("")}
-        <div class="atlas-annotation"><span class="line-key"></span> OPTIONAL <span class="line-key bundled"></span> BUNDLED</div>
+        <div class="atlas-annotation"><span class="line-key"></span> CONFIGURED <span class="line-key bundled"></span> BUNDLED</div>
       </div><div class="atlas-detail" id="atlas-detail" aria-live="polite"></div></div>
     </div></section>
     <section class="projects-section shell" id="projects" aria-labelledby="projects-title"><div class="section-head"><div><span class="section-kicker">OPEN PROJECTS / 02</span><h2 id="projects-title">Pick the tool<br/><span>for the work.</span></h2></div><p>Every project has its own source and installation path. Choose the capability you need first.</p></div>
       <div class="project-grid">${projectOrder.map((id, i) => {
         const p = projects[id];
-        return `<article class="project-card project-${id}"><div class="project-identity"><span class="project-number">${String(i + 1).padStart(2, "0")}</span><span class="project-glyph">${icon(id)}</span><div><h3>${p.name}</h3><span class="project-role">${p.role}</span></div></div><p class="project-summary">${p.summary}</p><div class="project-actions"><a href="#interface-${id}" data-interface-link="${id}">See interface ${icon("arrow")}</a><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} ${p.candidate ? "candidate guide" : "GitHub repository"}">${p.candidate ? "Candidate guide" : "Source"} ${icon("external")}</a></div></article>`;
+        return `<article class="project-card project-${id}"><div class="project-identity"><span class="project-number">${String(i + 1).padStart(2, "0")}</span><span class="project-glyph">${icon(id)}</span><div><h3>${p.name}</h3><span class="project-role">${p.role}</span></div></div><p class="project-summary">${p.summary}</p><div class="project-actions"><a href="#interface-${id}" data-interface-link="${id}">${id === "emberfold" ? "See its CLI" : "See in console"} ${icon("arrow")}</a><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} GitHub repository">Source ${icon("external")}</a></div></article>`;
       }).join("")}</div>
       <div class="ardent-note"><span class="ardent-symbol" aria-hidden="true">A<span>:</span>E</span><div><span class="mini-label">INSIDE MAGNUS</span><h3>Ardent runs the work. Emberfold carries the context.</h3><p>Ardent is Magnus’s headless agent runtime. It can run on its own or under Magnus management; its pinned Emberfold library helps fit context for the next turn.</p></div><a class="text-link" href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" target="_blank" rel="noopener noreferrer">Explore Ardent ${icon("external")}</a></div>
     </section>
     <section class="screens-section" id="interfaces" aria-labelledby="screens-title"><div class="shell">
-      <div class="section-head"><div><span class="section-kicker">IN THE INTERFACE / 03</span><h2 id="screens-title">See the tools at work.</h2></div><p>Retained interfaces, candidate product boundaries, and a verified CLI example. Captures use synthetic or disposable data.</p></div>
-      <div class="interface-tabs" role="tablist" aria-label="Choose a project interface">${projectOrder.map((id, i) => `<button type="button" role="tab" class="project-${id}" id="interface-tab-${id}" aria-controls="interface-${id}" aria-selected="${id === activeInterface}" tabindex="${id === activeInterface ? 0 : -1}" data-interface="${id}"><span class="interface-tab-number">${String(i + 1).padStart(2, "0")}</span><span>${projects[id].name}</span><span class="interface-tab-icon">${icon(id)}</span></button>`).join("")}</div>
-      ${projectOrder.map(id => {
-        const p = projects[id], note = interfaceNotes[id];
+      <div class="section-head"><div><span class="section-kicker">// IN THE CONSOLE / 03</span><h2 id="screens-title">One console.<br/><span>Every product you install.</span></h2></div><p>HiveXUI is the single browser UI of a Hive installation. These captures are the real console with synthetic data, shown across its product areas.</p></div>
+      <div class="interface-tabs" role="tablist" aria-label="Choose a console area">${galleryOrder.map(id => `<button type="button" role="tab" class="project-${id}" id="interface-tab-${id}" aria-controls="interface-${id}" aria-selected="${id === activeInterface}" tabindex="${id === activeInterface ? 0 : -1}" data-interface="${id}"><span class="interface-tab-icon">${icon(id)}</span><span>${projects[id].name}</span></button>`).join("")}</div>
+      ${galleryOrder.map(id => {
+        const p = projects[id], area = gallery[id], first = area.captures[0];
         return `<section class="interface-panel project-${id}" id="interface-${id}" role="tabpanel" aria-labelledby="interface-tab-${id}" tabindex="0" ${id !== activeInterface ? "hidden" : ""}>
-          <div class="interface-toolbar"><span>${p.candidate ? "PRODUCT BOUNDARY / CANDIDATE" : id === "emberfold" ? "CLI / VERIFIED DRY RUN" : id === "hive" ? "LEGACY CONSOLE / SYNTHETIC DATA" : "CONSOLE / SYNTHETIC DATA"}</span>${id === "cindertrace" ? `<div class="capture-switch" role="group" aria-label="Cindertrace capture"><button type="button" data-capture="overview" aria-pressed="true">Overview</button><button type="button" data-capture="case" aria-pressed="false">Investigation</button></div>` : `<span>${p.candidate ? "INDEPENDENT RELEASES" : id === "emberfold" ? "NO MODEL CALLS" : "SELECT IMAGE TO OPEN FULL SIZE"}</span>`}</div>
-          <figure class="interface-figure"><div class="interface-visual"><div class="screen-frame">${p.candidate ? `<div class="boundary-panel"><span class="mini-label">${p.role.toUpperCase()}</span><h4>${p.name}</h4><p>${p.summary}</p><dl>${p.connections.map(connection => `<div><dt>${connection.to}</dt><dd>${connection.how}</dd></div>`).join("")}</dl><p class="boundary-status">Candidate implementation · release and migration acceptance in progress</p></div>` : p.image ? `<a class="capture-link" href="${p.image}" target="_blank" rel="noopener noreferrer" aria-label="Open full ${p.name} capture"><img src="${p.image}" alt="${p.imageAlt}" loading="lazy" decoding="async" width="${id === "cindertrace" ? 1440 : 1280}" height="${id === "cindertrace" ? 900 : 720}" /></a>` : `<div class="screen-terminal"><div class="terminal-top"><span>EMBERFOLD / CLI</span><span>SYNTHETIC INPUT</span></div><p><span>$</span> emberfold prepare --input emberfold.json --dry-run</p><pre tabindex="0" aria-label="Excerpt from actual Emberfold dry run output">{
+          <div class="interface-toolbar"><span><span class="interface-prompt" aria-hidden="true">&gt;_</span> ${area.path}</span>${area.captures.length > 1 ? `<div class="capture-switch" role="group" aria-label="${p.name} capture">${area.captures.map((capture, i) => `<button type="button" data-capture="${i}" aria-pressed="${i === 0}">${capture.label}</button>`).join("")}</div>` : `<span>SELECT IMAGE TO OPEN FULL SIZE</span>`}</div>
+          <figure class="interface-figure"><div class="interface-visual"><div class="screen-frame"><a class="capture-link" href="${captureSrc(first)}" target="_blank" rel="noopener noreferrer" aria-label="Open full ${p.name} capture"><img src="${captureSrc(first)}" alt="${first.alt}" loading="lazy" decoding="async" width="1440" height="900" /></a></div><p class="capture-caption">HiveXUI · <span class="capture-name">${first.label}</span> · synthetic data · <a class="capture-full-link" href="${captureSrc(first)}" target="_blank" rel="noopener noreferrer">Open full capture ${icon("external")}</a></p></div>
+          <figcaption class="interface-story"><span class="mini-label">${p.role}</span><h3>${area.title}</h3><p>${area.copy}</p><ul>${area.points.map(point => `<li>${point}</li>`).join("")}</ul><a class="text-link" href="/guides/${id}.md">${p.name} guide ${icon("arrow")}</a>${area.extra ?? ""}</figcaption></figure>
+        </section>`;
+      }).join("")}
+      <section class="console-aside project-emberfold" id="interface-emberfold" tabindex="-1" aria-labelledby="emberfold-aside-title"><div class="screen-terminal"><div class="terminal-top"><span>EMBERFOLD / CLI</span><span>SYNTHETIC INPUT</span></div><p><span>$</span> emberfold prepare --input emberfold.json --dry-run</p><pre tabindex="0" aria-label="Excerpt from actual Emberfold dry run output">{
   "tokens": {
     "input_tokens": 100,
     "max_input_tokens": 12000,
@@ -429,13 +506,10 @@ app.innerHTML = `
   "protected_spans_verified": 0,
   "compacted": false,
   "fits": true
-}</pre><div class="terminal-foot">OUTPUT EXCERPT · NO MODEL CALLS</div></div>`}</div><p class="capture-caption">${p.candidate ? "Product ownership diagram · see guide for verification limits" : id === "emberfold" ? "Actual output excerpt · synthetic input" : `${p.name} · ${id === "cindertrace" ? '<span class="capture-name">Overview</span>' : 'sample environment'} · <a class="capture-full-link" href="${p.image}" target="_blank" rel="noopener noreferrer">Open full capture ${icon("external")}</a>`}</p></div>
-          <figcaption class="interface-story"><span class="mini-label">${p.role}</span><h3>${note.title}</h3><p>${note.copy}</p><ul>${note.points.map(point => `<li>${point}</li>`).join("")}</ul><a class="text-link" href="/guides/${id}.md">${p.name} guide ${icon("arrow")}</a>${id === "cindertrace" ? `<div class="response-note"><h4>One incident. Evolving evidence.</h4><p>Investigate a suspicious login, weigh a benign explanation, then assess corroborating activity. Compare cited claims and confidence across revisions. Containment stays a human-approved simulation.</p><a href="/guides/cindertrace.md#try-the-evolving-investigation-lab">Try the disposable investigation lab ${icon("arrow")}</a></div><div class="response-note" id="security"><h4>Response stays deliberate.</h4><p>Administrator approval binds the exact plan, expires after ten minutes, and is used once. Optional Magnus executes host actions; response controls require its configured bridge.</p><a href="https://github.com/ChefTaco/cindertrace/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy and data handling ${icon("external")}</a></div>` : ""}${id === "chattermost" ? '<p class="interface-limit">Background mobile push and calls are not implemented. Suite browser identity is a candidate integration; native Mattermost sessions remain available.</p>' : ""}</figcaption></figure>
-        </section>`;
-      }).join("")}
+}</pre><div class="terminal-foot">OUTPUT EXCERPT · NO MODEL CALLS</div></div><div class="console-aside-copy"><span class="mini-label">${projects.emberfold.role}</span><h3 id="emberfold-aside-title">Emberfold has no screen.</h3><p>It is a library, CLI and optional HTTP service, so it is not a console section. This excerpt is from a real synthetic CLI dry run: inspect a context preparation result before using it in an agent.</p><ul><li>Review the token budget</li><li>Check protected spans</li><li>Use the library, CLI, or optional HTTP service</li></ul><a class="text-link" href="/guides/emberfold.md">Emberfold guide ${icon("arrow")}</a></div></section>
       <p class="interface-footnote">You are viewing documentation and sample captures. This site does not connect to an operational fleet or security installation.</p>
     </div></section>
-    <section class="suite-boundary shell" aria-label="Suite release status"><h2>A suite under acceptance.</h2><p>The extracted products and Bash installer are being verified in isolated installations. No official signed suite release has been published. Keep the existing frontends and recovery artifacts until the replacement gates pass. Ollama, llama.cpp and hosted providers remain external; Hive only verifies and registers their endpoints.</p></section>
+    <section class="suite-boundary shell" aria-label="Release and acceptance status"><h2>Know what you are installing.</h2><p>Hive installs only from a signed release, listed on the <a href="https://github.com/ChefTaco/hive/releases" target="_blank" rel="noopener noreferrer">Hive releases page</a>. A passing disposable rehearsal is not production cutover approval, physical multi-host certification or ARM64 certification. Existing installations keep their own recovery paths and upgrade guides. Ollama, llama.cpp and hosted providers remain external; Hive only verifies and registers their endpoints.</p></section>
     <section class="install-section shell" id="install" aria-labelledby="install-title"><div class="section-head"><div><span class="section-kicker">INSTALL LAB / 04</span><h2 id="install-title">Try it on your host.</h2></div><p>Follow the first steps here, then continue with each project’s full guide. These walkthroughs explain commands; they do not run them for you.</p></div>
       <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span class="tab-counter">${String(i + 1).padStart(2, "0")}</span><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh environment for a first install. Existing installations follow their own upgrade guides.</p></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
     </section>
@@ -446,14 +520,14 @@ app.innerHTML = `
     </section>
     <section class="closing"><div class="shell closing-inner"><div><span class="section-kicker">YOUR INFRASTRUCTURE. YOUR CHOICE.</span><h2>Start with one piece.<br/><em>Make it yours.</em></h2></div><a class="button button-light" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">Explore the repositories ${icon("arrow")}</a></div></section>
   </main>
-  <footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="#top"><span>Hive<span class="brand-colon">:</span>Magnus</span></a><p>Open source tools for self-hosted agents.</p><div><a href="https://github.com/ChefTaco/hive">Hive</a><a href="https://github.com/ChefTaco/magnus">Magnus</a><a href="https://github.com/ChefTaco/cindertrace">Cindertrace</a><a href="https://github.com/ChefTaco/ChatterMost">ChatterMost</a><a href="https://github.com/ChefTaco/emberfold">Emberfold</a><a href="https://github.com/ChefTaco/HiveMagnus">Site source</a></div><p class="footer-legal">Each project is licensed under Apache-2.0. ChatterMost is independently developed and Mattermost-compatible; Mattermost is a trademark of Mattermost, Inc., which does not affiliate with, endorse, or sponsor it.</p></div></footer>
+  <footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="#top"><span>Hive<span class="brand-colon">:</span>Magnus</span></a><p>Open source tools for self-hosted agents.</p><div><a href="https://github.com/ChefTaco/hive">Hive</a><a href="https://github.com/ChefTaco/HiveXUI">HiveXUI</a><a href="https://github.com/ChefTaco/Oathweave">Oathweave</a><a href="https://github.com/ChefTaco/Emberpath">Emberpath</a><a href="https://github.com/ChefTaco/HiveMem">HiveMem</a><a href="https://github.com/ChefTaco/HiveSkills">HiveSkills</a><a href="https://github.com/ChefTaco/magnus">Magnus</a><a href="https://github.com/ChefTaco/cindertrace">Cindertrace</a><a href="https://github.com/ChefTaco/ChatterMost">ChatterMost</a><a href="https://github.com/ChefTaco/emberfold">Emberfold</a><a href="https://github.com/ChefTaco/HiveMagnus">Site source</a></div><p class="footer-legal">Each project is licensed under Apache-2.0. ChatterMost is independently developed and Mattermost-compatible; Mattermost is a trademark of Mattermost, Inc., which does not affiliate with, endorse, or sponsor it.</p></div></footer>
   <div class="sr-only" id="announce" role="status" aria-live="polite"></div>
 `;
 
 function renderAtlas() {
   const p = projects[activeProject];
   const detail = document.querySelector<HTMLDivElement>("#atlas-detail")!;
-  detail.innerHTML = `<span class="detail-meta">SELECTED SYSTEM / ${p.role.toUpperCase()}</span><div class="detail-body"><h3>${p.name}</h3><p>${p.detail}</p><h4>Connects to</h4><ul class="detail-links">${p.connections.map((c) => `<li><strong>${c.to}</strong> <span>${c.how}</span></li>`).join("")}</ul><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="Open ${p.name} ${p.candidate ? "candidate guide" : "GitHub repository"}">${p.candidate ? "Candidate guide" : "Project source"} ${icon("external")}</a></div>`;
+  detail.innerHTML = `<span class="detail-meta">SELECTED SYSTEM / ${p.role.toUpperCase()}</span><div class="detail-body"><h3>${p.name}</h3><p>${p.detail}</p><h4>Connects to</h4><ul class="detail-links">${p.connections.map((c) => `<li><strong>${c.to}</strong> <span>${c.how}</span></li>`).join("")}</ul><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="Open ${p.name} GitHub repository">Project source ${icon("external")}</a></div>`;
   document
     .querySelectorAll<HTMLButtonElement>(".atlas-node")
     .forEach((button) => {
@@ -481,7 +555,7 @@ function renderAtlasLines() {
   });
 }
 
-function selectInterface(id: ProjectId, focus = false) {
+function selectInterface(id: GalleryId, focus = false) {
   activeInterface = id;
   document.querySelectorAll<HTMLButtonElement>("[data-interface]").forEach(button => {
     const active = button.dataset.interface === id;
@@ -489,51 +563,57 @@ function selectInterface(id: ProjectId, focus = false) {
     button.tabIndex = active ? 0 : -1;
     if (active && focus) button.focus();
   });
-  projectOrder.forEach(project => {
-    document.querySelector<HTMLElement>(`#interface-${project}`)!.hidden = project !== id;
+  galleryOrder.forEach(area => {
+    document.querySelector<HTMLElement>(`#interface-${area}`)!.hidden = area !== id;
   });
 }
 
+// Emberfold sits below the gallery rather than in it, so its links scroll there instead of selecting.
+function showInterface(id: string) {
+  if (isGalleryId(id)) {
+    selectInterface(id);
+    document.querySelector<HTMLElement>("#interfaces")!.scrollIntoView();
+  } else if (id === "emberfold") {
+    document.querySelector<HTMLElement>("#interface-emberfold")!.scrollIntoView();
+  }
+}
+
 document.querySelectorAll<HTMLButtonElement>("[data-interface]").forEach(button => {
-  button.addEventListener("click", () => selectInterface(button.dataset.interface as ProjectId));
+  button.addEventListener("click", () => selectInterface(button.dataset.interface as GalleryId));
   button.addEventListener("keydown", event => {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
-    const index = projectOrder.indexOf(activeInterface);
-    const next = event.key === "Home" ? 0 : event.key === "End" ? projectOrder.length - 1
-      : (index + (event.key === "ArrowRight" ? 1 : -1) + projectOrder.length) % projectOrder.length;
-    selectInterface(projectOrder[next], true);
+    const index = galleryOrder.indexOf(activeInterface);
+    const next = event.key === "Home" ? 0 : event.key === "End" ? galleryOrder.length - 1
+      : (index + (event.key === "ArrowRight" ? 1 : -1) + galleryOrder.length) % galleryOrder.length;
+    selectInterface(galleryOrder[next], true);
   });
 });
 document.querySelectorAll<HTMLAnchorElement>("[data-interface-link]").forEach(link => {
   link.addEventListener("click", event => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    const id = link.dataset.interfaceLink as ProjectId;
-    selectInterface(id);
+    const id = link.dataset.interfaceLink!;
+    showInterface(id);
     history.pushState(null, "", `#interface-${id}`);
-    document.querySelector<HTMLElement>("#interfaces")!.scrollIntoView();
     document.querySelector<HTMLElement>(`#interface-${id}`)!.focus({ preventScroll: true });
   });
 });
 window.addEventListener("hashchange", () => {
-  const id = location.hash === "#security" ? "cindertrace" : location.hash.replace("#interface-", "");
-  if (projectOrder.includes(id as ProjectId)) {
-    selectInterface(id as ProjectId);
-    document.querySelector<HTMLElement>("#interfaces")!.scrollIntoView();
-  }
+  showInterface(location.hash === "#security" ? "cindertrace" : location.hash.replace("#interface-", ""));
 });
-document.querySelectorAll<HTMLButtonElement>("[data-capture]").forEach(button => {
-  button.addEventListener("click", () => {
-    const investigation = button.dataset.capture === "case";
-    const panel = document.querySelector<HTMLElement>("#interface-cindertrace")!;
-    const src = `/captures/cindertrace-${investigation ? "case" : "overview"}.webp`;
-    const img = panel.querySelector<HTMLImageElement>("img")!;
-    img.src = src;
-    img.alt = investigation ? "Cindertrace synthetic case showing the evidence braid, affected entities, and recommended investigation" : projects.cindertrace.imageAlt!;
-    panel.querySelectorAll<HTMLAnchorElement>(".capture-link, .capture-full-link").forEach(link => { link.href = src; });
-    panel.querySelector(".capture-name")!.textContent = investigation ? "Investigation" : "Overview";
-    panel.querySelectorAll<HTMLButtonElement>("[data-capture]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+galleryOrder.forEach(id => {
+  const panel = document.querySelector<HTMLElement>(`#interface-${id}`)!;
+  panel.querySelectorAll<HTMLButtonElement>("[data-capture]").forEach(button => {
+    button.addEventListener("click", () => {
+      const capture = gallery[id].captures[Number(button.dataset.capture)];
+      const img = panel.querySelector<HTMLImageElement>("img")!;
+      img.src = captureSrc(capture);
+      img.alt = capture.alt;
+      panel.querySelectorAll<HTMLAnchorElement>(".capture-link, .capture-full-link").forEach(link => { link.href = captureSrc(capture); });
+      panel.querySelector(".capture-name")!.textContent = capture.label;
+      panel.querySelectorAll<HTMLButtonElement>("[data-capture]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+    });
   });
 });
 
@@ -634,5 +714,5 @@ new ResizeObserver(renderAtlasLines).observe(document.querySelector(".atlas-map"
 void document.fonts.ready.then(renderAtlasLines);
 renderDemo();
 if (location.hash === "#security" || location.hash.startsWith("#interface-")) {
-  requestAnimationFrame(() => document.querySelector("#interfaces")!.scrollIntoView());
+  requestAnimationFrame(() => showInterface(location.hash === "#security" ? "cindertrace" : location.hash.replace("#interface-", "")));
 }

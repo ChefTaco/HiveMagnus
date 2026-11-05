@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#e9f0ef" />
     <meta
       name="description"
-      content="Meet the open source tools behind a self-hosted agent stack: Hive, Emberpath, Oathweave, HiveMem, HiveSkills, HiveXUI, Magnus, Cindertrace, ChatterMost, Ardent, and Emberfold. Explore the system and follow real install guides."
+      content="Meet the open source tools behind a self-hosted agent stack: Hive, HiveXUI, Oathweave, Emberpath, HiveMem, HiveSkills, Magnus, Cindertrace, ChatterMost, Ardent, and Emberfold. One browser console, a signed installer, and real install guides."
     />
     <meta
       property="og:title"
@@ -14,14 +14,14 @@
     />
     <meta
       property="og:description"
-      content="Explore the open source control plane, fleet manager, security console, chat service, agent runtime, and context engine."
+      content="Explore one browser console across identity, models, memory, skills, fleet operations, security and chat, deployed from signed releases by a Bash installer."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://hivemagnus.com/" />
     <meta property="og:image" content="https://hivemagnus.com/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Hive:Magnus — independent products, a shared console, and your infrastructure" />
+    <meta property="og:image:alt" content="Hive:Magnus — independent products, one console, your infrastructure" />
     <meta property="og:site_name" content="Hive:Magnus" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href="https://hivemagnus.com/" />
@@ -36,7 +36,7 @@
       "@type": "SoftwareSourceCode",
       "@id": "https://hivemagnus.com/#source-hive",
       "name": "Hive",
-      "description": "Bash installer, pinned deployment bundles, upgrades, backups and recovery for independently versioned ecosystem products.",
+      "description": "Bash installer and controller deploying signed, digest-pinned releases of independently versioned products, with upgrades, backups, restore rehearsals and a mandatory Hive Registry install catalog.",
       "codeRepository": "https://github.com/ChefTaco/hive",
       "url": "https://github.com/ChefTaco/hive",
       "programmingLanguage": "TypeScript",
@@ -51,7 +51,7 @@
       "@type": "SoftwareSourceCode",
       "@id": "https://hivemagnus.com/#source-magnus",
       "name": "Magnus",
-      "description": "Linux fleet inventory, operations, jobs, skills, and agent management.",
+      "description": "Linux fleet inventory, operations, jobs, skills, and agent management, with HiveXUI as its console in a Hive installation.",
       "codeRepository": "https://github.com/ChefTaco/magnus",
       "url": "https://github.com/ChefTaco/magnus",
       "programmingLanguage": "TypeScript",
@@ -69,7 +69,7 @@
       "@type": "SoftwareSourceCode",
       "@id": "https://hivemagnus.com/#source-cindertrace",
       "name": "Cindertrace",
-      "description": "Standalone security investigations, correlated cases, hashed evidence, and explicitly approved response through optional Magnus integration.",
+      "description": "Security investigations, correlated cases, hashed evidence, and explicitly approved response through optional Magnus integration. A section of HiveXUI in a Hive installation, and standalone with its retained console.",
       "codeRepository": "https://github.com/ChefTaco/cindertrace",
       "url": "https://github.com/ChefTaco/cindertrace",
       "programmingLanguage": "TypeScript",
@@ -125,43 +125,78 @@
     },
     {
       "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-emberpath",
       "name": "Emberpath",
-      "description": "Model routing, external providers, aliases, quotas and telemetry. Candidate extraction; publication and migration acceptance remain pending.",
+      "description": "OpenAI-compatible model gateway with external providers, routing, failover, quotas and traces.",
+      "codeRepository": "https://github.com/ChefTaco/Emberpath",
+      "url": "https://github.com/ChefTaco/Emberpath",
       "programmingLanguage": "TypeScript",
-      "license": "https://www.apache.org/licenses/LICENSE-2.0",
-      "url": "https://hivemagnus.com/guides/emberpath.md"
+      "license": "https://github.com/ChefTaco/Emberpath/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/emberpath.md",
+        "encodingFormat": "text/markdown"
+      }
     },
     {
       "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-oathweave",
       "name": "Oathweave",
-      "description": "Identity, authentication, authorization and explicit product account links. Candidate extraction; publication and migration acceptance remain pending.",
+      "description": "Identity and access management: OAuth 2.0 and OpenID Connect, role-based access, MFA and passkeys, service identities and audit.",
+      "codeRepository": "https://github.com/ChefTaco/Oathweave",
+      "url": "https://github.com/ChefTaco/Oathweave",
       "programmingLanguage": "TypeScript",
-      "license": "https://www.apache.org/licenses/LICENSE-2.0",
-      "url": "https://hivemagnus.com/guides/oathweave.md"
+      "license": "https://github.com/ChefTaco/Oathweave/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/oathweave.md",
+        "encodingFormat": "text/markdown"
+      }
     },
     {
       "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-hivemem",
       "name": "HiveMem",
-      "description": "Memory storage, retrieval, sessions, consolidation and workspaces. Candidate extraction; publication and migration acceptance remain pending.",
+      "description": "Long-term memory for agents with workspaces, retrieval, consolidation and a knowledge graph.",
+      "codeRepository": "https://github.com/ChefTaco/HiveMem",
+      "url": "https://github.com/ChefTaco/HiveMem",
       "programmingLanguage": "TypeScript",
-      "license": "https://www.apache.org/licenses/LICENSE-2.0",
-      "url": "https://hivemagnus.com/guides/hivemem.md"
+      "license": "https://github.com/ChefTaco/HiveMem/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/hivemem.md",
+        "encodingFormat": "text/markdown"
+      }
     },
     {
       "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-hiveskills",
       "name": "HiveSkills",
-      "description": "Skills registry, immutable archives, assignments and distribution. Candidate extraction; publication and migration acceptance remain pending.",
+      "description": "Skills registry for agents with immutable releases, channels, assignments and audited distribution.",
+      "codeRepository": "https://github.com/ChefTaco/HiveSkills",
+      "url": "https://github.com/ChefTaco/HiveSkills",
       "programmingLanguage": "TypeScript",
-      "license": "https://www.apache.org/licenses/LICENSE-2.0",
-      "url": "https://hivemagnus.com/guides/hiveskills.md"
+      "license": "https://github.com/ChefTaco/HiveSkills/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/hiveskills.md",
+        "encodingFormat": "text/markdown"
+      }
     },
     {
       "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-hivexui",
       "name": "HiveXUI",
-      "description": "Static TypeScript shared browser console using authorized product APIs. Candidate extraction; publication and migration acceptance remain pending.",
+      "description": "The single browser console for a Hive installation: a static TypeScript application using each product's own API, with sections only for installed products.",
+      "codeRepository": "https://github.com/ChefTaco/HiveXUI",
+      "url": "https://github.com/ChefTaco/HiveXUI",
       "programmingLanguage": "TypeScript",
-      "license": "https://www.apache.org/licenses/LICENSE-2.0",
-      "url": "https://hivemagnus.com/guides/hivexui.md"
+      "license": "https://github.com/ChefTaco/HiveXUI/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/hivexui.md",
+        "encodingFormat": "text/markdown"
+      }
     }
   ]
 }
@@ -175,42 +210,30 @@
         <h1>Hive:Magnus</h1>
         <p>
           Open source tools for self-hosted agents. Enable JavaScript to explore
-          the interactive system atlas and install walkthroughs, or visit the
-          project guides:
+          the interactive system atlas, the console gallery and install
+          walkthroughs, or visit the project repositories:
         </p>
         <ul>
-          <li>
-            <a href="https://github.com/ChefTaco/hive"
-              >Hive — suite installation and recovery</a
-            >
-          </li>
-          <li>
-            <a href="https://github.com/ChefTaco/magnus"
-              >Magnus — fleet operations and Ardent</a
-            >
-          </li>
-          <li>
-            <a href="https://github.com/ChefTaco/ChatterMost"
-              >ChatterMost — self-hosted conversation</a
-            >
-          </li>
-          <li>
-            <a href="https://github.com/ChefTaco/emberfold"
-              >Emberfold — context continuity</a
-            >
-          </li>
+          <li><a href="https://github.com/ChefTaco/hive">Hive — signed suite installation and recovery</a></li>
+          <li><a href="https://github.com/ChefTaco/HiveXUI">HiveXUI — the single browser console</a></li>
+          <li><a href="https://github.com/ChefTaco/Oathweave">Oathweave — identity and access</a></li>
+          <li><a href="https://github.com/ChefTaco/Emberpath">Emberpath — model routing</a></li>
+          <li><a href="https://github.com/ChefTaco/HiveMem">HiveMem — agent memory</a></li>
+          <li><a href="https://github.com/ChefTaco/HiveSkills">HiveSkills — skills registry</a></li>
+          <li><a href="https://github.com/ChefTaco/magnus">Magnus — fleet operations and Ardent</a></li>
+          <li><a href="https://github.com/ChefTaco/cindertrace">Cindertrace — security investigations, cases, and evidence</a></li>
+          <li><a href="https://github.com/ChefTaco/ChatterMost">ChatterMost — self-hosted conversation</a></li>
+          <li><a href="https://github.com/ChefTaco/emberfold">Emberfold — context continuity</a></li>
         </ul>
-        <p><a href="https://github.com/ChefTaco/cindertrace">Cindertrace — standalone security investigations, cases, and evidence</a></p>
         <h2>For agents</h2>
         <p><a href="/llms.txt">Agent index (llms.txt)</a> · <a href="/index.md">Site overview in Markdown</a></p>
         <ul>
           <li><a href="/guides/hive.md">Hive Markdown guide</a></li>
-<li><a href="/guides/emberpath.md">Emberpath candidate guide</a></li>
-<li><a href="/guides/oathweave.md">Oathweave candidate guide</a></li>
-<li><a href="/guides/hivemem.md">HiveMem candidate guide</a></li>
-<li><a href="/guides/hiveskills.md">HiveSkills candidate guide</a></li>
-<li><a href="/guides/hivexui.md">HiveXUI candidate guide</a></li>
-
+          <li><a href="/guides/hivexui.md">HiveXUI Markdown guide</a></li>
+          <li><a href="/guides/oathweave.md">Oathweave Markdown guide</a></li>
+          <li><a href="/guides/emberpath.md">Emberpath Markdown guide</a></li>
+          <li><a href="/guides/hivemem.md">HiveMem Markdown guide</a></li>
+          <li><a href="/guides/hiveskills.md">HiveSkills Markdown guide</a></li>
           <li><a href="/guides/magnus.md">Magnus and Ardent Markdown guide</a></li>
           <li><a href="/guides/cindertrace.md">Cindertrace Markdown guide</a></li>
           <li><a href="/guides/chattermost.md">ChatterMost Markdown guide</a></li>

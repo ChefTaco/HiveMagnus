@@ -1,5 +1,5 @@
 // With the site open in Playwright CLI:
-// playwright-cli run-code --filename scripts/check-browser.js
+// playwright-cli run-code --filename scripts/check-browser.js (or npx @playwright/cli)
 async function checkBrowser(page) {
   const assert = (ok, message) => {
     if (!ok) throw new Error(message);
@@ -114,59 +114,72 @@ async function checkBrowser(page) {
   assert(metadata["@context"] === "https://schema.org", "Schema.org context");
   assert(metadata["@graph"].filter((item) => item["@type"] === "SoftwareSourceCode").length === 11, "Eleven SoftwareSourceCode entries");
 
-  assert(await page.locator("#interfaces .section-kicker").textContent().then(t => t.includes("IN THE INTERFACE / 03")), "Section 3 retains its interface heading");
-  assert((await interfaces.getByRole("tab").count()) === 10, "Section 3 includes all ten products");
-  assert((await page.locator(".interface-panel").count()) === 10, "One gallery panel per product");
-  for (const name of expectedProjects) {
-    const tab = interfaces.getByRole("tab", { name: new RegExp(`^\\d{2} ${name}$`) });
+  // Section 3 is one console shown across its product areas, in sidebar order.
+  const consoleAreas = ["Hive", "Magnus", "Oathweave", "Emberpath", "HiveMem", "HiveSkills", "Cindertrace", "ChatterMost", "HiveXUI"];
+  const captureViews = { Magnus: ["fleet-overview", "fleet-map", "fleet-mission"], Cindertrace: ["cindertrace-overview", "cindertrace-case"] };
+  const tabName = (name) => new RegExp(`^${name}$`, "i");
+  assert(await page.locator("#interfaces .section-kicker").textContent().then(t => t.includes("IN THE CONSOLE / 03")), "Section 3 keeps its heading");
+  assert((await interfaces.getByRole("tab").count()) === consoleAreas.length, "Section 3 includes every console area");
+  assert((await page.locator(".interface-panel").count()) === consoleAreas.length, "One gallery panel per console area");
+  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("Magnus")), "Magnus area selected initially");
+  for (const name of consoleAreas) {
+    const tab = interfaces.getByRole("tab", { name: tabName(name) });
     await tab.click();
-    assert(await tab.getAttribute("aria-selected") === "true", `${name} interface selected`);
-    assert((await page.locator(".interface-panel:visible").count()) === 1, "Exactly one visible interface");
+    assert(await tab.getAttribute("aria-selected") === "true", `${name} area selected`);
+    assert((await page.locator(".interface-panel:visible").count()) === 1, "Exactly one visible area");
     const panel = page.locator(`#${await tab.getAttribute("aria-controls")}`);
     assert(await panel.isVisible(), `${name} correct gallery panel`);
     assert(await panel.locator(".interface-story .text-link").textContent().then(t => t.includes(name)), `${name} guide matches capture`);
-    for (const image of await panel.locator("img").all()) {
-      await image.scrollIntoViewIfNeeded();
+    const image = panel.locator("img");
+    assert((await image.count()) === 1, `${name} has one capture`);
+    assert(await image.getAttribute("src").then(s => s.startsWith("/captures/") && s.endsWith(".webp")), `${name} capture path`);
+    await image.scrollIntoViewIfNeeded();
+    await image.evaluate(img => img.decode());
+    assert(await image.evaluate(img => img.naturalWidth === 2880 && img.naturalHeight === 1800), `${name} capture decoded at full size`);
+    for (const [index, file] of (captureViews[name] ?? []).entries()) {
+      const button = panel.locator(`[data-capture="${index}"]`);
+      await button.click();
+      assert(await button.getAttribute("aria-pressed") === "true", `${name} capture ${index} selection`);
       await image.evaluate(img => img.decode());
-      assert(await image.evaluate(img => img.naturalWidth > 0), `${name} capture decoded`);
+      assert(await image.getAttribute("src").then(s => s.endsWith(`${file}.webp`)), `${name} ${file} image`);
+      assert(await panel.locator(".capture-full-link").getAttribute("href").then(s => s.endsWith(`${file}.webp`)), `${name} ${file} full capture link`);
     }
-    if (name === "Emberfold") assert(await panel.locator("pre").textContent().then(t => t.includes('"fits": true')), "Verified Emberfold output");
+    if (captureViews[name]) await panel.locator('[data-capture="0"]').click();
   }
-  await interfaces.getByRole("tab", { name: /Cindertrace/ }).click();
-  const cindertrace = page.locator("#interface-cindertrace");
-  for (const [name, suffix] of [["Investigation", "case"], ["Overview", "overview"]]) {
-    const button = cindertrace.getByRole("button", {name, exact: true});
-    await button.click();
-    assert(await button.getAttribute("aria-pressed") === "true", `${name} capture selection`);
-    await cindertrace.locator("img").evaluate(img => img.decode());
-    assert(await cindertrace.locator("img").getAttribute("src").then(s => s.endsWith(`cindertrace-${suffix}.webp`)), `${name} image`);
-    assert(await cindertrace.locator(".capture-full-link").getAttribute("href").then(s => s.endsWith(`cindertrace-${suffix}.webp`)), `${name} full capture link`);
-  }
-  await interfaces.getByRole("tab", { name: /Cindertrace/ }).focus();
+  const emberfold = page.locator("#interface-emberfold");
+  assert(await emberfold.isVisible(), "Emberfold sits outside the gallery tabs");
+  assert(await emberfold.locator("pre").textContent().then(t => t.includes('"fits": true')), "Verified Emberfold output");
+  await interfaces.getByRole("tab", { name: tabName("Cindertrace") }).focus();
   await page.keyboard.press("End");
-  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("Emberfold")), "Interface End key");
+  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("HiveXUI")), "Interface End key");
   await page.keyboard.press("ArrowRight");
-  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("Hive")), "Interface arrow wraps");
+  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => /^hive$/i.test(t.trim())), "Interface arrow wraps");
   await page.keyboard.press("ArrowLeft");
-  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("Emberfold")), "Interface previous wraps");
+  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("HiveXUI")), "Interface previous wraps");
   await page.keyboard.press("Home");
-  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("Hive")), "Interface Home key");
-  // Every entry in the hero and project directory opens the matching section 3 panel.
+  assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => /^hive$/i.test(t.trim())), "Interface Home key");
+  // Every entry in the hero and project directory opens the matching area, and Emberfold's scrolls to its excerpt.
   for (const area of [".stack-index", ".project-grid"]) {
     for (const name of expectedProjects) {
-      const link = page.locator(area).getByRole("link", {name: area === ".stack-index" ? new RegExp(`^\\d{2} ${name} `) : "See interface"});
-      const target = area === ".stack-index" ? link : page.locator(area).locator(`.project-${name.toLowerCase()} [data-interface-link]`);
-      await target.click();
-      assert(await interfaces.getByRole("tab", {selected:true}).textContent().then(t => t.includes(name)), `${area} opens ${name}`);
+      const link = area === ".stack-index" ? page.locator(area).getByRole("link", {name: new RegExp(`^\\d{2} ${name} `)}) : page.locator(area).locator(`.project-${name.toLowerCase()} [data-interface-link]`);
+      await link.click();
+      if (name === "Emberfold") {
+        assert(await emberfold.evaluate(el => el === document.activeElement), `${area} focuses Emberfold`);
+      } else {
+        assert(await interfaces.getByRole("tab", {selected:true}).textContent().then(t => t.trim().toLowerCase() === name.toLowerCase()), `${area} opens ${name}`);
+      }
     }
   }
-  await interfaces.getByRole("tab", {name: /Cindertrace/}).click();
+  await interfaces.getByRole("tab", { name: tabName("Cindertrace") }).click();
+  const cindertrace = page.locator("#interface-cindertrace");
   const labLink = cindertrace.getByRole("link", {name: /Try the disposable investigation lab/});
   assert(await labLink.isVisible(), "Cindertrace lab entry");
+  assert(await cindertrace.textContent().then(t => t.includes("not reached through HiveXUI")), "Lab is described as apart from HiveXUI");
   assert(await labLink.getAttribute("href") === "/guides/cindertrace.md#try-the-evolving-investigation-lab", "Lab instructions link");
   const labGuide = await page.request.get(new URL(await labLink.getAttribute("href"), page.url()).href);
   assert(labGuide.ok() && (await labGuide.text()).includes("git checkout --detach 0368abb6779c0c715e1dc00f7f346b2253f5f040"), "Lab guide pins implementation");
-  // Legacy deep links still lead to Cindertrace after a different gallery is selected.
+  assert(await page.locator("#interface-magnus").textContent().then(t => t.includes("web terminal stays off")), "Web terminal described as off");
+  // Legacy deep links still lead to Cindertrace after a different area is selected.
   await page.goto(new URL("/#security", page.url()).href);
   await cindertrace.waitFor({state:"visible"});
   assert(await cindertrace.isVisible(), "Legacy security anchor selects Cindertrace");
@@ -191,11 +204,11 @@ async function checkBrowser(page) {
       return x.left < y.right && x.right > y.left && x.top < y.bottom && x.bottom > y.top;
     }).map(b => `${a.textContent.trim()} / ${b.textContent.trim()}`)));
     assert(!overlaps.length, `Atlas nodes overlap at ${width}px: ${overlaps}`);
-    for (const name of ["Cindertrace", "Emberfold"]) {
-      await interfaces.getByRole("tab", {name: new RegExp(name)}).click();
+    for (const name of consoleAreas) {
+      await interfaces.getByRole("tab", { name: tabName(name) }).click();
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${name} gallery overflow at ${width}px`);
     }
-    await interfaces.getByRole("tab", {name: /Cindertrace/}).click();
+    await interfaces.getByRole("tab", { name: tabName("Cindertrace") }).click();
     await page.mouse.move(0, 0);
     const accessibility = await page.evaluate(async () => {
       const result = await axe.run(document, {
@@ -244,8 +257,8 @@ async function checkBrowser(page) {
     agentGuides: 10,
     sourceCodeEntries: 11,
     accessibilityViolations: 0,
-    interfaces: 10,
-    cindertraceCaptures: 2,
+    consoleAreas: 9,
+    captures: 12,
     directoryLinks: 20,
     viewportWidths: [1440, 1024, 768, 390, 320],
     pageErrors: errors.length,

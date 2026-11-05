@@ -1,21 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#e9f0ef"/>
-  <g font-family="Arial,sans-serif" fill="#173246">
-    <text x="62" y="76" font-size="27" font-weight="700">Hive:Magnus</text>
-    <path d="M62 111h1076" stroke="#bdceca"/>
-    <text x="62" y="254" font-size="67" font-weight="700" letter-spacing="-2">Run your stack.</text>
-    <text x="62" y="335" font-size="67" font-weight="700" letter-spacing="-2" fill="#216d69">On your terms.</text>
-    <text x="65" y="398" font-size="21" fill="#46656e">Open source tools for self-hosted agents.</text>
-    <text x="65" y="539" font-size="17" fill="#46656e">APACHE-2.0 · FIVE INDEPENDENT PROJECTS</text>
-    <rect x="695" y="155" width="443" height="382" fill="#d1e1dc"/>
-    <rect x="685" y="145" width="443" height="382" fill="#f6f9f7" stroke="#bdceca"/>
-    <g font-size="23" font-weight="700">
-      <text x="714" y="189" fill="#216d69">01</text><text x="765" y="189">Hive</text>
-      <text x="714" y="265" fill="#966022">02</text><text x="765" y="265">Magnus</text>
-      <text x="714" y="341" fill="#a14f40">03</text><text x="765" y="341">Cindertrace</text>
-      <text x="714" y="417" fill="#41677e">04</text><text x="765" y="417">ChatterMost</text>
-      <text x="714" y="493" fill="#526890">05</text><text x="765" y="493">Emberfold</text>
-    </g>
-    <g stroke="#bdceca"><path d="M685 221h443M685 297h443M685 373h443M685 449h443"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#00e5ff" stroke-opacity=".07"/></pattern>
+    <clipPath id="frame"><rect x="600" y="118" width="640" height="400" rx="6"/></clipPath>
+  </defs>
+  <rect width="1200" height="630" fill="#000"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <g font-family="'Space Grotesk',Arial,sans-serif" fill="#f5f7ff">
+    <text x="62" y="76" font-size="27" font-weight="700">Hive<tspan fill="#ff006e">:</tspan>Magnus</text>
+    <text x="62" y="222" font-size="60" font-weight="700" letter-spacing="-2">Run your stack.</text>
+    <text x="62" y="294" font-size="60" font-weight="700" letter-spacing="-2" fill="#00e5ff">On your terms.</text>
+    <text x="64" y="350" font-size="23" fill="#b6b8cf">One console for self-hosted agents.</text>
   </g>
+  <g font-family="'IBM Plex Mono',Menlo,monospace" font-size="15" fill="#9496b6">
+    <text x="64" y="424">HIVE · HIVEXUI · OATHWEAVE · EMBERPATH</text>
+    <text x="64" y="448">HIVEMEM · HIVESKILLS · MAGNUS · CINDERTRACE</text>
+    <text x="64" y="472">CHATTERMOST · EMBERFOLD</text>
+    <text x="64" y="572" fill="#00e5ff">APACHE-2.0 · TEN INDEPENDENT PROJECTS</text>
+  </g>
+  <rect x="598" y="116" width="644" height="404" rx="7" fill="#06060d" stroke="#00e5ff" stroke-opacity=".5"/>
+  <image href="captures/fleet-overview.webp" x="600" y="118" width="640" height="400" preserveAspectRatio="xMinYMin slice" clip-path="url(#frame)"/>
 </svg>
