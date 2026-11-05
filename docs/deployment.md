@@ -18,4 +18,6 @@ HSTS starts at `max-age=86400`. Raise it to `31536000` once HTTPS has stayed hea
 
 HTML uses `no-transform` to keep automatic proxy script injection from conflicting with the site's source-only content policy. No analytics script is part of this site.
 
+Security reporting contacts are published at `/.well-known/security.txt`; `/security.txt` redirects there through `public/_redirects`. The file links to each project's GitHub private vulnerability reporting form and security policy. Recheck these links and renew its `Expires` field before 2027-05-05. After deployment, verify the canonical file returns `200` with `text/plain; charset=utf-8` and the root alias redirects to it.
+
 For rollback, select the last known good production deployment in the Pages dashboard and choose **Rollback to this deployment**. Revert the source change as well so the next push does not republish it. Keep DNS connected to the Pages custom domain during a code rollback.

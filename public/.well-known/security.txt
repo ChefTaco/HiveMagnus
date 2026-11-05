@@ -1,0 +1,26 @@
+# Report vulnerabilities privately to the affected project.
+# Do not include vulnerability details in public GitHub issues.
+
+# Hive
+Contact: https://github.com/ChefTaco/hive/security/advisories/new
+Policy: https://github.com/ChefTaco/hive/security/policy
+
+# Magnus, including Ardent
+Contact: https://github.com/ChefTaco/magnus/security/advisories/new
+Policy: https://github.com/ChefTaco/magnus/security/policy
+
+# Cindertrace
+Contact: https://github.com/ChefTaco/cindertrace/security/advisories/new
+Policy: https://github.com/ChefTaco/cindertrace/security/policy
+
+# ChatterMost
+Contact: https://github.com/ChefTaco/ChatterMost/security/advisories/new
+Policy: https://github.com/ChefTaco/ChatterMost/security/policy
+
+# Emberfold
+Contact: https://github.com/ChefTaco/emberfold/security/advisories/new
+Policy: https://github.com/ChefTaco/emberfold/security/policy
+
+Expires: 2027-05-05T00:00:00Z
+Canonical: https://hivemagnus.com/.well-known/security.txt
+Preferred-Languages: en
