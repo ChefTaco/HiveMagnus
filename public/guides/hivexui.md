@@ -1,25 +1,44 @@
 # HiveXUI
 
-> Shared strict TypeScript, React and Vite browser application.
+> The single browser console for a Hive installation: fleet, identity, models, memory, skills, security and chat in one shell, with sections only for installed products.
 
-**Candidate extraction.** The new ecosystem has no official signed suite release yet. Independent product and installation acceptance must pass before replacing an existing deployment. This guide describes the candidate ownership boundary; it is not a published installation recipe.
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/HiveXUI) · [Theme](https://github.com/ChefTaco/HiveXUI/blob/main/docs/THEME.md)
 
 ## Responsibility
 
-The container serves static assets only. It contains no application backend, database access, signing keys or infrastructure credentials. Same-origin HTTPS ingress forwards caller credentials to the owning API. Bearer tokens stay in memory; Oathweave owns the SSO session. Magnus remains linked as a separate console.
+HiveXUI is a static TypeScript and React application. The container serves compiled assets only: no application backend, database access, signing keys or infrastructure credentials. Same-origin HTTPS ingress forwards the signed-in user's own credentials to the owning API. Access tokens stay in memory; Oathweave owns the SSO session. Nothing puts credentials in URLs or browser storage.
 
-## Suite integration
+Runtime `products` decide what the console shows: one section per installed product, plus Hive and System. A bookmark to an absent product opens the overview. `Ctrl` or `Cmd` + `K` searches every visible screen. There is one theme for now: dark, in the Magnus look.
 
-Hive plans and installs selected product containers with independently pinned versions. Core includes Oathweave, Emberpath, HiveMem, HiveSkills and HiveXUI. Full adds Magnus/Ardent, Cindertrace, ChatterMost and optional Emberfold HTTP. Each product retains standalone operation and its own data, credentials and recovery lifecycle.
+## What it covers
 
-Do not copy a sibling backend source tree into the browser application. Products own their API specifications and browser-safe contracts. Native machine protocols remain separate from suite browser sign-in.
+| Section | Product | Notes |
+| --- | --- | --- |
+| Hive | Installation readiness and incidents | Readiness shows availability, not migration or workflow acceptance |
+| Magnus | Fleet console at `/fleet` | Reaches an allowlist of browser routes through `/api/magnus`. The web terminal appears only when a fleet gateway is deployed |
+| Oathweave | Users, roles, clients, sessions, audit | Actors also needs Emberpath and HiveMem |
+| Emberpath | Providers, routing, tests, keys, traces | |
+| HiveMem | Memories, workspaces, memory operations | |
+| HiveSkills | Catalogue, archives, assignments | |
+| Cindertrace | Cases, events, evidence, policies, audit | The investigation lab keeps its own console; see the [Cindertrace guide](https://hivemagnus.com/guides/cindertrace.md#try-the-evolving-investigation-lab) |
+| ChatterMost | Channels, DMs, threads, files, search, administration | Official apps connect to ChatterMost directly |
 
-## Migration and recovery
+The HiveXUI README records these modules as ports with workflows still under live integration acceptance. Keep native clients available, and do not treat synthetic screenshots as evidence of backend authorization or workflow parity.
 
-Preserve existing databases, signing keys, native issuer URLs, client registrations, memberships and audit history. Restore a backup in isolation with dispatchers and collectors disabled before activation. Only one writer may be active during cutover. Existing frontends and published packages remain recovery paths until acceptance passes. No production cutover is authorized by a successful rehearsal.
+## In a Hive installation
+
+[Hive](https://hivemagnus.com/guides/hive.md) installs HiveXUI next to the ingress on the console host, in every profile, and writes its public runtime file. There is nothing else to configure.
+
+## Build it
+
+```bash
+npm ci --ignore-scripts
+npm run build
+npm test
+```
+
+Expected result: compiled assets in `dist/`. `Dockerfile` serves them as UID 101. Without Hive, mount a public `runtime.json` listing product prefixes and Oathweave public clients, and configure HTTPS and API routing in a separate ingress, as the README describes. Runtime JSON contains public identifiers only.
 
 ## Source review
 
-Reviewed against the local extracted candidate implementation on 2026-11-05, revision `ef4bb23`. The extracted repository has not been published as part of an official suite release. Original source attribution, licenses and immutable history remain preserved in the [published Hive source](https://github.com/ChefTaco/hive).
-
-[Product directory](/index.md) · [Hive installation boundary](/guides/hive.md)
+Reviewed 2026-11-05 against public revision `565eec413fd4361f0db319ecfb9384a860c7b05f`: [README](https://github.com/ChefTaco/HiveXUI/blob/565eec413fd4361f0db319ecfb9384a860c7b05f/README.md), [changelog](https://github.com/ChefTaco/HiveXUI/blob/565eec413fd4361f0db319ecfb9384a860c7b05f/CHANGELOG.md) and [theme](https://github.com/ChefTaco/HiveXUI/blob/565eec413fd4361f0db319ecfb9384a860c7b05f/docs/THEME.md). License: Apache-2.0.

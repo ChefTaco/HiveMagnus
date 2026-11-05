@@ -6,11 +6,11 @@
 
 ## Choose an entry point
 
-Use Cindertrace to investigate endpoint, network, identity, and application observations. It runs with local administrator login, PostgreSQL, and Redis. Hive and Magnus are optional. Collectors send signed observations directly to Cindertrace; sources and listeners must be explicitly configured.
+Use Cindertrace to investigate endpoint, network, identity, and application observations. In a [Hive](https://hivemagnus.com/guides/hive.md) installation it is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md), signed in through Oathweave with resource tokens, and fresh Hive setup starts its ingestion, dispatch and notification integrations disabled until you review them. It also runs on its own with its retained console, local administrator login, PostgreSQL, and Redis. Hive and Magnus are optional. Collectors send signed observations directly to Cindertrace; sources and listeners must be explicitly configured.
 
 Cindertrace owns security cases, evidence, correlation, investigations, assurance, policies, retention, audit, and approvals. Magnus owns fleet management and host execution. Existing `/security-fusion` pages and `/api/v1/security-fusion/*` API paths remain compatible.
 
-## Install a fresh Compose stack
+## Install a fresh Compose stack on its own
 
 Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.1 or later on the 24.x line, or 26.13.0 or later on the 26.x line. Use a fresh checkout and installation directory. The first release is `v0.1.0`.
 
@@ -24,7 +24,7 @@ docker compose up --build -d
 
 Expected result: initialization writes unique installation secrets, an Argon2id administrator hash, and a 90-day local TLS certificate. It refuses to overwrite an existing `.env`. Compose starts the console, API, PostgreSQL, and Redis, applies migrations, and keeps database and Redis ports private to the Compose network.
 
-Open `https://localhost:3444`. The console binds to loopback by default. Read the generated login privately from `state/initial-credentials.txt`. Trust the generated local certificate for development. For remote access, use your own CA-issued certificate, configure the public origin, and explicitly choose the listening interface using the full installation guide. Keep certificate verification enabled.
+Open `https://localhost:3444`. This is the retained standalone console, which binds to loopback by default. Read the generated login privately from `state/initial-credentials.txt`. Trust the generated local certificate for development. For remote access, use your own CA-issued certificate, configure the public origin, and explicitly choose the listening interface using the full installation guide. Keep certificate verification enabled.
 
 Source adapters begin disabled. After configuring admitted sources and their credentials, start the optional collector:
 
@@ -36,7 +36,7 @@ Do not publish `.env`, credentials, certificates, state, incident records, or li
 
 ## Try the evolving investigation lab
 
-The optional lab is a disposable three-stage investigation for people and external agents. It runs without Hive, Magnus, external sources, or a model provider. Use a **fresh separate checkout**; never initialize it over an operational installation. The first release tag above predates this feature, so these commands pin the reviewed lab implementation:
+The optional lab is a disposable three-stage investigation for people and external agents, using synthetic evidence. It runs without Hive, Magnus, external sources, or a model provider. Lab startup forbids external identity and integration settings, including Oathweave, so the lab keeps its own console with local administrator login and is not reached through HiveXUI. Use a **fresh separate checkout**; never initialize it over an operational installation. The first release tag above predates this feature, so these commands pin the reviewed lab implementation:
 
 ```bash
 git clone https://github.com/ChefTaco/cindertrace.git cindertrace-lab
@@ -69,7 +69,7 @@ Response requires explicit confirmation of an exact immutable plan, expires afte
 
 ## Optional integrations
 
-- **Hive:** IAM sign-in and scoped IAM audit and Router security metadata. Security export uses scoped OAuth client credentials; the retired static-token fallback is not supported.
+- **Oathweave and Emberpath:** sign-in and scoped identity audit and routing security metadata. Security export uses scoped OAuth client credentials; the retired static-token fallback is not supported.
 - **Magnus:** inventory, durable observations, summaries and links, and explicitly approved restart, isolation, or release through its response bridge. Fleet operations remain independent of Cindertrace availability.
 - **Sources:** Wazuh, UniFi, NetFlow/IPFIX, Tailscale, Loki, and ChatterMost/Mattermost adapters. Only configured inputs and listeners run. ChatterMost/Mattermost audit export excludes message bodies.
 - **Agents:** the server-side Cindertrace adapter supports scoped reads and investigation drafts. Keep its credentials server-side.
@@ -100,3 +100,5 @@ Rollback keeps current state and requires reviewed application compatibility. Af
 ## Source review
 
 Reviewed 2026-11-04 against public revision `0368abb6779c0c715e1dc00f7f346b2253f5f040`: [README](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/README.md), [lab workflow and API](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/INVESTIGATION-LAB.md), [installation](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/INSTALLATION.md), and [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/UPGRADING.md). The normal installation example retains `v0.1.0` (`576f4b4e7ba4ef5f0524deb213137b3fd643aa88`); the lab example pins the newer implementation explicitly. This release adds schema profile `cindertrace-v2` and disables automatic incompatible rollback; existing installations require the upgrade tool's verified restore rehearsal. License: Apache-2.0.
+
+HiveXUI placement, standalone console and lab identity rule reviewed 2026-11-05 against public [revision `dfca27f77ae2d34625069a641c906e2f77f28f86`](https://github.com/ChefTaco/cindertrace/tree/dfca27f77ae2d34625069a641c906e2f77f28f86): `docs/OATHWEAVE.md`, `docs/OATHWEAVE_CONSOLE.md` and the lab startup fence. The commands above keep their earlier review.

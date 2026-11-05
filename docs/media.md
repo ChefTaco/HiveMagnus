@@ -1,15 +1,48 @@
 # Public media provenance
 
-All captures show actual project UI code. Data is synthetic; the images are illustrative, not evidence of a production fleet or live agent activity.
+All console captures show the real HiveXUI build. Data is synthetic and the installation is disposable; the images are illustrative, not evidence of a production fleet, live agent activity, or workflow parity.
+
+## HiveXUI gallery, 2026-11-05
+
+| Asset (`public/captures/`) | Console screen | Gallery area |
+| --- | --- | --- |
+| `hive-overview.webp` | Hive > Installation | Hive |
+| `fleet-overview.webp` | Magnus > Fleet overview | Magnus |
+| `fleet-map.webp` | Magnus > Fleet map | Magnus |
+| `fleet-mission.webp` | Magnus > Mission control | Magnus |
+| `identity.webp` | Oathweave > Users, scrolled to the directory | Oathweave |
+| `models.webp` | Emberpath > Traces | Emberpath |
+| `memories.webp` | HiveMem > Memories | HiveMem |
+| `skills.webp` | HiveSkills catalogue | HiveSkills |
+| `cindertrace-overview.webp` | Cindertrace overview | Cindertrace |
+| `cindertrace-case.webp` | Cindertrace synthetic case detail | Cindertrace |
+| `chat.webp` | ChatterMost, Operations channel | ChatterMost |
+| `palette.webp` | Command palette over the installation overview | HiveXUI |
+
+Static files came from a fresh `npm run build` of public HiveXUI revision `565eec413fd4361f0db319ecfb9384a860c7b05f`. API requests reached a disposable Hive full-profile fixture running candidate images on a loopback HTTPS origin, with generated credentials and no operational data. `scripts/capture-hivexui.mjs` drove headless Chromium at 1440 × 900 with `deviceScaleFactor` 2 and no browser chrome. Images are 2880 × 1800, encoded to WebP at quality 0.82 with no crop or content edits.
+
+Data came from a throwaway seed script, not part of this repository: fictional hosts `node-NN.example.com`, documentation addresses from `192.0.2.0/24` and `198.51.100.0/24`, `example.com` accounts, `seed-` usernames and channels, and canned model responses. It wrote Magnus heartbeats and Cindertrace events directly to that stack's own databases, because the browser ingress refuses those machine routes. Ardent and Codex agents do not exist, and failed `df` and `uptime` commands in the fleet overview are expected for hosts that do not exist.
+
+Two responses were changed in the browser for the capture only:
+
+- `/api/oathweave/health/live` reports normal sign-in limits. The fixture relaxes them for testing, and the warning strip that follows must never appear in a public image.
+- The fleet topology marks seeded nodes reachable with plausible latency, because the API probes documentation addresses that can never answer. Offline nodes stay offline. This affects `fleet-map.webp` only.
+
+The identity capture shows the users directory rather than the overview, because the overview's session table lists the real local bridge address of the fixture's host. Every image was reviewed at full size before publication for hostnames, addresses, emails, usernames and names. Source posture names adapters such as Wazuh and UniFi only because the seed labels synthetic events that way; no such system was connected.
+
+To reproduce, run a new disposable installation, seed it with obviously fake data, then:
+
+```bash
+node scripts/capture-hivexui.mjs --credentials FILE --ui-dist HIVEXUI/dist --playwright-from HIVEXUI --output output/captures
+```
+
+The script refuses anything but a `https://localhost:PORT` origin. Review each PNG before copying its WebP into `public/captures/`. It needs `@playwright/test`, which the HiveXUI checkout provides.
+
+## Emberfold CLI excerpt
 
 | Asset | Source revision | Capture scenario |
 | --- | --- | --- |
-| Hive console | `e29ffb40d70bb9c3e7ae3abc6453995e5ffa1a2a` | Public Hive UI dev server, browser API fixtures in `scripts/demo-hive.js` |
-| Magnus console | `f1f3c6a2e3dce2e2fa506341ee400d4d4d6d5d75` | Public Magnus UI dev server, isolated Redis and synthetic local Control API responses; eight fictional nodes |
-| ChatterMost chat | `b4834314b330c6f9b723d4b37a67c7ea4687adb6` | Disposable JSON-store server with sample administrator and sample messages |
 | Emberfold CLI excerpt | `@hivemagnus/emberfold-cli@0.1.0` | Selected fields from actual `prepare --dry-run` output for `scripts/samples/emberfold.json`, with values unchanged; no model calls |
-
-The Next.js development toolbar was hidden before the Magnus capture. Product content and styling were not altered. Each screenshot was reviewed visually before publication.
 
 Reproduce the Emberfold output from the site checkout:
 
@@ -17,18 +50,10 @@ Reproduce the Emberfold output from the site checkout:
 npx --package @hivemagnus/emberfold-cli@0.1.0 emberfold prepare --input scripts/samples/emberfold.json --dry-run
 ```
 
-The system atlas, brand mark, and project icons are original SVG/CSS artwork. DM Sans, Space Grotesk, and IBM Plex Mono are self-hosted; their licenses ship in `public/licenses/`.
+The system atlas, brand mark, and project icons are original SVG/CSS artwork; the gallery's colors follow HiveXUI's public design tokens. DM Sans, Space Grotesk, and IBM Plex Mono are self-hosted; their licenses ship in `public/licenses/`.
 
-## Cindertrace, 2026-11-04
+## Gallery structure
 
-`captures/cindertrace-overview.webp` and `captures/cindertrace-case.webp` show the actual console from public revision `a92c12a4e7386be6099e6becebc115fc146b91b1` (application code matches release `576f4b4e7ba4ef5f0524deb213137b3fd643aa88`). A clean Git archive was built into a separately named image and launched as a new disposable Compose project with fresh secrets, separate PostgreSQL/Redis volumes, and a loopback port. No production configuration or source adapters were copied or enabled. Hive and Magnus were absent.
+Section 3 shows one interface, HiveXUI, across its product areas instead of one tab per product UI. Magnus and Cindertrace offer several views of the same area. The gallery preserves each capture's aspect ratio and links the original image. Emberfold has no console section, so its verified CLI excerpt sits below the gallery. The earlier per-product captures and their scripts were retired; their provenance is in this file's Git history.
 
-The public `scripts/demo.mjs --preserve` fixture ingested one synthetic Wazuh authentication observation and preserved its evidence. The examples use `app-1.example.com` and `operator@example.com`. Source health represents this local synthetic ingestion, not a live Wazuh deployment. Host response is visibly unconfigured. Captures contain no operational records, credentials, private hostnames, or browser chrome. Product styling and content were not modified for the screenshots.
-
-To reproduce, follow Cindertrace's isolated demo instructions in a separate checkout with generated configuration. Sign in privately, then run this site's `scripts/capture-cindertrace.js` with Playwright CLI. It waits for the case heading before capture to avoid recording the preceding overview during navigation. Screenshots are 1440 × 900; reviewed PNGs were encoded to WebP at quality 92 with no crop or content edits. Review the images before copying them into `public/captures/`.
-
-## Unified interface gallery
-
-Section 3 includes Hive, Magnus, Cindertrace, ChatterMost, and Emberfold using the shared project registry. Cindertrace’s two captures are selectable views of the same project. The full-size assets and their provenance above are unchanged; the gallery preserves their aspect ratios and links the original images. Emberfold retains its verified CLI excerpt. The hero now links to these interfaces instead of displaying the decorative orbit illustration. No new product screenshots or generated product imagery were introduced for this restructuring.
-
-The social preview (`og.svg` and `og.png`) now names all five projects and follows the page’s project chooser. It is original SVG artwork, rendered in Chromium at 1200 × 630 for the PNG; it contains only public project names and website copy.
+The social preview (`og.svg` and `og.png`) names all ten projects and shows `captures/fleet-overview.webp`, cropped, in a console-styled frame. The rest is original SVG artwork; the PNG is rendered in Chromium at 1200 × 630 and contains only public project names, website copy and that synthetic capture.

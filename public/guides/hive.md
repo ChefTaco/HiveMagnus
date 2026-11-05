@@ -1,67 +1,78 @@
 # Hive: agent guide
 
-> Suite deployment, tested product bundles, upgrades, backup and recovery.
+> Bash installer and controller for signed, digest-pinned suite releases, with upgrades, backups, restore rehearsals and the Hive Registry.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/hive) · [Current instructions](https://github.com/ChefTaco/hive#quick-start-with-npm)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/hive) · [Releases](https://github.com/ChefTaco/hive/releases) · [Deployment overview](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/deployment/README.md)
 
 ## When to use Hive
 
-Choose Hive to plan, install, upgrade and recover a tested combination of independent ecosystem products. Core provides identity, model routing, memory, skill distribution and the shared console. Select additional products only where needed. The published launcher described below predates this separation.
+Choose Hive to plan, install, upgrade and recover a tested combination of independent ecosystem products. `hive.sh` verifies a signed release manifest, renders per-host Compose projects from digest-pinned images, and records what it did. Hive plans, applies and recovers; each product keeps its own data, credentials and recovery lifecycle.
 
-## Candidate ecosystem boundary
+| Profile | Adds |
+| --- | --- |
+| `core` | Oathweave, Emberpath, HiveMem, HiveSkills, HiveXUI, the HTTPS ingress and the Hive Registry, with their private datastores |
+| `full` | Core plus Magnus, Cindertrace, ChatterMost and the optional Emberfold HTTP service |
+| `custom` | Oathweave, HiveXUI, the ingress and the Hive Registry, plus the products you select |
 
-Hive is becoming the Bash/Compose installer for independently versioned Oathweave, Emberpath, HiveMem, HiveSkills and HiveXUI, with selectable Magnus/Ardent, Cindertrace, ChatterMost and Emberfold HTTP. The static HiveXUI console calls authorized product APIs through HTTPS ingress. Magnus keeps its current console until a later merge.
+Ardent and other native host agents are opt-in selections with independent pinned artifacts. Selecting Magnus does not install an agent.
 
-The candidate controller supports interactive and unattended configuration, per-host placement, protected secret references, signed release pins, backup and isolated restore rehearsals. No official signed suite release has been published. Do not cut over an existing installation based on a candidate guide or a passing fresh fixture.
+## Check what is published
 
-Ollama, llama.cpp, other inference services and hosted APIs are external dependencies. Hive only verifies connectivity, model discovery, generation and streaming, then registers verified providers with Emberpath. It never installs or manages inference services, model downloads, storage, licenses or GPUs. Existing external configurations and model resources remain with their current owner.
-
-## Published legacy launcher
-
-The commands below retain the previously reviewed published launcher and its recovery-compatible documentation. They are not commands for the new candidate Bash suite.
+Hive installs only from a signed release. Look for one on the [releases page](https://github.com/ChefTaco/hive/releases). A passing disposable rehearsal is not production cutover approval, physical multi-host certification or ARM64 certification. Do not cut over an existing installation based on this guide or on a passing fresh fixture.
 
 ## Prerequisites
 
-- Linux or macOS, npm, and Node.js 24.22.1+ in the 24 series or 26.13.0+ in the 26 series.
-- OpenSSL for the local TLS certificates.
-- Docker to run Qdrant and Redis, or independently configured Qdrant and Redis services.
-- `flock` for HiveMem (util-linux on Linux; `brew install flock` on macOS).
+- On the controller: Bash, `jq`, OpenSSL and `sha256sum`.
+- On each host: Docker with Compose, reached locally or through strictly verified SSH. On console hosts also `ss` (iproute2), `df` and coreutils.
+- The release manifest, its detached signature and the publisher's public key. Defaults are `releases/VERSION.json`, the same path plus `.sig`, and `trust/publisher.pub`.
+- An HTTPS console origin with existing certificate and key files on the console host.
 
-These steps are for a first installation. Existing installations should use the launcher's upgrade instructions.
+## Install
 
-## Install and start
-
-Run in an interactive terminal:
+In an interactive terminal:
 
 ```bash
-npx @hivemagnus/hive init
-npx @hivemagnus/hive start
+./hive.sh --release __HIVE_RELEASE__
 ```
 
-`init` asks which services to install, prepares configuration and local TLS, and asks before installing packages or starting containers. Without an interactive terminal it refuses to wait for input; consult the launcher's documented `--yes` option when intentionally automating setup.
+Expected result: the controller verifies the manifest signature, then asks for the installation name and directory, host, console origin, profile and certificate references. It never asks for a password on the command line. It shows a plan and applies it after you confirm. Use `--manifest`, `--signature` and `--trust-key` for files outside the default paths.
 
-Expected result: `start` reports `Hive is running` and prints the console URL, normally `https://localhost:9443/`. Services run in the foreground; Ctrl-C stops them. Runtime and configuration live under `~/.hive`.
-
-Sign in as `admin` using the password IAM creates on first start in `~/.hive/iam/initial-credentials.env`. Read it privately. The initial certificate uses a local CA; follow the launcher guide to trust that CA. Change the initial password and follow the guide's credential-file cleanup instructions.
-
-For diagnostics in another terminal:
+To prepare configuration separately or run unattended, supply the same installation JSON ([example](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/examples/installation.json), [schema](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/examples/installation.schema.json)):
 
 ```bash
-npx @hivemagnus/hive doctor
+./hive.sh plan --config installation.json --release __HIVE_RELEASE__
+./hive.sh install --config installation.json --release __HIVE_RELEASE__ --non-interactive --yes
+./hive.sh status --config installation.json
+./hive.sh doctor --config installation.json
 ```
 
-The optional Skills registry can be selected during a new setup with `npx @hivemagnus/hive init --services all`. Its OS/PAM administration login is independent of IAM. Read the Skills prerequisites before selecting it; the Linux PAM administration flow is not available on macOS.
+Planning does not contact hosts. Per-product secrets, initial identities and internal transport keys are generated once into protected files, and retries check the exact inputs. Existing data, configuration, model resources and Compose projects are never silently adopted or overwritten. `./hive.sh --help` lists the lifecycle commands: `init`, `upgrade`, `rollback`, `backup`, `adopt`, `restore` and `rehearse`.
 
-## Connect an agent
+For hosts beyond one, read the [distributed](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/deployment/DISTRIBUTED.md), [full](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/deployment/FULL.md) and [custom](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/deployment/CUSTOM.md) guides.
 
-Use the Router's OpenAI-compatible interface for model requests, HiveMem's REST API or TypeScript SDK for memory, and IAM's SDK for verification in services that trust IAM. Configure each integration explicitly using the relevant service documentation. Do not assume console credentials are an API token or that installing Hive automatically configures an agent.
+## Open the console
 
-- [Architecture](https://github.com/ChefTaco/hive/blob/main/docs/HIVE_ARCHITECTURE.md)
-- [Launcher, upgrades, and uninstall](https://github.com/ChefTaco/hive/tree/main/packages/hive)
-- [HiveMem TypeScript SDK](https://github.com/ChefTaco/hive/tree/main/services/hive-mem/sdks/typescript)
-- [OpenAPI documents](https://github.com/ChefTaco/hive/tree/main/docs/openapi)
-- [Repository instructions](https://github.com/ChefTaco/hive/blob/main/AGENTS.md)
+Visit the HTTPS origin you configured and sign in through Oathweave. Initial sign-in instructions are stored on the identity host in `config/initial-credentials.env`; read them privately. [HiveXUI](https://hivemagnus.com/guides/hivexui.md) is the console for every installed product, and shows sections only for products in this installation.
+
+## Hive Registry
+
+Every installation runs a Hive Registry: its install catalog and lookup API, a small SQLite container on the console host. It is mandatory, one per installation, and unrelated to [HiveSkills](https://hivemagnus.com/guides/hiveskills.md), the skills registry. It holds the products the signed release offers, what this installation actually runs, the links an operator or client needs, and an append-only history. It has no console section.
+
+```bash
+./hive.sh registry list --config installation.json
+./hive.sh registry get emberpath --config installation.json
+```
+
+`list` also has `installed`, `summary` and `history` forms. `hive.sh` is the normal writer; `registry add`, `update` and `remove` cover externally managed products only, and any credential in an entry is refused. The ingress passes only explicit `GET` routes under `/api/registry/`, so writes never leave the private network. `status` reports drift by name and `doctor` fails on any drift. See the [API reference](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/docs/hive-registry-api.md).
+
+## External inference
+
+Ollama, llama.cpp, other inference services and hosted APIs are external dependencies. Hive only verifies connectivity, model discovery, generation and streaming, then registers verified providers with Emberpath. It never installs or manages inference services, model downloads, storage, licenses or GPUs. See [external inference](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/deployment/INFERENCE.md).
+
+## Existing installations
+
+The npm launcher `@hivemagnus/hive` predates this separation and remains the path for installations it already manages; follow [UPGRADING](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/UPGRADING.md). To bring one under the controller, rehearse its own backups and read [existing-data rehearsals](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/deployment/EXISTING_DATA_REHEARSALS.md) before any separately approved maintenance window. Preserve each installation's state.
 
 ## Source review
 
-Reviewed 2026-11-03 against public revision `78fb6cced1aade79b4c55160754f4d6466bf8891`: [root README](https://github.com/ChefTaco/hive/blob/78fb6cced1aade79b4c55160754f4d6466bf8891/README.md) and [launcher README](https://github.com/ChefTaco/hive/blob/78fb6cced1aade79b4c55160754f4d6466bf8891/packages/hive/README.md). Commands follow those docs; npm resolves the currently published launcher. Follow current source instructions when versions change. License: Apache-2.0.
+Reviewed 2026-11-05 against public revision `623eba65fc67b7b97bb58180088b6b8fb17dc307` on branch `codex/ecosystem-separation`: [deployment overview](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/deployment/README.md), [full profile](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/deployment/FULL.md), [Hive Registry API](https://github.com/ChefTaco/hive/blob/623eba65fc67b7b97bb58180088b6b8fb17dc307/docs/hive-registry-api.md) and `hive.sh --help`. Commands follow those sources; `__HIVE_RELEASE__` is the exact release version. Follow current docs for later releases. License: Apache-2.0.

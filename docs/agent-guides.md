@@ -1,6 +1,6 @@
 # Agent documentation maintenance
 
-`public/llms.txt` indexes the Markdown overview and five project guides. The visual site links them in its For agents section and no-JavaScript fallback. The HTML head advertises `llms.txt` with `rel="describedby"` and the overview with `rel="alternate" type="text/markdown"`. Markdown responses also advertise the index through an HTTP Link header.
+`public/llms.txt` indexes the Markdown overview and ten project guides. The visual site links them in its For agents section and no-JavaScript fallback. The HTML head advertises `llms.txt` with `rel="describedby"` and the overview with `rel="alternate" type="text/markdown"`. Markdown responses also advertise the index through an HTTP Link header.
 
 ## Public source review, 2026-11-03
 
@@ -26,7 +26,7 @@ Command review does not install or reconfigure Hive, Magnus, ChatterMost, or a H
 
 Fetch current public docs, record their commit IDs, and compare commands and prerequisites before changing examples. Preserve exact release pins where shown; never substitute mutable image tags. Recheck the interactive install lab if any documented command changes. Update each guide's source review date and immutable source links.
 
-The static JSON-LD graph in `index.html` describes five repositories and Ardent as a part of Magnus using Schema.org `SoftwareSourceCode`. It includes descriptions, repository URLs, TypeScript language, license links, and links to the guides. Keep its CSP SHA-256 hash in `public/_headers` synchronized with the exact script text, including whitespace. Do not loosen the policy to allow arbitrary inline scripts.
+The static JSON-LD graph in `index.html` describes ten repositories and Ardent as a part of Magnus using Schema.org `SoftwareSourceCode`. It includes descriptions, repository URLs, TypeScript language, license links, and links to the guides. Keep its CSP SHA-256 hash in `public/_headers` synchronized with the exact script text, including whitespace. Do not loosen the policy to allow arbitrary inline scripts.
 
 Before publishing, build, check local Markdown links and shell syntax, validate the JSON-LD and CSP hash, run the browser check, and inspect the For agents section at desktop/mobile widths. Review the Pages preview before promotion to `main`; verify live Markdown content types, discovery headers, assets, and the intended source revision after deployment.
 
@@ -47,3 +47,26 @@ Reviewed the public lab workflow at `0368abb6779c0c715e1dc00f7f346b2253f5f040` a
 The maintainer requested the five extracted products in the public directory: Emberpath, Oathweave, HiveMem, HiveSkills and HiveXUI. This supersedes the earlier five-project content limit. Candidate guides identify local implementation review and explicitly state that official publication and migration acceptance are pending. Existing published installation recipes retain their original source review and are labeled legacy where appropriate. No unverified new public repository link or official release is advertised.
 
 The ten-product atlas distinguishes deployment orchestration, identity, model routing, memory, distribution, the static console, host execution, security, chat and context. Inference services, hosted providers and model storage remain external dependencies. The metadata and Markdown discovery index follow the same boundaries.
+
+These two earlier records describe the site as reviewed then. The section below supersedes the candidate labels.
+
+## Unified console, 2026-11-05
+
+The extracted products are now public repositories, and HiveXUI is the single browser UI of a Hive installation. Guides for Emberpath, Oathweave, HiveMem, HiveSkills and HiveXUI now carry real commands from their READMEs at these public revisions, and link the repositories instead of a candidate label. Hive, Magnus, Cindertrace and ChatterMost guides gained their console and installer changes; Emberfold's revision is unchanged.
+
+| Project | Revision | Reviewed sources |
+| --- | --- | --- |
+| Hive | `623eba65fc67b7b97bb58180088b6b8fb17dc307` on branch `codex/ecosystem-separation` | `deployment/README.md`, `deployment/FULL.md`, `deployment/CUSTOM.md`, `deployment/DISTRIBUTED.md`, `docs/hive-registry-api.md`, `scripts/suite/suite-catalog.json`, `hive.sh --help` |
+| HiveXUI | `565eec413fd4361f0db319ecfb9384a860c7b05f` | `README.md`, `CHANGELOG.md`, `docs/THEME.md`, `src/lib/navigation.ts` |
+| Emberpath | `1ee9f3c37f28694ae971e2f8ec599b57ad4f89c0` | `README.md` |
+| Oathweave | `f2150cc277e5b96b619cfaae98af96c54133e66d` | `README.md`, `apps/iam-core/README.md` |
+| HiveMem | `ac4195fe4bc58647d74d644a6fbb5a1150bbc0d2` | `README.md`, `ts-core/README.md` |
+| HiveSkills | `1d950c8695ab69af0c1d5ba246bbf6b0417fcbb8` | `README.md` |
+| Magnus | `887d039a6a167b04acbf787ab0e548f87e866450` | `README.md`, `services/fleet-gateway/README.md`, `docs/console-api.md` |
+| Cindertrace | `dfca27f77ae2d34625069a641c906e2f77f28f86` | `README.md`, `docs/OATHWEAVE.md`, `docs/OATHWEAVE_CONSOLE.md`, `docs/INVESTIGATION-LAB.md`, `services/security-fusion/src/config/lab-isolation.ts` |
+| ChatterMost | `88a08663454f69ef8b07ccdcfc31ae9e6184efcb` | `README.md`, `docs/containers.md`, `docs/oathweave.md` |
+| Emberfold | `aac58682312fb509d8a7ba240b9a151651d272de` | Unchanged |
+
+Hive's `hive.sh` commands use one placeholder, `__HIVE_RELEASE__`, because release version numbers and image names are not final; see [deployment](deployment.md). The docs do not yet say how to obtain the controller, signed manifest and publisher key together, so the walkthrough points to the releases page and invents no download command. Release status wording stays true before and after publication: it names the releases page rather than a state.
+
+Cindertrace's lab commands keep their pinned `0368abb6779c0c715e1dc00f7f346b2253f5f040` review; the lab's startup fence at the revision above confirms it forbids `OATHWEAVE_`, `HIVE_` and `MAGNUS_` settings, so it keeps its own console. No installation command was exercised against an operational environment. All guide Bash blocks passed `bash -n`.

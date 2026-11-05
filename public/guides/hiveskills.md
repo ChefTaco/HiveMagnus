@@ -1,25 +1,29 @@
 # HiveSkills
 
-> Skills registry, immutable archives, channels, assignments and distribution.
+> The skills registry for agents: a digest-verified archive API with immutable releases, channels, assignments and audited distribution.
 
-**Candidate extraction.** The new ecosystem has no official signed suite release yet. Independent product and installation acceptance must pass before replacing an existing deployment. This guide describes the candidate ownership boundary; it is not a published installation recipe.
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/HiveSkills) · [README](https://github.com/ChefTaco/HiveSkills#readme)
 
 ## Responsibility
 
-The registry distributes authenticated manifests and immutable archives. Approved host deployment must run through Magnus jobs and agents. Native compatibility paths and retained frontends remain until replacement workflow and recovery gates pass.
+The registry distributes authenticated manifests and immutable archives. It is unrelated to the [Hive Registry](https://hivemagnus.com/guides/hive.md#hive-registry), which catalogs one installation's products. Approved host deployment runs through Magnus jobs and agents with a dedicated endpoint-scoped grant that cannot run arbitrary commands or administer the fleet.
 
-## Suite integration
+## In a Hive installation
 
-Hive plans and installs selected product containers with independently pinned versions. Core includes Oathweave, Emberpath, HiveMem, HiveSkills and HiveXUI. Full adds Magnus/Ardent, Cindertrace, ChatterMost and optional Emberfold HTTP. Each product retains standalone operation and its own data, credentials and recovery lifecycle.
+HiveSkills is part of the core profile, installed by [Hive](https://hivemagnus.com/guides/hive.md). Its catalogue, archive and assignment screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md). Native host mappings are prepared separately and are never activated by installation alone.
 
-Do not copy a sibling backend source tree into the browser application. Products own their API specifications and browser-safe contracts. Native machine protocols remain separate from suite browser sign-in.
+## Run it on its own
 
-## Migration and recovery
+Requires Linux, Node.js 24.22.1+ or 26.13.0+, TLS certificates and `pamtester` for OS-backed sign-in. Agent deployment also needs Bash, OpenSSH and permission to enable the target's user timer. Prepare a private `skills.env` with the settings its README lists, including a session secret from `openssl rand -hex 32`.
 
-Preserve existing databases, signing keys, native issuer URLs, client registrations, memberships and audit history. Restore a backup in isolation with dispatchers and collectors disabled before activation. Only one writer may be active during cutover. Existing frontends and published packages remain recovery paths until acceptance passes. No production cutover is authorized by a successful rehearsal.
+```bash
+npx @hivemagnus/hive-skills check --env-file skills.env
+npx @hivemagnus/hive-skills migrate --env-file skills.env
+npx @hivemagnus/hive-skills --env-file skills.env
+```
+
+Expected result: `check` validates TLS, configuration and an existing database without creating state, and a fresh install starts with an empty catalog. On this standalone path the registry has its own OS-authenticated operator page, and its administration is independent of Oathweave sign-in.
 
 ## Source review
 
-Reviewed against the local extracted candidate implementation on 2026-11-05, revision `717f0d1507fdf2555622680513951963972027b8`. The extracted repository has not been published as part of an official suite release. Original source attribution, licenses and immutable history remain preserved in the [published Hive source](https://github.com/ChefTaco/hive).
-
-[Product directory](/index.md) · [Hive installation boundary](/guides/hive.md)
+Reviewed 2026-11-05 against public revision `1d950c8695ab69af0c1d5ba246bbf6b0417fcbb8`: [README](https://github.com/ChefTaco/HiveSkills/blob/1d950c8695ab69af0c1d5ba246bbf6b0417fcbb8/README.md). The commands follow its npm instructions. Original attribution and migration history are preserved. License: Apache-2.0.

@@ -59,7 +59,9 @@ Restart an existing gateway through its current supervisor instead. Keep one gat
 
 ## Interfaces and limits
 
-Mattermost-compatible REST lives under `/api/v4`; WebSocket events use `/api/v4/websocket`. Connect official clients using the HTTPS origin, without an API path. Mobile background push, calls and upstream plugins/marketplace are not implemented. Candidate suite browser identity uses Oathweave while native Mattermost sessions remain product-owned. ChatterMost is independently developed; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.
+Mattermost-compatible REST lives under `/api/v4`; WebSocket events use `/api/v4/websocket`. Connect official clients using the HTTPS origin, without an API path. Mobile background push, calls and upstream plugins/marketplace are not implemented.
+
+In a [Hive](https://hivemagnus.com/guides/hive.md) installation the browser interface is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md). An explicitly linked Oathweave identity is exchanged for a short native session; existing user IDs, roles, memberships and Mattermost sessions remain product-owned. ChatterMost keeps its small included web UI, which the official desktop app loads and recovery relies on. ChatterMost is independently developed; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.
 
 - [Container installation](https://github.com/ChefTaco/ChatterMost/blob/main/docs/containers.md)
 - [Hermes setup](https://github.com/ChefTaco/ChatterMost/blob/main/docs/hermes-compatibility.md)
@@ -70,3 +72,5 @@ Mattermost-compatible REST lives under `/api/v4`; WebSocket events use `/api/v4/
 ## Source review
 
 Reviewed 2026-11-03 against public revision `bab016695d493dcc094b82e0a498fac74bba9f7c`: [README](https://github.com/ChefTaco/ChatterMost/blob/bab016695d493dcc094b82e0a498fac74bba9f7c/README.md), [container guide](https://github.com/ChefTaco/ChatterMost/blob/bab016695d493dcc094b82e0a498fac74bba9f7c/docs/containers.md), and [agent runbook](https://github.com/ChefTaco/ChatterMost/blob/bab016695d493dcc094b82e0a498fac74bba9f7c/AGENTS.md). Release `0.3.3` is pinned intentionally. Follow current docs for later versions. License: Apache-2.0.
+
+HiveXUI placement reviewed 2026-11-05 against public [revision `88a08663454f69ef8b07ccdcfc31ae9e6184efcb`](https://github.com/ChefTaco/ChatterMost/tree/88a08663454f69ef8b07ccdcfc31ae9e6184efcb): README and `docs/oathweave.md`. The installation sequence above is unchanged at that revision.

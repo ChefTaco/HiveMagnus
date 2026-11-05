@@ -1,25 +1,36 @@
 # Oathweave
 
-> Identity, authentication, authorization, browser sign-in and service identities.
+> Identity and access management: OAuth 2.0 and OpenID Connect, role-based access, MFA and passkeys, service identities and an append-only audit trail.
 
-**Candidate extraction.** The new ecosystem has no official signed suite release yet. Independent product and installation acceptance must pass before replacing an existing deployment. This guide describes the candidate ownership boundary; it is not a published installation recipe.
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/Oathweave) · [Server README](https://github.com/ChefTaco/Oathweave/blob/main/apps/iam-core/README.md)
 
 ## Responsibility
 
-Browser sign-in uses Authorization Code with PKCE S256 and explicit resource audiences. Product APIs validate independently. Account links require an approved issuer/subject to existing product ID mapping; matching email never merges accounts. MFA, passkeys, recovery and consent remain identity-owned.
+Oathweave issues RS256-signed JWTs and keeps sessions, roles, clients, service accounts and audit. Browser sign-in uses Authorization Code with PKCE S256 and explicit resource audiences. Product APIs validate independently. Account links require an approved issuer and subject mapped to an existing product ID; matching email never merges accounts. MFA, passkeys, recovery and consent remain identity-owned.
 
-## Suite integration
+## In a Hive installation
 
-Hive plans and installs selected product containers with independently pinned versions. Core includes Oathweave, Emberpath, HiveMem, HiveSkills and HiveXUI. Full adds Magnus/Ardent, Cindertrace, ChatterMost and optional Emberfold HTTP. Each product retains standalone operation and its own data, credentials and recovery lifecycle.
+Oathweave and its private Redis are required in every profile. [Hive](https://hivemagnus.com/guides/hive.md) provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
 
-Do not copy a sibling backend source tree into the browser application. Products own their API specifications and browser-safe contracts. Native machine protocols remain separate from suite browser sign-in.
+## Run it on its own
 
-## Migration and recovery
+Requires Node.js 24.22.1+ or 26.13.0+ on Linux or macOS, Redis 7+ and OpenSSL. The published package keeps its original name, `@hivemagnus/hive-iam-server`.
 
-Preserve existing databases, signing keys, native issuer URLs, client registrations, memberships and audit history. Restore a backup in isolation with dispatchers and collectors disabled before activation. Only one writer may be active during cutover. Existing frontends and published packages remain recovery paths until acceptance passes. No production cutover is authorized by a successful rehearsal.
+```bash
+docker run -d --name hive-redis -p 127.0.0.1:6379:6379 redis:7.4.7-alpine
+cat > iam.env <<ENV
+HIVE_AUTO_MIGRATE=true
+COOKIE_SECRET=$(openssl rand -hex 32)
+IAM_AGENT_SECRET=$(openssl rand -hex 32)
+SEED_ADMIN_PASSWORD=$(openssl rand -base64 24)
+ENV
+chmod 600 iam.env
+npx --allow-scripts=better-sqlite3,argon2 @hivemagnus/hive-iam-server check --env-file iam.env
+npx --allow-scripts=better-sqlite3,argon2 @hivemagnus/hive-iam-server --env-file iam.env
+```
+
+Expected result: the first start creates its data directory, signing keys, database and initial `SUPER_ADMIN` account. From another terminal, `curl http://127.0.0.1:4200/api/v1/health/ready` reports readiness. Keep `iam.env` private. Later starts refuse pending migrations unless explicitly allowed, and missing databases or signing keys must be restored rather than regenerated.
 
 ## Source review
 
-Reviewed against the local extracted candidate implementation on 2026-11-05, revision `c799515`. The extracted repository has not been published as part of an official suite release. Original source attribution, licenses and immutable history remain preserved in the [published Hive source](https://github.com/ChefTaco/hive).
-
-[Product directory](/index.md) · [Hive installation boundary](/guides/hive.md)
+Reviewed 2026-11-05 against public revision `f2150cc277e5b96b619cfaae98af96c54133e66d`: [README](https://github.com/ChefTaco/Oathweave/blob/f2150cc277e5b96b619cfaae98af96c54133e66d/README.md) and [server README](https://github.com/ChefTaco/Oathweave/blob/f2150cc277e5b96b619cfaae98af96c54133e66d/apps/iam-core/README.md). The commands follow its quick start. Original attribution and migration history are preserved. License: Apache-2.0.

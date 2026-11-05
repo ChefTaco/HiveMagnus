@@ -1,32 +1,34 @@
 # Hive:Magnus
 
-> Open source tools for self-hosted agents: Hive for suite installation and recovery; Oathweave for identity; Emberpath for model routing; HiveMem for memory; HiveSkills for distribution; HiveXUI for the shared browser console; Magnus for Linux fleet operations and the Ardent runtime; Cindertrace for security investigations, cases, and evidence; ChatterMost for conversation; Emberfold for context continuity.
+> Open source tools for self-hosted agents: Hive for suite installation and recovery; HiveXUI for the single browser console; Oathweave for identity; Emberpath for model routing; HiveMem for memory; HiveSkills for skills distribution; Magnus for Linux fleet operations and the Ardent runtime; Cindertrace for security investigations, cases, and evidence; ChatterMost for conversation; Emberfold for context continuity.
 
-These projects can be used independently. Integrations are optional and require configuration. Ardent belongs to the Magnus repository and bundles the Emberfold library; a separate Emberfold HTTP service is not required. This website publishes documentation and sample UI captures, not a hosted agent service or installation endpoint. The products use Apache-2.0; extracted suite products remain candidates pending publication and migration acceptance.
+These projects can be used independently. Integrations are optional and require configuration. In a Hive installation, HiveXUI is the browser UI for every installed product, with sections only for those products. Ardent belongs to the Magnus repository and bundles the Emberfold library; a separate Emberfold HTTP service is not required. Inference services and model storage remain external to Hive. This website publishes documentation and sample UI captures, not a hosted agent service or installation endpoint. The products use Apache-2.0. Hive installs only from a signed release; see its releases page for what is published.
 
 Guides include prerequisites, documented commands, expected results, and the public source revision reviewed. Follow the linked current repository documentation for upgrades and configuration changes. Before editing a repository, read its AGENTS.md.
 
 ## Start here
 
 - [Site overview](https://hivemagnus.com/index.md): Project selection, optional connections, and documentation links in Markdown.
-- [Hive guide](https://hivemagnus.com/guides/hive.md): Published legacy launcher and candidate Bash suite boundary.
-- [Magnus and Ardent guide](https://hivemagnus.com/guides/magnus.md): Install the fleet manager or run Ardent independently with bundled Emberfold.
-- [Cindertrace guide](https://hivemagnus.com/guides/cindertrace.md): Install standalone security operations, configure optional sources and integrations, use the dedicated upgrade runbook, or try the isolated three-stage investigation lab with external agents and simulated containment.
+- [Hive guide](https://hivemagnus.com/guides/hive.md): Install a signed suite release with hive.sh, the mandatory Hive Registry, external inference, and existing installations.
+- [HiveXUI guide](https://hivemagnus.com/guides/hivexui.md): The single browser console, what each section covers, and building it.
+- [Magnus and Ardent guide](https://hivemagnus.com/guides/magnus.md): Run the fleet manager through Hive or on its own, the optional web terminal gateway, or Ardent independently with bundled Emberfold.
+- [Cindertrace guide](https://hivemagnus.com/guides/cindertrace.md): Security investigations in HiveXUI or standalone, optional sources and integrations, the dedicated upgrade runbook, and the isolated three-stage investigation lab, which keeps its own console.
 - [ChatterMost guide](https://hivemagnus.com/guides/chattermost.md): Verify and install the versioned Compose distribution and connect an agent.
 - [Emberfold guide](https://hivemagnus.com/guides/emberfold.md): Run a synthetic CLI dry run or use the TypeScript library; optional HTTP and Hermes interfaces.
+- [Emberpath guide](https://hivemagnus.com/guides/emberpath.md): OpenAI-compatible model gateway with external providers, routing, quotas and traces.
+- [Oathweave guide](https://hivemagnus.com/guides/oathweave.md): Identity, authentication, authorization, browser sign-in and service identities.
+- [HiveMem guide](https://hivemagnus.com/guides/hivemem.md): Memory storage, retrieval, sessions, graph evidence, consolidation and workspaces.
+- [HiveSkills guide](https://hivemagnus.com/guides/hiveskills.md): Skills registry, immutable archives, channels, assignments and distribution. Not the Hive Registry.
 
 ## Repository instructions
 
 - [Hive AGENTS.md](https://raw.githubusercontent.com/ChefTaco/hive/main/AGENTS.md): Repository setup, checks, and contribution guidance.
+- [HiveXUI AGENTS.md](https://raw.githubusercontent.com/ChefTaco/HiveXUI/main/AGENTS.md): Browser boundaries and repository checks.
+- [Oathweave AGENTS.md](https://raw.githubusercontent.com/ChefTaco/Oathweave/main/AGENTS.md): Repository setup and checks.
+- [Emberpath AGENTS.md](https://raw.githubusercontent.com/ChefTaco/Emberpath/main/AGENTS.md): Repository setup and checks.
+- [HiveMem AGENTS.md](https://raw.githubusercontent.com/ChefTaco/HiveMem/main/AGENTS.md): Repository setup and checks.
+- [HiveSkills AGENTS.md](https://raw.githubusercontent.com/ChefTaco/HiveSkills/main/AGENTS.md): Repository setup and checks.
 - [Magnus AGENTS.md](https://raw.githubusercontent.com/ChefTaco/magnus/main/AGENTS.md): Repository setup, checks, and contribution guidance for Magnus and Ardent.
 - [Cindertrace AGENTS.md](https://raw.githubusercontent.com/ChefTaco/cindertrace/main/AGENTS.md): Privacy gates, security boundaries, setup, and verification.
 - [ChatterMost AGENTS.md](https://raw.githubusercontent.com/ChefTaco/ChatterMost/main/AGENTS.md): Installation runbook and repository checks.
 - [Emberfold AGENTS.md](https://raw.githubusercontent.com/ChefTaco/emberfold/main/AGENTS.md): Repository setup, contracts, and verification.
-
-## Extracted product candidates
-
-- [Emberpath candidate guide](https://hivemagnus.com/guides/emberpath.md): External providers, model routing, aliases, quotas and telemetry.
-- [Oathweave candidate guide](https://hivemagnus.com/guides/oathweave.md): Identity, authentication, authorization, browser sign-in and service identities.
-- [HiveMem candidate guide](https://hivemagnus.com/guides/hivemem.md): Memory storage, retrieval, sessions, graph evidence, consolidation and workspaces.
-- [HiveSkills candidate guide](https://hivemagnus.com/guides/hiveskills.md): Skills registry, immutable archives, channels, assignments and distribution.
-- [HiveXUI candidate guide](https://hivemagnus.com/guides/hivexui.md): Shared strict TypeScript, React and Vite browser application.

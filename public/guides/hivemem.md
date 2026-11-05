@@ -1,25 +1,32 @@
 # HiveMem
 
-> Memory storage, retrieval, sessions, graph evidence, consolidation and workspaces.
+> Long-term memory for agents: storage and retrieval, sessions, a knowledge graph, consolidation, webhooks and workspaces.
 
-**Candidate extraction.** The new ecosystem has no official signed suite release yet. Independent product and installation acceptance must pass before replacing an existing deployment. This guide describes the candidate ownership boundary; it is not a published installation recipe.
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/HiveMem) · [API reference](https://github.com/ChefTaco/HiveMem/blob/main/HIVEMEM_API.md)
 
 ## Responsibility
 
-Existing TypeScript SDKs and Python Hermes integrations retain native machine credentials. Workspaces own access and private records remain account-bound. Product datastore credentials, storage formats, migrations and recovery evidence remain independent.
+HiveMem gives agents, IDE tools and runtimes one server-side system for remembering, backed by Qdrant. Workspaces own access and private records remain account-bound. TypeScript and Python SDKs and the Hermes memory provider retain native machine credentials. Its credentials, storage formats, migrations and backups stay independent of other products.
 
-## Suite integration
+## In a Hive installation
 
-Hive plans and installs selected product containers with independently pinned versions. Core includes Oathweave, Emberpath, HiveMem, HiveSkills and HiveXUI. Full adds Magnus/Ardent, Cindertrace, ChatterMost and optional Emberfold HTTP. Each product retains standalone operation and its own data, credentials and recovery lifecycle.
+HiveMem and its private Qdrant are part of the core profile, installed by [Hive](https://hivemagnus.com/guides/hive.md). Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md): memory search, sessions, webhooks, graph evidence, conflicts, consolidation and queue operations, limited by workspace. Issuer and subject mappings remain explicit product configuration.
 
-Do not copy a sibling backend source tree into the browser application. Products own their API specifications and browser-safe contracts. Native machine protocols remain separate from suite browser sign-in.
+## Run it on its own
 
-## Migration and recovery
+Requires Node.js 24.22.1+ or 26.13.0+ on Linux or macOS with `flock`, and a Qdrant instance.
 
-Preserve existing databases, signing keys, native issuer URLs, client registrations, memberships and audit history. Restore a backup in isolation with dispatchers and collectors disabled before activation. Only one writer may be active during cutover. Existing frontends and published packages remain recovery paths until acceptance passes. No production cutover is authorized by a successful rehearsal.
+```bash
+docker run -d --name hive-qdrant -p 127.0.0.1:6333:6333 \
+  -v hive-qdrant:/qdrant/storage qdrant/qdrant:v1.18.1
+umask 077
+printf 'HIVEMEM_JWT_SECRET=%s\n' "$(openssl rand -hex 32)" > hivemem.env
+npx @hivemagnus/hivemem-server check --env-file hivemem.env
+npx @hivemagnus/hivemem-server --env-file hivemem.env
+```
+
+Expected result: from another terminal, `curl http://127.0.0.1:18790/v1/health/ready` reports readiness. Without an OpenAI-compatible embeddings endpoint, HiveMem uses deterministic lexical retrieval. Mint access tokens with `issue-token` as its README describes; the server also has a self-contained `/dashboard` for this standalone path.
 
 ## Source review
 
-Reviewed against the local extracted candidate implementation on 2026-11-05, revision `b37195c`. The extracted repository has not been published as part of an official suite release. Original source attribution, licenses and immutable history remain preserved in the [published Hive source](https://github.com/ChefTaco/hive).
-
-[Product directory](/index.md) · [Hive installation boundary](/guides/hive.md)
+Reviewed 2026-11-05 against public revision `ac4195fe4bc58647d74d644a6fbb5a1150bbc0d2`: [README](https://github.com/ChefTaco/HiveMem/blob/ac4195fe4bc58647d74d644a6fbb5a1150bbc0d2/README.md) and [server README](https://github.com/ChefTaco/HiveMem/blob/ac4195fe4bc58647d74d644a6fbb5a1150bbc0d2/ts-core/README.md). The commands follow its quick start. Original attribution and migration history are preserved. License: Apache-2.0.

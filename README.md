@@ -6,11 +6,13 @@ Public home for the Hive:Magnus ecosystem at [hivemagnus.com](https://hivemagnus
 
 Use Node.js 24.22.1, then run `npm ci` and `npm run dev`. `npm run build` typechecks and emits static files in `dist/`.
 
-The interactive walkthroughs are browser-only explanations. Commands are sourced from the linked repository installation guides and must be rechecked when releases change. UI captures use synthetic or disposable data; never publish a live operator screen, credential, or private endpoint.
+The interactive walkthroughs are browser-only explanations. Commands are sourced from the linked repository installation guides and must be rechecked when releases change. UI captures use synthetic data on a disposable installation; never publish a live operator screen, credential, or private endpoint.
 
-With the site open in Playwright CLI, run `playwright-cli run-code --filename scripts/check-browser.js` to check the atlas, all ten product panels, both Cindertrace views, hero/directory links, all walkthrough steps, clipboard, keyboard navigation, image loading, accessibility, minimum text size, overflow, and reduced motion at desktop, tablet, and phone widths. The check uses the local `axe-core` development dependency. Save review screenshots under the ignored `output/playwright/` directory.
+With the site open in Playwright CLI (`npx @playwright/cli`), run `playwright-cli run-code --filename scripts/check-browser.js` to check the atlas, all nine console areas, every capture view, hero/directory links, all walkthrough steps, clipboard, keyboard navigation, image loading, accessibility, minimum text size, overflow, and reduced motion at desktop, tablet, and phone widths. The check uses the local `axe-core` development dependency. Save review screenshots under the ignored `output/playwright/` directory.
 
-The interface gallery in section 3 comes from the same ten-product registry as the atlas and directory. Cindertrace is selected initially and offers overview/investigation captures; every project has a panel and guide link. Hero and directory links select the matching panel. `#interface-PROJECT` deep links and the legacy `#security` anchor remain supported. The atlas distinguishes optional integrations from bundled components.
+The gallery in section 3 is one interface, HiveXUI, shown across its product areas in sidebar order. The Magnus area is selected initially; Magnus and Cindertrace offer several captures. Emberfold has no console section, so its CLI excerpt sits below the gallery. Hero and directory links select the matching area. `#interface-PROJECT` deep links and the legacy `#security` anchor remain supported. The atlas distinguishes configured connections from bundled components.
+
+Regenerate captures with `scripts/capture-hivexui.mjs` against a disposable seeded installation; see [media provenance](docs/media.md).
 
 See [media provenance](docs/media.md) for screenshot sources and the verified CLI example. Font licenses are included in `public/licenses/`.
 

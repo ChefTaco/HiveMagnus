@@ -10,6 +10,8 @@ The `hivemagnus` Pages project connects to `ChefTaco/HiveMagnus`. Production fol
 | Node | `.node-version` |
 | Hosting | static Cloudflare Pages; no Functions or service bindings |
 
+The suite release version is a placeholder until a release exists. Before merging to `main`, replace `__HIVE_RELEASE__` with the exact version: the `HIVE_RELEASE` constant in `src/main.ts` and the commands in `public/guides/hive.md`. `grep -rn __HIVE_RELEASE__ src public` must then find nothing.
+
 For a site change, run `npm ci`, `npm run build`, and the browser check documented in the README. Push a branch, review its Pages preview, then fast-forward or merge the reviewed change to `main`. Pages builds the committed source automatically.
 
 After deployment, check the canonical domain in a real browser, verify the certificate, navigate every walkthrough, copy a command, and open the UI captures. Confirm the served deployment corresponds to the intended Git commit. The static response policy is in `public/_headers`. Unknown paths must return the `public/404.html` page with status 404; without that file Pages answers every path with `index.html` and status 200.
