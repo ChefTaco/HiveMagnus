@@ -10,7 +10,7 @@ Oathweave issues RS256-signed JWTs and keeps sessions, roles, clients, service a
 
 ## In a Hive installation
 
-Oathweave and its private Redis are required in every profile. [Hive](https://hivemagnus.com/guides/hive.md) provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
+Oathweave and its private Redis are required in every profile; [Hive](https://hivemagnus.com/guides/hive.md) 2.0.0 installs Oathweave 2.0.1 as a digest-pinned image. Hive provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
 
 ## Run it on its own
 
@@ -33,4 +33,4 @@ Expected result: the first start creates its data directory, signing keys, datab
 
 ## Source review
 
-Reviewed 2026-11-05 against public revision `f2150cc277e5b96b619cfaae98af96c54133e66d`: [README](https://github.com/ChefTaco/Oathweave/blob/f2150cc277e5b96b619cfaae98af96c54133e66d/README.md) and [server README](https://github.com/ChefTaco/Oathweave/blob/f2150cc277e5b96b619cfaae98af96c54133e66d/apps/iam-core/README.md). The commands follow its quick start. Original attribution and migration history are preserved. License: Apache-2.0.
+Reviewed 2026-11-05 against tag `v2.0.1`, commit `dd164d733235cac26c13f410c869f5cf424222a8`: [README](https://github.com/ChefTaco/Oathweave/blob/dd164d733235cac26c13f410c869f5cf424222a8/README.md) and [server README](https://github.com/ChefTaco/Oathweave/blob/dd164d733235cac26c13f410c869f5cf424222a8/apps/iam-core/README.md). The commands follow its quick start. The [2.0.1 release](https://github.com/ChefTaco/Oathweave/releases/tag/v2.0.1) publishes the container image that Hive installs. Original attribution and migration history are preserved. License: Apache-2.0.

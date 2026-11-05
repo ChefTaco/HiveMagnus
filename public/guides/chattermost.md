@@ -13,14 +13,14 @@
 
 The distribution includes PostgreSQL, persistent files, and optional Redis for abuse counters. It requires one application writer. It does not require Node, a source checkout, or a registry login. Existing installations use their current manager and the upgrade guide.
 
-## Verify and install release 0.3.3
+## Verify and install release 0.4.1
 
 The following is the public agent runbook's first-install sequence. Replace `https://chat.example.test` with the actual HTTPS origin before running. Run the complete block in one shell:
 
 ```bash
 set -eu
 umask 077
-VERSION=0.3.3
+VERSION=0.4.1
 INSTALL_DIR="$HOME/chattermost-installation"
 test ! -e "$INSTALL_DIR"
 DOWNLOAD_DIR="$(mktemp -d)"
@@ -34,6 +34,8 @@ tar xzf "chattermost-$VERSION.tar.gz"
 "$INSTALL_DIR/chattermost" --directory "$INSTALL_DIR" start
 "$INSTALL_DIR/chattermost" --directory "$INSTALL_DIR" status
 ```
+
+Supply verified trusted-proxy CIDRs through `--trusted-proxies` at setup when you know them.
 
 Expected result: the archive checksum reports `OK` before extraction; setup creates a fresh installation with unique credentials and pinned image digests; `start` launches the stack; `status` reports its state. Read the initial administrator credentials privately from `$INSTALL_DIR/secrets/runtime.env`. Preserve that file and the database password; do not publish the installation directory.
 
@@ -71,6 +73,4 @@ In a [Hive](https://hivemagnus.com/guides/hive.md) installation the browser inte
 
 ## Source review
 
-Reviewed 2026-11-03 against public revision `bab016695d493dcc094b82e0a498fac74bba9f7c`: [README](https://github.com/ChefTaco/ChatterMost/blob/bab016695d493dcc094b82e0a498fac74bba9f7c/README.md), [container guide](https://github.com/ChefTaco/ChatterMost/blob/bab016695d493dcc094b82e0a498fac74bba9f7c/docs/containers.md), and [agent runbook](https://github.com/ChefTaco/ChatterMost/blob/bab016695d493dcc094b82e0a498fac74bba9f7c/AGENTS.md). Release `0.3.3` is pinned intentionally. Follow current docs for later versions. License: Apache-2.0.
-
-HiveXUI placement reviewed 2026-11-05 against public [revision `88a08663454f69ef8b07ccdcfc31ae9e6184efcb`](https://github.com/ChefTaco/ChatterMost/tree/88a08663454f69ef8b07ccdcfc31ae9e6184efcb): README and `docs/oathweave.md`. The installation sequence above is unchanged at that revision.
+Reviewed 2026-11-05 against tag `v0.4.1`, commit `8962cebeca1473957e2358a22c2855c106b85303`: [README](https://github.com/ChefTaco/ChatterMost/blob/8962cebeca1473957e2358a22c2855c106b85303/README.md), [container guide](https://github.com/ChefTaco/ChatterMost/blob/8962cebeca1473957e2358a22c2855c106b85303/docs/containers.md), [agent runbook](https://github.com/ChefTaco/ChatterMost/blob/8962cebeca1473957e2358a22c2855c106b85303/AGENTS.md) and [Oathweave integration](https://github.com/ChefTaco/ChatterMost/blob/8962cebeca1473957e2358a22c2855c106b85303/docs/oathweave.md). The installation block matches the runbook at that tag. The [0.4.1 release](https://github.com/ChefTaco/ChatterMost/releases/tag/v0.4.1) attaches `chattermost-0.4.1.tar.gz` and `SHA256SUMS`, and the archive's line in `SHA256SUMS` matches both the asset digest GitHub reports and the downloaded file. Release `0.4.1` is pinned intentionally. Follow current docs for later versions. License: Apache-2.0.

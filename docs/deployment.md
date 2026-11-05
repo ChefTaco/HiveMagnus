@@ -10,7 +10,7 @@ The `hivemagnus` Pages project connects to `ChefTaco/HiveMagnus`. Production fol
 | Node | `.node-version` |
 | Hosting | static Cloudflare Pages; no Functions or service bindings |
 
-The suite release version is a placeholder until a release exists. Before merging to `main`, replace `__HIVE_RELEASE__` with the exact version: the `HIVE_RELEASE` constant in `src/main.ts` and the commands in `public/guides/hive.md`. `grep -rn __HIVE_RELEASE__ src public` must then find nothing.
+The site shows Hive suite release 2.0.0. When Hive publishes a new suite release, update the `HIVE_RELEASE` constant in `src/main.ts` and the commands, tag links and source review in `public/guides/hive.md` together, after checking them against that release's tagged docs and attached files.
 
 For a site change, run `npm ci`, `npm run build`, and the browser check documented in the README. Push a branch, review its Pages preview, then fast-forward or merge the reviewed change to `main`. Pages builds the committed source automatically.
 

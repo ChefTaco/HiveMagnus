@@ -12,10 +12,10 @@ Cindertrace owns security cases, evidence, correlation, investigations, assuranc
 
 ## Install a fresh Compose stack on its own
 
-Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.1 or later on the 24.x line, or 26.13.0 or later on the 26.x line. Use a fresh checkout and installation directory. The first release is `v0.1.0`.
+Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.1 or later on the 24.x line, or 26.13.0 or later on the 26.x line. Use a fresh checkout and installation directory. The current release is [`v0.2.1`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.2.1).
 
 ```bash
-git clone --branch v0.1.0 https://github.com/ChefTaco/cindertrace.git
+git clone --branch v0.2.1 https://github.com/ChefTaco/cindertrace.git
 cd cindertrace
 npm ci
 npm run init
@@ -36,12 +36,11 @@ Do not publish `.env`, credentials, certificates, state, incident records, or li
 
 ## Try the evolving investigation lab
 
-The optional lab is a disposable three-stage investigation for people and external agents, using synthetic evidence. It runs without Hive, Magnus, external sources, or a model provider. Lab startup forbids external identity and integration settings, including Oathweave, so the lab keeps its own console with local administrator login and is not reached through HiveXUI. Use a **fresh separate checkout**; never initialize it over an operational installation. The first release tag above predates this feature, so these commands pin the reviewed lab implementation:
+The optional lab is a disposable three-stage investigation for people and external agents, using synthetic evidence. It runs without Hive, Magnus, external sources, or a model provider. Lab startup forbids external identity and integration settings, including Oathweave, so the lab keeps its own console with local administrator login and is not reached through HiveXUI. Use a **fresh separate checkout**; never initialize it over an operational installation. The lab ships in the release above:
 
 ```bash
-git clone https://github.com/ChefTaco/cindertrace.git cindertrace-lab
+git clone --branch v0.2.1 https://github.com/ChefTaco/cindertrace.git cindertrace-lab
 cd cindertrace-lab
-git checkout --detach 0368abb6779c0c715e1dc00f7f346b2253f5f040
 npm ci
 npm run init -- --lab
 npm run lab -- up
@@ -57,7 +56,7 @@ Save a revision before each evidence release and before completion. Record compr
 
 Containment remains an explicitly labeled simulation: an ADMIN reviews the exact target, effect, evidence and expiry, then approves or rejects it. Approval expires after ten minutes and is consumed once; newer evidence or a revision invalidates pending plans. Simulated decisions never contact Magnus or enter the production action outbox. External collection, integrations, notifications and dispatch are disabled, and synthetic evidence does not alter integration health.
 
-External agents use separate server-side read, draft and lab-control credentials through `CindertraceClient`. They can investigate and advance evidence, but cannot start runs or approve containment. Keep generated agent credentials in the lab's private state directory. See the [complete lab workflow and API](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/INVESTIGATION-LAB.md).
+External agents use separate server-side read, draft and lab-control credentials through `CindertraceClient`. They can investigate and advance evidence, but cannot start runs or approve containment. Keep generated agent credentials in the lab's private state directory. See the [complete lab workflow and API](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/docs/INVESTIGATION-LAB.md).
 
 `npm run lab -- stop` preserves history; `npm run lab -- up` resumes it. Restarting an investigation creates a new run while retaining prior results. Destruction requires `npm run lab -- destroy NAME`, with the exact generated `COMPOSE_PROJECT_NAME`, and removes only that lab's containers and volumes. Local state and credentials remain until separately removed.
 
@@ -99,6 +98,4 @@ Rollback keeps current state and requires reviewed application compatibility. Af
 
 ## Source review
 
-Reviewed 2026-11-04 against public revision `0368abb6779c0c715e1dc00f7f346b2253f5f040`: [README](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/README.md), [lab workflow and API](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/INVESTIGATION-LAB.md), [installation](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/INSTALLATION.md), and [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/0368abb6779c0c715e1dc00f7f346b2253f5f040/docs/UPGRADING.md). The normal installation example retains `v0.1.0` (`576f4b4e7ba4ef5f0524deb213137b3fd643aa88`); the lab example pins the newer implementation explicitly. This release adds schema profile `cindertrace-v2` and disables automatic incompatible rollback; existing installations require the upgrade tool's verified restore rehearsal. License: Apache-2.0.
-
-HiveXUI placement, standalone console and lab identity rule reviewed 2026-11-05 against public [revision `dfca27f77ae2d34625069a641c906e2f77f28f86`](https://github.com/ChefTaco/cindertrace/tree/dfca27f77ae2d34625069a641c906e2f77f28f86): `docs/OATHWEAVE.md`, `docs/OATHWEAVE_CONSOLE.md` and the lab startup fence. The commands above keep their earlier review.
+Reviewed 2026-11-05 against tag `v0.2.1`, commit `36d3a00e0e9588cf87128226083fc804d64d9a49`: [README](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/README.md), [lab workflow and API](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/docs/INVESTIGATION-LAB.md), [installation](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/docs/INSTALLATION.md), [integrations](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/docs/INTEGRATIONS.md), [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/docs/UPGRADING.md), `docs/OATHWEAVE.md`, `docs/OATHWEAVE_CONSOLE.md` and the package Node engines. The tag contains the lab implementation reviewed earlier at `0368abb6779c0c715e1dc00f7f346b2253f5f040` and the HiveXUI placement reviewed at `dfca27f77ae2d34625069a641c906e2f77f28f86`; the lab, installation and upgrade docs are unchanged since then. Both the normal installation and the lab now check out the release tag. The lab adds schema profile `cindertrace-v2`, which declares `rollbackCompatible=false`: before upgrading an existing `v0.1.0` installation, prepare a verified restore and review the target schema, as the upgrade runbook says. License: Apache-2.0.

@@ -20,7 +20,7 @@
 | Self-host channels, DMs, threads, and agent conversations | ChatterMost | [ChatterMost](https://hivemagnus.com/guides/chattermost.md) | [ChefTaco/ChatterMost](https://github.com/ChefTaco/ChatterMost) |
 | Fit context and carry continuity into the next model turn | Emberfold | [Emberfold](https://hivemagnus.com/guides/emberfold.md) | [ChefTaco/emberfold](https://github.com/ChefTaco/emberfold) |
 
-Hive installs only from a signed release; see the [releases page](https://github.com/ChefTaco/hive/releases) for what is published. A passing disposable rehearsal is not production cutover approval. Existing installations keep their own recovery paths and upgrade guides.
+Hive installs only from a signed release. The current suite release is [Hive 2.0.0](https://github.com/ChefTaco/hive/releases/tag/v2.0.0); later ones appear on the [releases page](https://github.com/ChefTaco/hive/releases). A passing disposable rehearsal is not production cutover approval. Existing installations keep their own recovery paths and upgrade guides.
 
 Ollama, llama.cpp, other inference services and hosted providers remain external. Hive only configures and verifies endpoints and protected credential references, then registers verified providers with Emberpath. It never installs, manages or stores inference services or model assets.
 

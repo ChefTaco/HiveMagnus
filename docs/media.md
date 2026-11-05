@@ -42,12 +42,12 @@ The script refuses anything but a `https://localhost:PORT` origin. Review each P
 
 | Asset | Source revision | Capture scenario |
 | --- | --- | --- |
-| Emberfold CLI excerpt | `@hivemagnus/emberfold-cli@0.1.0` | Selected fields from actual `prepare --dry-run` output for `scripts/samples/emberfold.json`, with values unchanged; no model calls |
+| Emberfold CLI excerpt | `@hivemagnus/emberfold-cli@0.2.1` | Selected fields from actual `prepare --dry-run` output for `scripts/samples/emberfold.json`, with values unchanged; no model calls. First captured with `0.1.0`; `0.2.1` produces identical output |
 
 Reproduce the Emberfold output from the site checkout:
 
 ```bash
-npx --package @hivemagnus/emberfold-cli@0.1.0 emberfold prepare --input scripts/samples/emberfold.json --dry-run
+npx --package @hivemagnus/emberfold-cli@0.2.1 emberfold prepare --input scripts/samples/emberfold.json --dry-run
 ```
 
 The system atlas, brand mark, and project icons are original SVG/CSS artwork; the gallery's colors follow HiveXUI's public design tokens. DM Sans, Space Grotesk, and IBM Plex Mono are self-hosted; their licenses ship in `public/licenses/`.

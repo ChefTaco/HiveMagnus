@@ -2,7 +2,7 @@
 
 > Magnus operates Linux fleets. Its Ardent runtime runs durable agent tasks, standalone or under fleet management, with bundled Emberfold context fitting.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/magnus) · [Current Magnus instructions](https://github.com/ChefTaco/magnus#quick-start) · [Current Ardent instructions](https://github.com/ChefTaco/magnus/tree/main/packages/ardent#install)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/magnus) · [Current Magnus instructions](https://github.com/ChefTaco/magnus#quick-start-standalone) · [Current Ardent instructions](https://github.com/ChefTaco/magnus/tree/main/packages/ardent#install)
 
 ## Choose an entry point
 
@@ -79,8 +79,4 @@ Ardent imports its pinned Emberfold library directly. No separate Emberfold acco
 
 ## Source review
 
-Reviewed 2026-11-03 against public revision `c53cbf3915a679c6545a4cea7fc4dce76ff00f7d`: [root README](https://github.com/ChefTaco/magnus/blob/c53cbf3915a679c6545a4cea7fc4dce76ff00f7d/README.md) and [Ardent README](https://github.com/ChefTaco/magnus/blob/c53cbf3915a679c6545a4cea7fc4dce76ff00f7d/packages/ardent/README.md). Commands follow those docs; npm resolves current published packages. Follow current instructions for upgrades. License: Apache-2.0.
-
-Security ownership reviewed 2026-11-04 against the [Magnus 2.0 release source](https://github.com/ChefTaco/magnus/tree/7a6782d2085702ef14e1bc997df65fe37d2b5673) and Cindertrace integration guide. The earlier command review above remains the provenance for the unchanged installation and Ardent examples.
-
-Console and web terminal reviewed 2026-11-05 against public [revision `887d039a6a167b04acbf787ab0e548f87e866450`](https://github.com/ChefTaco/magnus/tree/887d039a6a167b04acbf787ab0e548f87e866450): root README, fleet gateway README and `docs/console-api.md`.
+Reviewed 2026-11-05 against tag `v2.1.1`, commit `084a3292f4b459fe74c91af7e06b37d2aeb2774e`: [root README](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/README.md), [installer README](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/packages/magnus/README.md), [Ardent README](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/packages/ardent/README.md), [fleet gateway README](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/services/fleet-gateway/README.md), [console route inventory](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/docs/console-api.md) and [Cindertrace migration](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/docs/CINDERTRACE_MIGRATION.md). Commands follow those docs. They are unpinned: npm resolves `@hivemagnus/magnus` and `@hivemagnus/ardent` to `latest`, which is `2.1.1` at this review. Follow current instructions for upgrades. License: Apache-2.0.

@@ -56,7 +56,7 @@ The extracted products are now public repositories, and HiveXUI is the single br
 
 | Project | Revision | Reviewed sources |
 | --- | --- | --- |
-| Hive | `623eba65fc67b7b97bb58180088b6b8fb17dc307` on branch `codex/ecosystem-separation` | `deployment/README.md`, `deployment/FULL.md`, `deployment/CUSTOM.md`, `deployment/DISTRIBUTED.md`, `docs/hive-registry-api.md`, `scripts/suite/suite-catalog.json`, `hive.sh --help` |
+| Hive | `623eba65fc67b7b97bb58180088b6b8fb17dc307`, before the first suite release; superseded by `v2.0.0` below | `deployment/README.md`, `deployment/FULL.md`, `deployment/CUSTOM.md`, `deployment/DISTRIBUTED.md`, `docs/hive-registry-api.md`, `scripts/suite/suite-catalog.json`, `hive.sh --help` |
 | HiveXUI | `565eec413fd4361f0db319ecfb9384a860c7b05f` | `README.md`, `CHANGELOG.md`, `docs/THEME.md`, `src/lib/navigation.ts` |
 | Emberpath | `1ee9f3c37f28694ae971e2f8ec599b57ad4f89c0` | `README.md` |
 | Oathweave | `f2150cc277e5b96b619cfaae98af96c54133e66d` | `README.md`, `apps/iam-core/README.md` |
@@ -67,6 +67,29 @@ The extracted products are now public repositories, and HiveXUI is the single br
 | ChatterMost | `88a08663454f69ef8b07ccdcfc31ae9e6184efcb` | `README.md`, `docs/containers.md`, `docs/oathweave.md` |
 | Emberfold | `aac58682312fb509d8a7ba240b9a151651d272de` | Unchanged |
 
-Hive's `hive.sh` commands use one placeholder, `__HIVE_RELEASE__`, because release version numbers and image names are not final; see [deployment](deployment.md). The docs do not yet say how to obtain the controller, signed manifest and publisher key together, so the walkthrough points to the releases page and invents no download command. Release status wording stays true before and after publication: it names the releases page rather than a state.
+At this review Hive had published no suite release, so its `hive.sh` commands carried a placeholder version and the walkthrough pointed to the releases page without a download command. The release section below replaces the placeholder with 2.0.0 and adds the documented checkout of the release tag.
 
 Cindertrace's lab commands keep their pinned `0368abb6779c0c715e1dc00f7f346b2253f5f040` review; the lab's startup fence at the revision above confirms it forbids `OATHWEAVE_`, `HIVE_` and `MAGNUS_` settings, so it keeps its own console. No installation command was exercised against an operational environment. All guide Bash blocks passed `bash -n`.
+
+## Hive 2.0.0 and product releases, 2026-11-05
+
+Hive published suite release 2.0.0, and each product published the release it pins. Every guide's source review now names a release tag and its commit, verified with the GitHub API and against local fetches of the public tags. Each release was confirmed published, not a draft or prerelease, and marked latest.
+
+| Project | Release | Commit | Reviewed sources |
+| --- | --- | --- | --- |
+| Hive | `v2.0.0` | `cc784bfa641b704d2ad0a87256d3271c28edc1dd` | `README.md`, `deployment/README.md`, `deployment/FULL.md`, `deployment/MIGRATE_NATIVE.md`, `docs/RELEASING.md`, `docs/hive-registry-api.md`, `releases/2.0.0.json`, `hive.sh --help`, release notes |
+| Oathweave | `v2.0.1` | `dd164d733235cac26c13f410c869f5cf424222a8` | `README.md`, `apps/iam-core/README.md` |
+| Emberpath | `v2.0.1` | `7aada3201bed915d36e37458c3b8a1dc5fe71c84` | `README.md` |
+| HiveMem | `v1.3.1` | `96638e704f1c8b3fa583f42b5ca0de01ee447d23` | `README.md`, `ts-core/README.md` |
+| HiveSkills | `v1.3.1` | `e61d7a1962cc20fef12aed28d9a2a5824aa53a4b` | `README.md` |
+| HiveXUI | `v0.1.1` | `18120937ad89443df81e789b0494ba7f217fc2b9` | `README.md`, `CHANGELOG.md`, `docs/THEME.md` |
+| Magnus / Ardent | `v2.1.1` | `084a3292f4b459fe74c91af7e06b37d2aeb2774e` | `README.md`, `packages/magnus/README.md`, `packages/ardent/README.md`, `services/fleet-gateway/README.md`, `docs/console-api.md`, `docs/CINDERTRACE_MIGRATION.md` |
+| Cindertrace | `v0.2.1` | `36d3a00e0e9588cf87128226083fc804d64d9a49` | `README.md`, `docs/INSTALLATION.md`, `docs/INTEGRATIONS.md`, `docs/INVESTIGATION-LAB.md`, `docs/UPGRADING.md`, `docs/OATHWEAVE.md`, `package.json` |
+| ChatterMost | `v0.4.1` | `8962cebeca1473957e2358a22c2855c106b85303` | `README.md`, `AGENTS.md`, `docs/containers.md`, `docs/oathweave.md`, release assets |
+| Emberfold | `v0.2.1` | `f97b7eec1083cbbab79361f6360b8b8412f50bc9` | `README.md`, `package.json`, package manifests, npm metadata |
+
+Hive: the walkthrough and guide now clone the repository at `v2.0.0` before `./hive.sh --release 2.0.0`, because the signed manifest pins the controller's SHA-256. The release attaches `2.0.0.json`, `2.0.0.json.sig` and `publisher.pub`; all three are byte-identical to the tagged tree, the signature verifies with that key, and the key's DER SHA-256 matches the fingerprint in the release notes. The guide gives the fingerprint command from `docs/RELEASING.md` rather than repeating the value. Initial sign-in now distinguishes fresh installs, which still use `config/initial-credentials.env`, from installations moved with `migrate-native`, which use the one-time administrator reset token and `hive-set-admin-password`. The component versions the guide lists come from the signed manifest.
+
+Product guides: ChatterMost pins `0.4.1`, whose runbook block is unchanged apart from the version; the archive's `SHA256SUMS` line matches the GitHub asset digest and the downloaded archive, which contains `chattermost-0.4.1/chattermost`. Cindertrace pins `v0.2.1` for both the normal installation and the lab, since the tag contains the lab and its docs are unchanged since the earlier lab review. Emberfold pins core and CLI `0.2.1`; the synthetic CLI dry run exits 0 with output identical to `0.1.0`, so the site excerpt stays as captured. HiveMem's guide no longer offers its standalone `/dashboard`, which the release docs reduce to a placeholder page. Emberpath's guide now notes that the npm package predates the repository and still bundles the old console. Magnus and Ardent commands are unchanged and unpinned; npm `latest` is `2.1.1`.
+
+The standalone npm commands for Oathweave, Emberpath, HiveMem and HiveSkills follow their READMEs, but npm still resolves those package names to the legacy `1.2.2` line; the new releases ship as container images, which Hive installs. Only Emberpath's README says so explicitly. No installation command was exercised against an operational environment.

@@ -10,7 +10,7 @@ The registry distributes authenticated manifests and immutable archives. It is u
 
 ## In a Hive installation
 
-HiveSkills is part of the core profile, installed by [Hive](https://hivemagnus.com/guides/hive.md). Its catalogue, archive and assignment screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md). Native host mappings are prepared separately and are never activated by installation alone.
+HiveSkills is part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 2.0.0 installs HiveSkills 1.3.1 as a digest-pinned image. Its catalogue, archive and assignment screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md). Native host mappings are prepared separately and are never activated by installation alone.
 
 ## Run it on its own
 
@@ -26,4 +26,4 @@ Expected result: `check` validates TLS, configuration and an existing database w
 
 ## Source review
 
-Reviewed 2026-11-05 against public revision `1d950c8695ab69af0c1d5ba246bbf6b0417fcbb8`: [README](https://github.com/ChefTaco/HiveSkills/blob/1d950c8695ab69af0c1d5ba246bbf6b0417fcbb8/README.md). The commands follow its npm instructions. Original attribution and migration history are preserved. License: Apache-2.0.
+Reviewed 2026-11-05 against tag `v1.3.1`, commit `e61d7a1962cc20fef12aed28d9a2a5824aa53a4b`: [README](https://github.com/ChefTaco/HiveSkills/blob/e61d7a1962cc20fef12aed28d9a2a5824aa53a4b/README.md). The commands follow its npm instructions. The [1.3.1 release](https://github.com/ChefTaco/HiveSkills/releases/tag/v1.3.1) publishes the container image that Hive installs. Original attribution and migration history are preserved. License: Apache-2.0.

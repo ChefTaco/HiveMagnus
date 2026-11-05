@@ -10,9 +10,10 @@ import "./style.css";
 type ProjectId = "hive" | "emberpath" | "oathweave" | "hivemem" | "hiveskills" | "hivexui" | "magnus" | "cindertrace" | "chattermost" | "emberfold";
 type GalleryId = Exclude<ProjectId, "emberfold">;
 type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
-// The suite's release version is not final. Fill this one constant, and the same token in
-// public/guides/hive.md, when the release is published. See docs/deployment.md.
-const HIVE_RELEASE = "__HIVE_RELEASE__";
+// The published Hive suite release the install walkthrough uses. Keep it in step with the
+// commands in public/guides/hive.md when a new release is published. See docs/deployment.md.
+const HIVE_RELEASE = "2.0.0";
+const HIVE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_RELEASE}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
   label: string;
@@ -148,24 +149,30 @@ const demos: Record<DemoId, Demo> = {
     kicker: "Suite installer",
     title: "Install from a signed release",
     intro:
-      `Hive's Bash controller installs what a signed release lists and refuses anything it cannot verify. Check <a href="https://github.com/ChefTaco/hive/releases" target="_blank" rel="noopener noreferrer">Hive's releases page</a> for what is published. Choose the core, full or custom profile; inference stays external and Hive only verifies endpoints.`,
+      `Hive's Bash controller installs what a signed release lists and refuses anything it cannot verify. The current suite release is <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Hive ${HIVE_RELEASE}</a>. Choose the core, full or custom profile; inference stays external and Hive only verifies endpoints.`,
     requires: [
-      "Bash, jq, OpenSSL and sha256sum on the controller",
+      "Git, Bash, jq, OpenSSL and sha256sum on the controller",
       "Docker Compose on each host; ss, df and coreutils on the console host",
-      "A signed release manifest, its signature and the publisher key",
       "An HTTPS origin with existing certificate and key files",
+      "Setup run as UID 1000 or a host administrator",
     ],
     steps: [
+      {
+        title: "Check out the release",
+        text: "Clone the repository at the release tag. The tag holds the signed manifest, its signature and the publisher key. The manifest pins the controller's SHA-256, so run hive.sh from this same checkout.",
+        code: `git clone --branch v${HIVE_RELEASE} https://github.com/ChefTaco/hive.git && cd hive`,
+        note: `The same three files are attached to the <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">v${HIVE_RELEASE} release</a>. To install from downloaded copies, check the key's fingerprint against the one in its release notes first.`,
+      },
       {
         title: "Start setup",
         text: "Run the controller with the exact release. It verifies the manifest signature first, then asks for the installation name, hosts, console origin, profile and certificate references. It never asks for a password on the command line.",
         code: `./hive.sh --release ${HIVE_RELEASE}`,
-        note: "The manifest defaults to <code>releases/VERSION.json</code>, its signature to the same path plus <code>.sig</code>, and the publisher key to <code>trust/publisher.pub</code>. Use <code>--manifest</code>, <code>--signature</code> and <code>--trust-key</code> for other paths.",
+        note: `In the checkout the manifest is <code>releases/${HIVE_RELEASE}.json</code>, its signature the same path plus <code>.sig</code>, and the publisher key <code>trust/publisher.pub</code>. Use <code>--manifest</code>, <code>--signature</code> and <code>--trust-key</code> for separately downloaded files. The signed services run as UID/GID 1000 (HiveXUI as 101).`,
       },
       {
         title: "Review the plan",
         text: "Setup shows a plan and applies it only after you confirm. To repeat or automate it, keep the installation JSON and run the same reviewed configuration. Planning does not contact hosts, and retries check the exact inputs.",
-        code: "./hive.sh plan --config installation.json\n./hive.sh install --config installation.json",
+        code: `./hive.sh plan --config installation.json --release ${HIVE_RELEASE}\n./hive.sh install --config installation.json --release ${HIVE_RELEASE}`,
         note: "Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten.",
       },
       {
@@ -173,7 +180,7 @@ const demos: Record<DemoId, Demo> = {
         text: "Visit the HTTPS origin you configured and sign in through Oathweave. HiveXUI shows a section for each product in this installation, so a core install has no Magnus, Cindertrace or ChatterMost section.",
         code: "https://console.example.com/",
         kind: "address",
-        note: "Initial sign-in instructions are in <code>config/initial-credentials.env</code> on the identity host. <code>./hive.sh status --config installation.json</code> and <code>./hive.sh registry list --config installation.json</code> report what is running.",
+        note: "A fresh install stores initial sign-in instructions in <code>config/initial-credentials.env</code> on the identity host. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. <code>./hive.sh status --config installation.json</code> and <code>./hive.sh registry list --config installation.json</code> report what is running.",
       },
     ],
     guide: "/guides/hive.md",
@@ -208,7 +215,7 @@ const demos: Record<DemoId, Demo> = {
         note: "Node registration and TLS configuration are host-specific. Follow the complete guide before enabling a remote agent.",
       },
     ],
-    guide: "https://github.com/ChefTaco/magnus#quick-start",
+    guide: "https://github.com/ChefTaco/magnus#quick-start-standalone",
     guideLabel: "Magnus installation guide",
   },
   cindertrace: {
@@ -221,8 +228,8 @@ const demos: Record<DemoId, Demo> = {
     steps: [
       {
         title: "Get the reviewed release",
-        text: "Clone the public repository at the first release into a new directory. Use a fresh environment for this walkthrough.",
-        code: "git clone --branch v0.1.0 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
+        text: "Clone the public repository at the current release into a new directory. Use a fresh environment for this walkthrough.",
+        code: "git clone --branch v0.2.1 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
         note: "Use the repository’s release notes when choosing a version. There is no npm installer for Cindertrace.",
       },
       {
@@ -258,7 +265,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the release",
         text: "Download the pinned release and its checksum file into a new temporary directory. Keep the following steps in the same terminal.",
-        code: 'VERSION=0.3.3\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
+        code: 'VERSION=0.4.1\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
       },
       {
         title: "Verify before setup",
@@ -509,7 +516,7 @@ app.innerHTML = `
 }</pre><div class="terminal-foot">OUTPUT EXCERPT · NO MODEL CALLS</div></div><div class="console-aside-copy"><span class="mini-label">${projects.emberfold.role}</span><h3 id="emberfold-aside-title">Emberfold has no screen.</h3><p>It is a library, CLI and optional HTTP service, so it is not a console section. This excerpt is from a real synthetic CLI dry run: inspect a context preparation result before using it in an agent.</p><ul><li>Review the token budget</li><li>Check protected spans</li><li>Use the library, CLI, or optional HTTP service</li></ul><a class="text-link" href="/guides/emberfold.md">Emberfold guide ${icon("arrow")}</a></div></section>
       <p class="interface-footnote">You are viewing documentation and sample captures. This site does not connect to an operational fleet or security installation.</p>
     </div></section>
-    <section class="suite-boundary shell" aria-label="Release and acceptance status"><h2>Know what you are installing.</h2><p>Hive installs only from a signed release, listed on the <a href="https://github.com/ChefTaco/hive/releases" target="_blank" rel="noopener noreferrer">Hive releases page</a>. A passing disposable rehearsal is not production cutover approval, physical multi-host certification or ARM64 certification. Existing installations keep their own recovery paths and upgrade guides. Ollama, llama.cpp and hosted providers remain external; Hive only verifies and registers their endpoints.</p></section>
+    <section class="suite-boundary shell" aria-label="Release and acceptance status"><h2>Know what you are installing.</h2><p>Hive installs only from a signed release. The current one is <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Hive ${HIVE_RELEASE}</a>; later ones appear on the <a href="https://github.com/ChefTaco/hive/releases" target="_blank" rel="noopener noreferrer">Hive releases page</a>. A passing disposable rehearsal is not production cutover approval, physical multi-host certification or ARM64 certification. Existing installations keep their own recovery paths and upgrade guides. Ollama, llama.cpp and hosted providers remain external; Hive only verifies and registers their endpoints.</p></section>
     <section class="install-section shell" id="install" aria-labelledby="install-title"><div class="section-head"><div><span class="section-kicker">INSTALL LAB / 04</span><h2 id="install-title">Try it on your host.</h2></div><p>Follow the first steps here, then continue with each project’s full guide. These walkthroughs explain commands; they do not run them for you.</p></div>
       <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span class="tab-counter">${String(i + 1).padStart(2, "0")}</span><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh environment for a first install. Existing installations follow their own upgrade guides.</p></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
     </section>

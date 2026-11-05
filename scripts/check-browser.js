@@ -29,6 +29,7 @@ async function checkBrowser(page) {
     );
   }
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+  let steps = 0;
   for (const name of ["Hive", "Magnus", "Cindertrace", "ChatterMost", "Ardent + Emberfold"]) {
     await walkthroughs
       .getByRole("tab", { name: new RegExp(name.replace("+", "\\+")) })
@@ -44,7 +45,10 @@ async function checkBrowser(page) {
       await page.getByRole("button", { name: "← Previous" }).isDisabled(),
       `${name} initial boundary`,
     );
-    for (let step = 2; step <= 3; step++) {
+    const stepCount = await page.locator(".step-progress i").count();
+    assert(stepCount >= 3, `${name} has at least three steps`);
+    steps += stepCount;
+    for (let step = 2; step <= stepCount; step++) {
       await page.getByRole("button", { name: "Next step →" }).click();
       assert(
         (await page.locator(".step-head").textContent()).includes(
@@ -65,7 +69,7 @@ async function checkBrowser(page) {
     );
     await page.getByRole("button", { name: "← Previous" }).click();
     assert(
-      (await page.locator(".step-head").textContent()).includes("STEP 02"),
+      (await page.locator(".step-head").textContent()).includes(`STEP 0${stepCount - 1}`),
       `${name} previous step`,
     );
   }
@@ -177,7 +181,7 @@ async function checkBrowser(page) {
   assert(await cindertrace.textContent().then(t => t.includes("not reached through HiveXUI")), "Lab is described as apart from HiveXUI");
   assert(await labLink.getAttribute("href") === "/guides/cindertrace.md#try-the-evolving-investigation-lab", "Lab instructions link");
   const labGuide = await page.request.get(new URL(await labLink.getAttribute("href"), page.url()).href);
-  assert(labGuide.ok() && (await labGuide.text()).includes("git checkout --detach 0368abb6779c0c715e1dc00f7f346b2253f5f040"), "Lab guide pins implementation");
+  assert(labGuide.ok() && (await labGuide.text()).includes("git clone --branch v0.2.1 https://github.com/ChefTaco/cindertrace.git cindertrace-lab"), "Lab guide pins the release");
   assert(await page.locator("#interface-magnus").textContent().then(t => t.includes("web terminal stays off")), "Web terminal described as off");
   // Legacy deep links still lead to Cindertrace after a different area is selected.
   await page.goto(new URL("/#security", page.url()).href);
@@ -252,7 +256,7 @@ async function checkBrowser(page) {
   return {
     atlasSelections: 10,
     walkthroughs: 5,
-    steps: 15,
+    steps,
     clipboardChecks: 5,
     agentGuides: 10,
     sourceCodeEntries: 11,
