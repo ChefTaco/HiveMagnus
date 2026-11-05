@@ -13,9 +13,10 @@ async function checkBrowser(page) {
   await page.locator(".atlas-node").first().waitFor();
   const walkthroughs = page.locator(".demo-tabs");
   const interfaces = page.locator(".interface-tabs");
-  for (const name of ["Hive", "Magnus", "Cindertrace", "ChatterMost", "Emberfold"]) {
+  const expectedProjects = ["Hive", "HiveXUI", "Oathweave", "Emberpath", "HiveMem", "HiveSkills", "Magnus", "Cindertrace", "ChatterMost", "Emberfold"];
+  for (const name of expectedProjects) {
     const node = page.getByRole("button", {
-      name: new RegExp(`0[1-5] ${name}`),
+      name: new RegExp(`^\\d{2} ${name} `),
     });
     await node.click();
     assert(
@@ -96,7 +97,7 @@ async function checkBrowser(page) {
     );
   assert(!brokenAnchors.length, `Missing anchor targets: ${brokenAnchors}`);
   const guideLinks = page.locator(".agent-guides a");
-  assert((await guideLinks.count()) === 5, "Five agent guides");
+  assert((await guideLinks.count()) === 10, "Ten agent guides");
   for (const link of await guideLinks.all()) {
     const response = await page.request.get(new URL(await link.getAttribute("href"), page.url()).href);
     assert(response.ok(), "Agent guide response");
@@ -111,13 +112,13 @@ async function checkBrowser(page) {
   assert(await page.locator('link[rel="alternate"][type="text/markdown"][href="/index.md"]').count(), "Markdown discovery");
   const metadata = JSON.parse(await page.locator("#project-metadata").textContent());
   assert(metadata["@context"] === "https://schema.org", "Schema.org context");
-  assert(metadata["@graph"].filter((item) => item["@type"] === "SoftwareSourceCode").length === 6, "Six SoftwareSourceCode entries");
-  const expectedProjects = ["Hive", "Magnus", "Cindertrace", "ChatterMost", "Emberfold"];
+  assert(metadata["@graph"].filter((item) => item["@type"] === "SoftwareSourceCode").length === 11, "Eleven SoftwareSourceCode entries");
+
   assert(await page.locator("#interfaces .section-kicker").textContent().then(t => t.includes("IN THE INTERFACE / 03")), "Section 3 retains its interface heading");
-  assert((await interfaces.getByRole("tab").count()) === 5, "Section 3 includes all five projects");
-  assert((await page.locator(".interface-panel").count()) === 5, "One gallery panel per project");
+  assert((await interfaces.getByRole("tab").count()) === 10, "Section 3 includes all ten products");
+  assert((await page.locator(".interface-panel").count()) === 10, "One gallery panel per product");
   for (const name of expectedProjects) {
-    const tab = interfaces.getByRole("tab", { name: new RegExp(name) });
+    const tab = interfaces.getByRole("tab", { name: new RegExp(`^\\d{2} ${name}$`) });
     await tab.click();
     assert(await tab.getAttribute("aria-selected") === "true", `${name} interface selected`);
     assert((await page.locator(".interface-panel:visible").count()) === 1, "Exactly one visible interface");
@@ -153,7 +154,7 @@ async function checkBrowser(page) {
   // Every entry in the hero and project directory opens the matching section 3 panel.
   for (const area of [".stack-index", ".project-grid"]) {
     for (const name of expectedProjects) {
-      const link = page.locator(area).getByRole("link", {name: area === ".stack-index" ? new RegExp(name) : "See interface"});
+      const link = page.locator(area).getByRole("link", {name: area === ".stack-index" ? new RegExp(`^\\d{2} ${name} `) : "See interface"});
       const target = area === ".stack-index" ? link : page.locator(area).locator(`.project-${name.toLowerCase()} [data-interface-link]`);
       await target.click();
       assert(await interfaces.getByRole("tab", {selected:true}).textContent().then(t => t.includes(name)), `${area} opens ${name}`);
@@ -236,16 +237,16 @@ async function checkBrowser(page) {
   await page.locator(".atlas-node").first().click();
   await page.evaluate(() => window.scrollTo(0, 0));
   return {
-    atlasSelections: 5,
+    atlasSelections: 10,
     walkthroughs: 5,
     steps: 15,
     clipboardChecks: 5,
-    agentGuides: 5,
-    sourceCodeEntries: 6,
+    agentGuides: 10,
+    sourceCodeEntries: 11,
     accessibilityViolations: 0,
-    interfaces: 5,
+    interfaces: 10,
     cindertraceCaptures: 2,
-    directoryLinks: 10,
+    directoryLinks: 20,
     viewportWidths: [1440, 1024, 768, 390, 320],
     pageErrors: errors.length,
     consoleErrors: consoleErrors.length,

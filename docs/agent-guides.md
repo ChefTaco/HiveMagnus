@@ -41,3 +41,9 @@ The metadata graph now contains six SoftwareSourceCode entries: five projects an
 ## Cindertrace evolving lab, 2026-11-04
 
 Reviewed the public lab workflow at `0368abb6779c0c715e1dc00f7f346b2253f5f040` and the matching README, initialization and lifecycle scripts, API contracts, and upgrade guidance. The lab commands explicitly check out that revision in a new directory; `v0.1.0` predates the lab and remains the normal installation example. Documentation covers evidence-bound revisions, structured comparisons, separate progression credentials, human-approved simulation, and history-preserving restarts. The site links the lab from Cindertrace's interface panel; existing captures continue to depict the original synthetic demo, not the new lab. No screenshots or source metadata changed.
+
+## Ecosystem candidate boundaries, 2026-11-05
+
+The maintainer requested the five extracted products in the public directory: Emberpath, Oathweave, HiveMem, HiveSkills and HiveXUI. This supersedes the earlier five-project content limit. Candidate guides identify local implementation review and explicitly state that official publication and migration acceptance are pending. Existing published installation recipes retain their original source review and are labeled legacy where appropriate. No unverified new public repository link or official release is advertised.
+
+The ten-product atlas distinguishes deployment orchestration, identity, model routing, memory, distribution, the static console, host execution, security, chat and context. Inference services, hosted providers and model storage remain external dependencies. The metadata and Markdown discovery index follow the same boundaries.

@@ -59,7 +59,7 @@ Restart an existing gateway through its current supervisor instead. Keep one gat
 
 ## Interfaces and limits
 
-Mattermost-compatible REST lives under `/api/v4`; WebSocket events use `/api/v4/websocket`. Connect official clients using the HTTPS origin, without an API path. Mobile background push, calls, upstream plugins/marketplace, and SSO are not implemented. ChatterMost is independently developed; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.
+Mattermost-compatible REST lives under `/api/v4`; WebSocket events use `/api/v4/websocket`. Connect official clients using the HTTPS origin, without an API path. Mobile background push, calls and upstream plugins/marketplace are not implemented. Candidate suite browser identity uses Oathweave while native Mattermost sessions remain product-owned. ChatterMost is independently developed; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.
 
 - [Container installation](https://github.com/ChefTaco/ChatterMost/blob/main/docs/containers.md)
 - [Hermes setup](https://github.com/ChefTaco/ChatterMost/blob/main/docs/hermes-compatibility.md)

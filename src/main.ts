@@ -7,8 +7,8 @@ import "@fontsource/space-grotesk/latin-700.css";
 import "@fontsource/ibm-plex-mono/latin-400.css";
 import "./style.css";
 
-type ProjectId = "hive" | "magnus" | "cindertrace" | "chattermost" | "emberfold";
-type DemoId = Exclude<ProjectId, "emberfold"> | "ardent";
+type ProjectId = "hive" | "emberpath" | "oathweave" | "hivemem" | "hiveskills" | "hivexui" | "magnus" | "cindertrace" | "chattermost" | "emberfold";
+type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
   label: string;
@@ -29,6 +29,7 @@ const projects: Record<
     summary: string;
     detail: string;
     href: string;
+    candidate?: boolean;
     image?: string;
     imageAlt?: string;
     connections: { to: string; how: string }[];
@@ -36,19 +37,55 @@ const projects: Record<
 > = {
   hive: {
     name: "Hive",
-    role: "Identity · memory · models",
-    summary: "One control plane for the services an agent shares.",
+    role: "Install · upgrade · recover",
+    summary: "A tested deployment of independent products.",
     detail:
-      "Hive brings identity, long-term memory, and model routing into a single self-hosted console. Start the core services together, then connect the agents and apps you trust.",
+      "Hive is becoming the Bash installer and recovery controller for the ecosystem. It pins tested product versions, coordinates Compose deployments per host, and preserves installation boundaries. The new suite is a candidate; published legacy packages remain available for recovery.",
     href: "https://github.com/ChefTaco/hive",
     image: "/captures/hive-console.webp",
     imageAlt:
-      "Hive console showing its self-hosted service overview with sample data",
+      "Retained legacy Hive console with sample data; the shared console is moving to HiveXUI",
     connections: [
-      { to: "Magnus", how: "optional IAM sign-in, Router model routing, and HiveMem memory" },
-      { to: "Ardent", how: "optional HiveMem long-term memory" },
-      { to: "Cindertrace", how: "optional IAM sign-in and scoped security audit metadata" },
+      { to: "Oathweave / Emberpath / HiveMem / HiveSkills", how: "core API products with independent data and credentials" },
+      { to: "HiveXUI", how: "static TypeScript console behind HTTPS ingress" },
+      { to: "Magnus", how: "authenticated host jobs and native agent execution" },
+      { to: "External inference", how: "verified endpoints and protected references; no model or runtime provisioning" },
     ],
+  },
+  emberpath: {
+    name: "Emberpath", role: "Models · routing · telemetry", candidate: true,
+    summary: "Route requests to the providers you choose.",
+    detail: "Emberpath owns external providers, aliases, quotas, inference requests and routing telemetry. Ollama, llama.cpp and hosted APIs remain independently operated dependencies. Hive verifies endpoints; it never installs or stores inference services or models.",
+    href: "/guides/emberpath.md",
+    connections: [{ to: "HiveXUI", how: "models, providers, tests and traces through authorized APIs" }, { to: "Oathweave", how: "resource-specific suite access; native API keys remain separate" }, { to: "External inference", how: "OpenAI-compatible and native provider protocols" }],
+  },
+  oathweave: {
+    name: "Oathweave", role: "Identity · access · enrollment", candidate: true,
+    summary: "One sign-in, explicit access to each product.",
+    detail: "Oathweave owns identity, browser sign-in, MFA, passkeys, recovery, roles and service identities. Product accounts link explicitly by issuer and subject. Each receiving API validates its own audience and permissions; identities are never merged by email.",
+    href: "/guides/oathweave.md",
+    connections: [{ to: "HiveXUI", how: "public clients with Authorization Code and PKCE; browser tokens stay in memory" }, { to: "Product APIs", how: "independent resource authorization and explicit account links" }, { to: "Magnus", how: "identity mappings; approved host changes remain Magnus jobs" }],
+  },
+  hivemem: {
+    name: "HiveMem", role: "Memory · retrieval · workspaces", candidate: true,
+    summary: "Keep durable memory within its workspace.",
+    detail: "HiveMem owns memory storage and retrieval, sessions, graph evidence, consolidation, webhooks and workspace access. Existing storage formats and native SDKs remain available. Its credentials and backup lifecycle stay independent of model routing.",
+    href: "/guides/hivemem.md",
+    connections: [{ to: "HiveXUI", how: "memory, workspace and operation workflows through scoped APIs" }, { to: "Ardent / Hermes", how: "separate workspace-scoped memory credentials" }, { to: "Oathweave", how: "explicit identity links and resource authorization" }],
+  },
+  hiveskills: {
+    name: "HiveSkills", role: "Registry · archives · assignments", candidate: true,
+    summary: "Distribute reviewed, immutable skills.",
+    detail: "HiveSkills owns the registry, versioned archives, channels, assignments and distribution contracts. Privileged deployment execution belongs to Magnus authenticated jobs and agents. Existing native compatibility paths remain until replacement acceptance passes.",
+    href: "/guides/hiveskills.md",
+    connections: [{ to: "HiveXUI", how: "catalogue, archive and assignment administration" }, { to: "Magnus", how: "approved host deployment execution" }, { to: "Agents", how: "authenticated manifests and immutable archive distribution" }],
+  },
+  hivexui: {
+    name: "HiveXUI", role: "Shared console · browser only", candidate: true,
+    summary: "A common workspace across the product APIs.",
+    detail: "HiveXUI is a strict TypeScript, React and Vite browser application served as static assets. HTTPS ingress routes same-origin API calls without administrator credential injection. Identity, models, memory, skills, security and chat share one shell. Magnus remains a linked console until a later merge.",
+    href: "/guides/hivexui.md",
+    connections: [{ to: "Oathweave", how: "browser sign-in and resource-specific access" }, { to: "Product APIs", how: "released browser-safe contracts; no database access or signing keys" }, { to: "Magnus", how: "separate console, prepared for later integration" }],
   },
   magnus: {
     name: "Magnus",
@@ -61,7 +98,7 @@ const projects: Record<
     imageAlt: "Magnus fleet console with synthetic host information",
     connections: [
       { to: "Ardent", how: "ships the runtime and can manage it on fleet hosts" },
-      { to: "Hive", how: "optional sign-in, model routing, and shared memory" },
+      { to: "Oathweave / Emberpath / HiveMem", how: "optional sign-in, model routing and shared memory" },
       { to: "Cindertrace", how: "optional observations, fleet context, and approved host response" },
     ],
   },
@@ -70,12 +107,12 @@ const projects: Record<
     role: "Security · cases · evidence",
     summary: "Turn security observations into an investigation.",
     detail:
-      "A standalone security console for correlated cases, hashed evidence, investigations, policies, and audit. Use local administrator login, then optionally connect Hive identity or Magnus fleet context and approved response. A separate disposable lab lets people and agents revise an investigation as evidence arrives.",
+      "A standalone security console for correlated cases, hashed evidence, investigations, policies, and audit. Use local administrator login, then optionally connect Oathweave identity or Magnus fleet context and approved response. A separate disposable lab lets people and agents revise an investigation as evidence arrives.",
     href: "https://github.com/ChefTaco/cindertrace",
     image: "/captures/cindertrace-overview.webp",
     imageAlt: "Cindertrace security overview showing a synthetic authentication case and source posture",
     connections: [
-      { to: "Hive", how: "optional IAM sign-in and scoped IAM and Router security metadata" },
+      { to: "Oathweave / Emberpath", how: "optional sign-in and scoped identity and routing security metadata" },
       { to: "Magnus", how: "optional fleet context and execution of explicitly approved host responses" },
       { to: "Configured sources", how: "signed observations from endpoint, network, identity, and application adapters" },
     ],
@@ -85,7 +122,7 @@ const projects: Record<
     role: "Conversation · channels",
     summary: "A self-hosted place to talk with people and agents.",
     detail:
-      "A Mattermost-compatible chat backend for channels, direct messages, threads, and agent conversations. It includes a compact web UI and connects to the official Mattermost mobile and desktop apps. Background mobile push, calls, and SSO are not implemented.",
+      "A Mattermost-compatible chat backend for channels, direct messages, threads, and agent conversations. It includes a compact web UI and connects to the official Mattermost mobile and desktop apps. Background mobile push and calls are not implemented. Suite browser identity is a candidate integration; native Mattermost sessions remain available.",
     href: "https://github.com/ChefTaco/ChatterMost",
     image: "/captures/chattermost-chat.webp",
     imageAlt:
@@ -111,11 +148,11 @@ const projects: Record<
 
 const demos: Record<DemoId, Demo> = {
   hive: {
-    label: "Hive",
-    kicker: "Control plane",
-    title: "Bring up the shared services",
+    label: "Hive (published legacy)",
+    kicker: "Recovery-compatible release",
+    title: "Explore the published launcher",
     intro:
-      "The launcher installs the selected Hive services, generates local secrets, and gives you a console to sign in to.",
+      "This walkthrough describes the existing published launcher. The new Bash/Compose suite is under isolated acceptance and has no official signed release bundle yet. Preserve existing installations and use their upgrade procedures.",
     requires: [
       "Linux or macOS",
       "Node.js 24.22.1+ or 26.13.0+",
@@ -293,11 +330,16 @@ const icon = (name: string) => {
     chattermost: '<path d="M4 5h16v11H10l-6 4.5z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/>',
     emberfold: '<path d="M12 3c.6 3.8 6 6.1 6 11.2A6 6 0 0 1 6 14.2c0-2.9 1.9-4.1 2.9-6.7 1.1.8 2 1.9 2.4 3.4.7-2.2.9-5.1.7-7.9z"/><path d="M12 21a2.8 2.8 0 0 1-2.8-2.8c0-1.6 1.7-2.4 2.8-4 1.1 1.6 2.8 2.4 2.8 4A2.8 2.8 0 0 1 12 21z"/>',
   };
-  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name]}</svg>`;
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] ?? paths.hive}</svg>`;
 };
 
 const projectOrder: ProjectId[] = [
   "hive",
+  "hivexui",
+  "oathweave",
+  "emberpath",
+  "hivemem",
+  "hiveskills",
   "magnus",
   "cindertrace",
   "chattermost",
@@ -306,16 +348,19 @@ const projectOrder: ProjectId[] = [
 const demoOrder: DemoId[] = ["hive", "magnus", "cindertrace", "chattermost", "ardent"];
 type AtlasId = ProjectId | "ardent";
 const atlasEdges: { from: AtlasId; to: AtlasId; bundled?: boolean }[] = [
-  { from: "hive", to: "magnus" },
-  { from: "hive", to: "ardent" },
-  { from: "magnus", to: "ardent", bundled: true },
-  { from: "emberfold", to: "ardent", bundled: true },
-  { from: "chattermost", to: "ardent" },
-  { from: "cindertrace", to: "hive" },
-  { from: "cindertrace", to: "magnus" },
+  { from: "hive", to: "hivexui" }, { from: "hivexui", to: "oathweave" },
+  { from: "hivexui", to: "emberpath" }, { from: "hivexui", to: "hivemem" },
+  { from: "hivexui", to: "hiveskills" }, { from: "hivexui", to: "cindertrace" },
+  { from: "hivexui", to: "chattermost" }, { from: "magnus", to: "ardent", bundled: true },
+  { from: "emberfold", to: "ardent", bundled: true }, { from: "cindertrace", to: "magnus" },
 ];
 const interfaceNotes: Record<ProjectId, { title: string; copy: string; points: string[] }> = {
-  hive: { title: "Shared services, in view.", copy: "Inspect identity, memory, and model routing from the Hive console.", points: ["Check the services you host", "Manage identity and scoped access", "Connect models and shared memory"] },
+  hive: { title: "Preserve the recovery path.", copy: "This capture shows the retained legacy console. Hive is becoming the suite installer; HiveXUI owns the shared browser application. Replacement workflows and recovery gates must pass before legacy frontends retire.", points: ["Pin independent product releases", "Plan, install, upgrade and recover", "Keep existing installations separate"] },
+  emberpath: { title: "Routing has one owner.", copy: "A standalone model API, extracted from Hive. The model module belongs in HiveXUI; inference services remain external.", points: ["Manage providers and aliases", "Apply quotas and inspect traces", "Keep model and memory endpoints distinct"] },
+  oathweave: { title: "Identity, with explicit boundaries.", copy: "A standalone identity API with browser authentication and explicit product account links.", points: ["Use PKCE and resource audiences", "Manage MFA, passkeys and recovery", "Preserve native identities and memberships"] },
+  hivemem: { title: "Memory stays with its workspace.", copy: "A standalone memory API and native SDKs. HiveXUI provides search, sessions, graph evidence and operations.", points: ["Control workspace access", "Inspect consolidation and queued work", "Retain independent storage and backups"] },
+  hiveskills: { title: "Review, assign, distribute.", copy: "An independent skills registry. Immutable archives and assignments stay here; approved host execution belongs to Magnus.", points: ["Keep release archives immutable", "Distribute scoped pull manifests", "Track deployment outcomes through jobs"] },
+  hivexui: { title: "One shell. Authorized product APIs.", copy: "The shared console is a static browser application. Its candidate modules are under workflow and migration acceptance; the Magnus console remains separate.", points: ["Identity, models, memory and skills", "Security investigations and chat", "No infrastructure credentials in the browser"] },
   magnus: { title: "Know your fleet.", copy: "Move from host inventory to the jobs, agents, and rollouts running across it.", points: ["Review host health and inventory", "Operate jobs and managed agents", "Inspect changes in the audit log"] },
   cindertrace: { title: "Follow the evidence.", copy: "Connect security observations to a case, preserve evidence, and revise hypotheses. Try the evolving investigation lab in a separate disposable installation.", points: ["Correlate signed observations", "Compare revisions as evidence arrives", "Keep containment under human approval"] },
   chattermost: { title: "Keep the conversation together.", copy: "Channels, direct messages, and threads for people and agents, in a Mattermost-compatible service.", points: ["Talk in channels and threads", "Connect an agent gateway", "Use compatible mobile and desktop apps"] },
@@ -342,12 +387,12 @@ app.innerHTML = `
     <section class="hero shell" id="top" aria-labelledby="hero-title">
       <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-line"></span> OPEN SOURCE · SELF HOSTED</div>
         <h1 id="hero-title">Run your stack.<br/><em>On your terms.</em></h1>
-        <p class="hero-lede">Identity, fleet operations, security, conversation, and context. Five open source projects you can run independently and connect on your terms.</p>
+        <p class="hero-lede">Identity, fleet operations, security, conversation, and context. Independent products, a shared console, and an installer that keeps their boundaries clear.</p>
         <div class="hero-actions"><a class="button button-primary" href="#interfaces">See the interfaces ${icon("arrow")}</a><a class="text-link" href="#install">Find your starting point ${icon("down")}</a></div>
         <p class="hero-proof">Apache-2.0 · Your host · Your choice of integrations</p>
       </div>
-      <div class="stack-index"><div class="stack-index-heading"><span class="mini-label">CHOOSE A PIECE</span><span class="stack-index-caption">Five independent projects</span></div>
-        ${projectOrder.map((id, i) => `<a class="stack-entry project-${id}" href="#interface-${id}" data-interface-link="${id}"><span class="stack-number">0${i + 1}</span><span class="stack-icon">${icon(id)}</span><span class="stack-name">${projects[id].name}<small>${projects[id].role}</small></span>${icon("arrow")}</a>`).join("")}
+      <div class="stack-index"><div class="stack-index-heading"><span class="mini-label">CHOOSE A PIECE</span><span class="stack-index-caption">Independent product boundaries</span></div>
+        ${projectOrder.map((id, i) => `<a class="stack-entry project-${id}" href="#interface-${id}" data-interface-link="${id}"><span class="stack-number">${String(i + 1).padStart(2, "0")}</span><span class="stack-icon">${icon(id)}</span><span class="stack-name">${projects[id].name}<small>${projects[id].role}</small></span>${icon("arrow")}</a>`).join("")}
         <p class="stack-index-foot">Start with one. Connect the rest when you need them.</p>
       </div>
     </section>
@@ -356,25 +401,25 @@ app.innerHTML = `
       <div class="atlas-layout"><div class="atlas-map" role="group" aria-label="Interactive system atlas">
         <div class="atlas-grid" aria-hidden="true"></div><svg class="atlas-lines" aria-hidden="true">${atlasEdges.map(edge => `<path data-from="${edge.from}" data-to="${edge.to}" class="${edge.bundled ? "atlas-line-bundled" : ""}"/>`).join("")}</svg>
         <a href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" class="atlas-center" target="_blank" rel="noopener noreferrer" aria-label="Ardent agent runtime, part of Magnus"><span>ARDENT<small>AGENT RUNTIME</small></span><i></i></a>
-        ${projectOrder.map((id, i) => `<button type="button" class="atlas-node node-${id}${i === 0 ? " is-active" : ""}" data-project="${id}" aria-pressed="${i === 0}"><span class="node-index">0${i + 1}</span><span class="node-name">${projects[id].name}</span><span class="node-role">${projects[id].role}</span></button>`).join("")}
+        ${projectOrder.map((id, i) => `<button type="button" class="atlas-node node-${id}${i === 0 ? " is-active" : ""}" data-project="${id}" aria-pressed="${i === 0}"><span class="node-index">${String(i + 1).padStart(2, "0")}</span><span class="node-name">${projects[id].name}</span><span class="node-role">${projects[id].role}</span></button>`).join("")}
         <div class="atlas-annotation"><span class="line-key"></span> OPTIONAL <span class="line-key bundled"></span> BUNDLED</div>
       </div><div class="atlas-detail" id="atlas-detail" aria-live="polite"></div></div>
     </div></section>
     <section class="projects-section shell" id="projects" aria-labelledby="projects-title"><div class="section-head"><div><span class="section-kicker">OPEN PROJECTS / 02</span><h2 id="projects-title">Pick the tool<br/><span>for the work.</span></h2></div><p>Every project has its own source and installation path. Choose the capability you need first.</p></div>
       <div class="project-grid">${projectOrder.map((id, i) => {
         const p = projects[id];
-        return `<article class="project-card project-${id}"><div class="project-identity"><span class="project-number">0${i + 1}</span><span class="project-glyph">${icon(id)}</span><div><h3>${p.name}</h3><span class="project-role">${p.role}</span></div></div><p class="project-summary">${p.summary}</p><div class="project-actions"><a href="#interface-${id}" data-interface-link="${id}">See interface ${icon("arrow")}</a><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} GitHub repository">Source ${icon("external")}</a></div></article>`;
+        return `<article class="project-card project-${id}"><div class="project-identity"><span class="project-number">${String(i + 1).padStart(2, "0")}</span><span class="project-glyph">${icon(id)}</span><div><h3>${p.name}</h3><span class="project-role">${p.role}</span></div></div><p class="project-summary">${p.summary}</p><div class="project-actions"><a href="#interface-${id}" data-interface-link="${id}">See interface ${icon("arrow")}</a><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} ${p.candidate ? "candidate guide" : "GitHub repository"}">${p.candidate ? "Candidate guide" : "Source"} ${icon("external")}</a></div></article>`;
       }).join("")}</div>
       <div class="ardent-note"><span class="ardent-symbol" aria-hidden="true">A<span>:</span>E</span><div><span class="mini-label">INSIDE MAGNUS</span><h3>Ardent runs the work. Emberfold carries the context.</h3><p>Ardent is Magnus’s headless agent runtime. It can run on its own or under Magnus management; its pinned Emberfold library helps fit context for the next turn.</p></div><a class="text-link" href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" target="_blank" rel="noopener noreferrer">Explore Ardent ${icon("external")}</a></div>
     </section>
     <section class="screens-section" id="interfaces" aria-labelledby="screens-title"><div class="shell">
-      <div class="section-head"><div><span class="section-kicker">IN THE INTERFACE / 03</span><h2 id="screens-title">See the tools at work.</h2></div><p>Five projects. Real interfaces and a verified CLI example. All captures use synthetic or disposable data.</p></div>
-      <div class="interface-tabs" role="tablist" aria-label="Choose a project interface">${projectOrder.map((id, i) => `<button type="button" role="tab" class="project-${id}" id="interface-tab-${id}" aria-controls="interface-${id}" aria-selected="${id === activeInterface}" tabindex="${id === activeInterface ? 0 : -1}" data-interface="${id}"><span class="interface-tab-number">0${i + 1}</span><span>${projects[id].name}</span><span class="interface-tab-icon">${icon(id)}</span></button>`).join("")}</div>
+      <div class="section-head"><div><span class="section-kicker">IN THE INTERFACE / 03</span><h2 id="screens-title">See the tools at work.</h2></div><p>Retained interfaces, candidate product boundaries, and a verified CLI example. Captures use synthetic or disposable data.</p></div>
+      <div class="interface-tabs" role="tablist" aria-label="Choose a project interface">${projectOrder.map((id, i) => `<button type="button" role="tab" class="project-${id}" id="interface-tab-${id}" aria-controls="interface-${id}" aria-selected="${id === activeInterface}" tabindex="${id === activeInterface ? 0 : -1}" data-interface="${id}"><span class="interface-tab-number">${String(i + 1).padStart(2, "0")}</span><span>${projects[id].name}</span><span class="interface-tab-icon">${icon(id)}</span></button>`).join("")}</div>
       ${projectOrder.map(id => {
         const p = projects[id], note = interfaceNotes[id];
         return `<section class="interface-panel project-${id}" id="interface-${id}" role="tabpanel" aria-labelledby="interface-tab-${id}" tabindex="0" ${id !== activeInterface ? "hidden" : ""}>
-          <div class="interface-toolbar"><span>${id === "emberfold" ? "CLI / VERIFIED DRY RUN" : "CONSOLE / SYNTHETIC DATA"}</span>${id === "cindertrace" ? `<div class="capture-switch" role="group" aria-label="Cindertrace capture"><button type="button" data-capture="overview" aria-pressed="true">Overview</button><button type="button" data-capture="case" aria-pressed="false">Investigation</button></div>` : `<span>${id === "emberfold" ? "NO MODEL CALLS" : "SELECT IMAGE TO OPEN FULL SIZE"}</span>`}</div>
-          <figure class="interface-figure"><div class="interface-visual"><div class="screen-frame">${p.image ? `<a class="capture-link" href="${p.image}" target="_blank" rel="noopener noreferrer" aria-label="Open full ${p.name} capture"><img src="${p.image}" alt="${p.imageAlt}" loading="lazy" decoding="async" width="${id === "cindertrace" ? 1440 : 1280}" height="${id === "cindertrace" ? 900 : 720}" /></a>` : `<div class="screen-terminal"><div class="terminal-top"><span>EMBERFOLD / CLI</span><span>SYNTHETIC INPUT</span></div><p><span>$</span> emberfold prepare --input emberfold.json --dry-run</p><pre tabindex="0" aria-label="Excerpt from actual Emberfold dry run output">{
+          <div class="interface-toolbar"><span>${p.candidate ? "PRODUCT BOUNDARY / CANDIDATE" : id === "emberfold" ? "CLI / VERIFIED DRY RUN" : id === "hive" ? "LEGACY CONSOLE / SYNTHETIC DATA" : "CONSOLE / SYNTHETIC DATA"}</span>${id === "cindertrace" ? `<div class="capture-switch" role="group" aria-label="Cindertrace capture"><button type="button" data-capture="overview" aria-pressed="true">Overview</button><button type="button" data-capture="case" aria-pressed="false">Investigation</button></div>` : `<span>${p.candidate ? "INDEPENDENT RELEASES" : id === "emberfold" ? "NO MODEL CALLS" : "SELECT IMAGE TO OPEN FULL SIZE"}</span>`}</div>
+          <figure class="interface-figure"><div class="interface-visual"><div class="screen-frame">${p.candidate ? `<div class="boundary-panel"><span class="mini-label">${p.role.toUpperCase()}</span><h4>${p.name}</h4><p>${p.summary}</p><dl>${p.connections.map(connection => `<div><dt>${connection.to}</dt><dd>${connection.how}</dd></div>`).join("")}</dl><p class="boundary-status">Candidate implementation · release and migration acceptance in progress</p></div>` : p.image ? `<a class="capture-link" href="${p.image}" target="_blank" rel="noopener noreferrer" aria-label="Open full ${p.name} capture"><img src="${p.image}" alt="${p.imageAlt}" loading="lazy" decoding="async" width="${id === "cindertrace" ? 1440 : 1280}" height="${id === "cindertrace" ? 900 : 720}" /></a>` : `<div class="screen-terminal"><div class="terminal-top"><span>EMBERFOLD / CLI</span><span>SYNTHETIC INPUT</span></div><p><span>$</span> emberfold prepare --input emberfold.json --dry-run</p><pre tabindex="0" aria-label="Excerpt from actual Emberfold dry run output">{
   "tokens": {
     "input_tokens": 100,
     "max_input_tokens": 12000,
@@ -384,19 +429,20 @@ app.innerHTML = `
   "protected_spans_verified": 0,
   "compacted": false,
   "fits": true
-}</pre><div class="terminal-foot">OUTPUT EXCERPT · NO MODEL CALLS</div></div>`}</div><p class="capture-caption">${id === "emberfold" ? "Actual output excerpt · synthetic input" : `${p.name} · ${id === "cindertrace" ? '<span class="capture-name">Overview</span>' : 'sample environment'} · <a class="capture-full-link" href="${p.image}" target="_blank" rel="noopener noreferrer">Open full capture ${icon("external")}</a>`}</p></div>
-          <figcaption class="interface-story"><span class="mini-label">${p.role}</span><h3>${note.title}</h3><p>${note.copy}</p><ul>${note.points.map(point => `<li>${point}</li>`).join("")}</ul><a class="text-link" href="/guides/${id}.md">${p.name} guide ${icon("arrow")}</a>${id === "cindertrace" ? `<div class="response-note"><h4>One incident. Evolving evidence.</h4><p>Investigate a suspicious login, weigh a benign explanation, then assess corroborating activity. Compare cited claims and confidence across revisions. Containment stays a human-approved simulation.</p><a href="/guides/cindertrace.md#try-the-evolving-investigation-lab">Try the disposable investigation lab ${icon("arrow")}</a></div><div class="response-note" id="security"><h4>Response stays deliberate.</h4><p>Administrator approval binds the exact plan, expires after ten minutes, and is used once. Optional Magnus executes host actions; response controls require its configured bridge.</p><a href="https://github.com/ChefTaco/cindertrace/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy and data handling ${icon("external")}</a></div>` : ""}${id === "chattermost" ? '<p class="interface-limit">Background mobile push, calls, and SSO are not implemented.</p>' : ""}</figcaption></figure>
+}</pre><div class="terminal-foot">OUTPUT EXCERPT · NO MODEL CALLS</div></div>`}</div><p class="capture-caption">${p.candidate ? "Product ownership diagram · see guide for verification limits" : id === "emberfold" ? "Actual output excerpt · synthetic input" : `${p.name} · ${id === "cindertrace" ? '<span class="capture-name">Overview</span>' : 'sample environment'} · <a class="capture-full-link" href="${p.image}" target="_blank" rel="noopener noreferrer">Open full capture ${icon("external")}</a>`}</p></div>
+          <figcaption class="interface-story"><span class="mini-label">${p.role}</span><h3>${note.title}</h3><p>${note.copy}</p><ul>${note.points.map(point => `<li>${point}</li>`).join("")}</ul><a class="text-link" href="/guides/${id}.md">${p.name} guide ${icon("arrow")}</a>${id === "cindertrace" ? `<div class="response-note"><h4>One incident. Evolving evidence.</h4><p>Investigate a suspicious login, weigh a benign explanation, then assess corroborating activity. Compare cited claims and confidence across revisions. Containment stays a human-approved simulation.</p><a href="/guides/cindertrace.md#try-the-evolving-investigation-lab">Try the disposable investigation lab ${icon("arrow")}</a></div><div class="response-note" id="security"><h4>Response stays deliberate.</h4><p>Administrator approval binds the exact plan, expires after ten minutes, and is used once. Optional Magnus executes host actions; response controls require its configured bridge.</p><a href="https://github.com/ChefTaco/cindertrace/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy and data handling ${icon("external")}</a></div>` : ""}${id === "chattermost" ? '<p class="interface-limit">Background mobile push and calls are not implemented. Suite browser identity is a candidate integration; native Mattermost sessions remain available.</p>' : ""}</figcaption></figure>
         </section>`;
       }).join("")}
       <p class="interface-footnote">You are viewing documentation and sample captures. This site does not connect to an operational fleet or security installation.</p>
     </div></section>
+    <section class="suite-boundary shell" aria-label="Suite release status"><h2>A suite under acceptance.</h2><p>The extracted products and Bash installer are being verified in isolated installations. No official signed suite release has been published. Keep the existing frontends and recovery artifacts until the replacement gates pass. Ollama, llama.cpp and hosted providers remain external; Hive only verifies and registers their endpoints.</p></section>
     <section class="install-section shell" id="install" aria-labelledby="install-title"><div class="section-head"><div><span class="section-kicker">INSTALL LAB / 04</span><h2 id="install-title">Try it on your host.</h2></div><p>Follow the first steps here, then continue with each project’s full guide. These walkthroughs explain commands; they do not run them for you.</p></div>
-      <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span class="tab-counter">0${i + 1}</span><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh environment for a first install. Existing installations follow their own upgrade guides.</p></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
+      <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span class="tab-counter">${String(i + 1).padStart(2, "0")}</span><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh environment for a first install. Existing installations follow their own upgrade guides.</p></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
     </section>
     <section class="agents-section shell" id="agents" aria-labelledby="agents-title">
       <div class="section-head"><div><span class="section-kicker">FOR AGENTS / 05</span><h2 id="agents-title">A direct path into the docs.</h2></div><p>Plain Markdown guides with prerequisites, commands, expected results, and reviewed source revisions. Start with the part you need.</p></div>
       <div class="agent-index-links"><a class="text-link" href="/llms.txt" type="text/plain">Read llms.txt ${icon("arrow")}</a><a class="text-link" href="/index.md" type="text/markdown">Site overview in Markdown ${icon("arrow")}</a></div>
-      <ul class="agent-guides" aria-label="Project guides in Markdown">${projectOrder.map((id, i) => `<li><a href="/guides/${id}.md" type="text/markdown"><span class="mini-label">0${i + 1} / MARKDOWN GUIDE</span><span class="agent-guide-title">${projects[id].name}${id === "magnus" ? " + Ardent" : ""} ${icon("arrow")}</span><span>${projects[id].role}</span></a></li>`).join("")}</ul>
+      <ul class="agent-guides" aria-label="Project guides in Markdown">${projectOrder.map((id, i) => `<li><a href="/guides/${id}.md" type="text/markdown"><span class="mini-label">${String(i + 1).padStart(2, "0")} / MARKDOWN GUIDE</span><span class="agent-guide-title">${projects[id].name}${id === "magnus" ? " + Ardent" : ""} ${icon("arrow")}</span><span>${projects[id].role}</span></a></li>`).join("")}</ul>
     </section>
     <section class="closing"><div class="shell closing-inner"><div><span class="section-kicker">YOUR INFRASTRUCTURE. YOUR CHOICE.</span><h2>Start with one piece.<br/><em>Make it yours.</em></h2></div><a class="button button-light" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">Explore the repositories ${icon("arrow")}</a></div></section>
   </main>
@@ -407,7 +453,7 @@ app.innerHTML = `
 function renderAtlas() {
   const p = projects[activeProject];
   const detail = document.querySelector<HTMLDivElement>("#atlas-detail")!;
-  detail.innerHTML = `<span class="detail-meta">SELECTED SYSTEM / ${p.role.toUpperCase()}</span><div class="detail-body"><h3>${p.name}</h3><p>${p.detail}</p><h4>Connects to</h4><ul class="detail-links">${p.connections.map((c) => `<li><strong>${c.to}</strong> <span>${c.how}</span></li>`).join("")}</ul><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="Open ${p.name} GitHub repository">Project source ${icon("external")}</a></div>`;
+  detail.innerHTML = `<span class="detail-meta">SELECTED SYSTEM / ${p.role.toUpperCase()}</span><div class="detail-body"><h3>${p.name}</h3><p>${p.detail}</p><h4>Connects to</h4><ul class="detail-links">${p.connections.map((c) => `<li><strong>${c.to}</strong> <span>${c.how}</span></li>`).join("")}</ul><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="Open ${p.name} ${p.candidate ? "candidate guide" : "GitHub repository"}">${p.candidate ? "Candidate guide" : "Project source"} ${icon("external")}</a></div>`;
   document
     .querySelectorAll<HTMLButtonElement>(".atlas-node")
     .forEach((button) => {

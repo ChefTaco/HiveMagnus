@@ -391,3 +391,29 @@ code { font: inherit; }
   :root { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
 }
+
+/* The product map follows ownership: installer and browser, core APIs, then
+   execution and optional applications. Grid placement remains readable on mobile. */
+.project-emberpath { --accent: #a14f40; }
+.project-oathweave { --accent: #526890; }
+.project-hivemem { --accent: #216d69; }
+.project-hiveskills { --accent: #966022; }
+.project-hivexui { --accent: #41677e; }
+.atlas-map { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); grid-template-areas: "hive hivexui oathweave" "emberpath hivemem hiveskills" "magnus ardent emberfold" "cindertrace cindertrace chattermost"; gap: 32px 18px; padding: 28px 20px 48px; min-height: 0; }
+.atlas-map .atlas-node { position: relative; inset: auto; width: 100%; min-width: 0; min-height: 108px; z-index: 1; }
+.atlas-map .atlas-center { grid-area: ardent; position: relative; inset: auto; transform: none; width: 100%; height: 108px; border-radius: 2px; box-shadow: none; z-index: 1; }
+.node-hive { grid-area: hive; }.node-hivexui { grid-area: hivexui; }.node-oathweave { grid-area: oathweave; }
+.node-emberpath { grid-area: emberpath; }.node-hivemem { grid-area: hivemem; }.node-hiveskills { grid-area: hiveskills; }
+.node-magnus { grid-area: magnus; }.node-cindertrace { grid-area: cindertrace; }.node-chattermost { grid-area: chattermost; }.node-emberfold { grid-area: emberfold; }
+.interface-tabs { grid-template-columns: repeat(5,minmax(0,1fr)); }
+.boundary-panel { padding: 40px; min-height: 420px; background: var(--surface); }
+.boundary-panel > h4 { margin: 18px 0 10px; font-size: clamp(30px,4vw,52px); color: var(--accent); }
+.boundary-panel dl { margin: 24px 0; }
+.boundary-panel dl > div { border-top: 1px solid var(--line); padding: 14px 0; }
+.boundary-panel dt { font-weight: 700; }.boundary-panel dd { margin: 5px 0 0; line-height: 1.6; color: var(--muted); }
+.boundary-status { margin-bottom: 0; font: 12px/1.6 "IBM Plex Mono",monospace; }
+.suite-boundary { padding: 38px; margin-block: 48px; background: var(--surface); border-left: 4px solid var(--teal); }
+.suite-boundary h2 { font-size: 28px; }.suite-boundary p { margin-bottom: 0; max-width: 940px; }
+@media (max-width:1150px) { .atlas-layout { grid-template-columns: minmax(0,1.6fr) minmax(260px,1fr); }.node-name { font-size: 16px; }.atlas-map { gap: 28px 10px; padding-inline: 12px; } }
+@media (max-width:960px) { .atlas-layout { grid-template-columns: 1fr; }.atlas-map { gap: 32px 20px; }.node-name { font-size: 18px; } }
+@media (max-width:600px) { .atlas-map { grid-template-columns: repeat(2,minmax(0,1fr)); grid-template-areas: "hive hivexui" "oathweave emberpath" "hivemem hiveskills" "magnus ardent" "cindertrace chattermost" "emberfold emberfold"; gap: 24px 12px; }.atlas-map .atlas-node { padding: 12px; }.boundary-panel { padding: 24px; }.suite-boundary { padding: 26px; }.interface-tabs button:last-child { flex-basis: 40%; } }

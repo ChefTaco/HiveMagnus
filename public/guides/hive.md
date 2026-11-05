@@ -1,12 +1,24 @@
 # Hive: agent guide
 
-> Shared identity, long-term memory, and OpenAI-compatible model routing, managed from one self-hosted console.
+> Suite deployment, tested product bundles, upgrades, backup and recovery.
 
 [Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/hive) · [Current instructions](https://github.com/ChefTaco/hive#quick-start-with-npm)
 
 ## When to use Hive
 
-Choose Hive when multiple agents or applications need shared identity (Hive IAM), memory (HiveMem), or a model gateway (Hive Router). The optional Skills registry distributes skills. Magnus, ChatterMost, and Emberfold are not prerequisites.
+Choose Hive to plan, install, upgrade and recover a tested combination of independent ecosystem products. Core provides identity, model routing, memory, skill distribution and the shared console. Select additional products only where needed. The published launcher described below predates this separation.
+
+## Candidate ecosystem boundary
+
+Hive is becoming the Bash/Compose installer for independently versioned Oathweave, Emberpath, HiveMem, HiveSkills and HiveXUI, with selectable Magnus/Ardent, Cindertrace, ChatterMost and Emberfold HTTP. The static HiveXUI console calls authorized product APIs through HTTPS ingress. Magnus keeps its current console until a later merge.
+
+The candidate controller supports interactive and unattended configuration, per-host placement, protected secret references, signed release pins, backup and isolated restore rehearsals. No official signed suite release has been published. Do not cut over an existing installation based on a candidate guide or a passing fresh fixture.
+
+Ollama, llama.cpp, other inference services and hosted APIs are external dependencies. Hive only verifies connectivity, model discovery, generation and streaming, then registers verified providers with Emberpath. It never installs or manages inference services, model downloads, storage, licenses or GPUs. Existing external configurations and model resources remain with their current owner.
+
+## Published legacy launcher
+
+The commands below retain the previously reviewed published launcher and its recovery-compatible documentation. They are not commands for the new candidate Bash suite.
 
 ## Prerequisites
 

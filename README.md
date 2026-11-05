@@ -1,6 +1,6 @@
 # Hive:Magnus site
 
-Public home for Hive, Magnus, Cindertrace, ChatterMost, and Emberfold at [hivemagnus.com](https://hivemagnus.com).
+Public home for the Hive:Magnus ecosystem at [hivemagnus.com](https://hivemagnus.com).
 
 ## Develop
 
@@ -8,9 +8,9 @@ Use Node.js 24.22.1, then run `npm ci` and `npm run dev`. `npm run build` typech
 
 The interactive walkthroughs are browser-only explanations. Commands are sourced from the linked repository installation guides and must be rechecked when releases change. UI captures use synthetic or disposable data; never publish a live operator screen, credential, or private endpoint.
 
-With the site open in Playwright CLI, run `playwright-cli run-code --filename scripts/check-browser.js` to check the atlas, all five interface panels, both Cindertrace views, hero/directory links, all walkthrough steps, clipboard, keyboard navigation, image loading, accessibility, minimum text size, overflow, and reduced motion at desktop, tablet, and phone widths. The check uses the local `axe-core` development dependency. Save review screenshots under the ignored `output/playwright/` directory.
+With the site open in Playwright CLI, run `playwright-cli run-code --filename scripts/check-browser.js` to check the atlas, all ten product panels, both Cindertrace views, hero/directory links, all walkthrough steps, clipboard, keyboard navigation, image loading, accessibility, minimum text size, overflow, and reduced motion at desktop, tablet, and phone widths. The check uses the local `axe-core` development dependency. Save review screenshots under the ignored `output/playwright/` directory.
 
-The interface gallery in section 3 comes from the same five-project registry as the atlas and directory. Cindertrace is selected initially and offers overview/investigation captures; every project has a panel and guide link. Hero and directory links select the matching panel. `#interface-PROJECT` deep links and the legacy `#security` anchor remain supported. The atlas distinguishes optional integrations from bundled components.
+The interface gallery in section 3 comes from the same ten-product registry as the atlas and directory. Cindertrace is selected initially and offers overview/investigation captures; every project has a panel and guide link. Hero and directory links select the matching panel. `#interface-PROJECT` deep links and the legacy `#security` anchor remain supported. The atlas distinguishes optional integrations from bundled components.
 
 See [media provenance](docs/media.md) for screenshot sources and the verified CLI example. Font licenses are included in `public/licenses/`.
 
