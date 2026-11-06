@@ -93,3 +93,16 @@ Hive: the walkthrough and guide now clone the repository at `v2.0.0` before `./h
 Product guides: ChatterMost pins `0.4.1`, whose runbook block is unchanged apart from the version; the archive's `SHA256SUMS` line matches the GitHub asset digest and the downloaded archive, which contains `chattermost-0.4.1/chattermost`. Cindertrace pins `v0.2.1` for both the normal installation and the lab, since the tag contains the lab and its docs are unchanged since the earlier lab review. Emberfold pins core and CLI `0.2.1`; the synthetic CLI dry run exits 0 with output identical to `0.1.0`, so the site excerpt stays as captured. HiveMem's guide no longer offers its standalone `/dashboard`, which the release docs reduce to a placeholder page. Emberpath's guide now notes that the npm package predates the repository and still bundles the old console. Magnus and Ardent commands are unchanged and unpinned; npm `latest` is `2.1.1`.
 
 The standalone npm commands for Oathweave, Emberpath, HiveMem and HiveSkills follow their READMEs, but npm still resolves those package names to the legacy `1.2.2` line; the new releases ship as container images, which Hive installs. Only Emberpath's README says so explicitly. No installation command was exercised against an operational environment.
+
+## Standalone container paths, 2026-11-06
+
+npm resolves `@hivemagnus/hive-iam-server`, `@hivemagnus/hivemem-server`, `@hivemagnus/hive-skills` and `@hivemagnus/hive-router` to the legacy `1.2.2` line, and `@hivemagnus/oathweave` and `@hivemagnus/emberpath` are not on npm. The current releases ship only as GHCR images, so the Oathweave, HiveMem, HiveSkills and Emberpath READMEs now document their images, and the guides' standalone sections follow those container examples instead of `npx`. Each block was run with throwaway containers against the image its release publishes (the multi-architecture digests Hive `2.0.0` and `2.0.1` both pin); Emberpath's block was run on the network of the Oathweave example.
+
+| Project | Image | Commit | Reviewed sources |
+| --- | --- | --- | --- |
+| Oathweave | `ghcr.io/cheftaco/oathweave:2.0.1` | `056b33500181db6fbd3c124a40f5bfa7b90a9873` | `README.md`, `apps/iam-core/README.md` |
+| HiveMem | `ghcr.io/cheftaco/hivemem:1.3.1` | `7f382cc05192f07ab1761d0e93754f404449d0c0` | `README.md`, `ts-core/README.md`, `APP_ARCHITECTURE.md` |
+| HiveSkills | `ghcr.io/cheftaco/hiveskills:1.3.1` | `aa4fa782509912a95584738d12b3e4b343b19dc9` | `README.md` |
+| Emberpath | `ghcr.io/cheftaco/emberpath:2.0.1` | `d5fbb8855a70223972f6e2981fb97f9b2b36ba9b` | `README.md` |
+
+The Cindertrace guide already installs from the release tag with Compose and does not claim release assets; its README now says that only `v0.1.0` attaches a native archive and that later releases publish the image. The HiveXUI and Cindertrace guides already keep the investigation lab out of HiveXUI, which now matches the HiveXUI README.

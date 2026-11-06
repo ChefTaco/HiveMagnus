@@ -14,23 +14,31 @@ Oathweave and its private Redis are required in every profile; [Hive](https://hi
 
 ## Run it on its own
 
-Requires Node.js 24.22.1+ or 26.13.0+ on Linux or macOS, Redis 7+ and OpenSSL. The published package keeps its original name, `@hivemagnus/hive-iam-server`.
+Oathweave 2.x ships only as the container image `ghcr.io/cheftaco/oathweave`. The npm package `@hivemagnus/hive-iam-server` is the legacy Hive IAM 1.x line: npm resolves it to `1.2.2`, not to this release, and `@hivemagnus/oathweave` is not on npm. Requires Docker and OpenSSL. This runs Oathweave and a password-protected Redis on a private Docker network and publishes Oathweave on loopback only:
 
 ```bash
-docker run -d --name hive-redis -p 127.0.0.1:6379:6379 redis:7.4.7-alpine
-cat > iam.env <<ENV
+umask 077
+printf 'REDIS_PASSWORD=%s\n' "$(openssl rand -hex 32)" > redis.env
+. ./redis.env
+cat > iam.env <<EOF
 HIVE_AUTO_MIGRATE=true
 COOKIE_SECRET=$(openssl rand -hex 32)
 IAM_AGENT_SECRET=$(openssl rand -hex 32)
 SEED_ADMIN_PASSWORD=$(openssl rand -base64 24)
-ENV
-chmod 600 iam.env
-npx --allow-scripts=better-sqlite3,argon2 @hivemagnus/hive-iam-server check --env-file iam.env
-npx --allow-scripts=better-sqlite3,argon2 @hivemagnus/hive-iam-server --env-file iam.env
+REDIS_URL=redis://:$REDIS_PASSWORD@oathweave-redis:6379
+HIVE_HEALTH_URL=http://localhost:4200/api/v1/health/ready
+EOF
+docker network create oathweave
+docker run -d --name oathweave-redis --network oathweave --env-file redis.env \
+  -v oathweave-redis:/data redis:7.4.7-alpine \
+  sh -c 'exec redis-server --requirepass "$REDIS_PASSWORD" --appendonly yes'
+docker run --rm --network oathweave --env-file iam.env ghcr.io/cheftaco/oathweave:2.0.1 check
+docker run -d --name oathweave --network oathweave -p 127.0.0.1:4200:4200 \
+  -v oathweave-data:/data --env-file iam.env ghcr.io/cheftaco/oathweave:2.0.1
 ```
 
-Expected result: the first start creates its data directory, signing keys, database and initial `SUPER_ADMIN` account. From another terminal, `curl http://127.0.0.1:4200/api/v1/health/ready` reports readiness. Keep `iam.env` private. Later starts refuse pending migrations unless explicitly allowed, and missing databases or signing keys must be restored rather than regenerated.
+Expected result: `check` reports `Result: OK`, and once the container is healthy, `curl http://127.0.0.1:4200/api/v1/health/ready` reports readiness. The first start creates the database, signing keys and initial `SUPER_ADMIN` account in the `oathweave-data` volume; generated client secrets are in `/data/iam/initial-credentials.env` there. This listener is plain HTTP, so keep it on loopback or behind a TLS proxy, or configure TLS as the server README describes. Keep both env files private. Later starts refuse pending migrations unless explicitly allowed, and missing databases or signing keys must be restored rather than regenerated.
 
 ## Source review
 
-Reviewed 2026-11-05 against tag `v2.0.1`, commit `dd164d733235cac26c13f410c869f5cf424222a8`: [README](https://github.com/ChefTaco/Oathweave/blob/dd164d733235cac26c13f410c869f5cf424222a8/README.md) and [server README](https://github.com/ChefTaco/Oathweave/blob/dd164d733235cac26c13f410c869f5cf424222a8/apps/iam-core/README.md). The commands follow its quick start. The [2.0.1 release](https://github.com/ChefTaco/Oathweave/releases/tag/v2.0.1) publishes the container image that Hive installs. Original attribution and migration history are preserved. License: Apache-2.0.
+Reviewed 2026-11-06 against `main` commit `056b33500181db6fbd3c124a40f5bfa7b90a9873`, documentation added after tag `v2.0.1`: [README](https://github.com/ChefTaco/Oathweave/blob/056b33500181db6fbd3c124a40f5bfa7b90a9873/README.md) and [server README](https://github.com/ChefTaco/Oathweave/blob/056b33500181db6fbd3c124a40f5bfa7b90a9873/apps/iam-core/README.md). The commands follow the server README's container example and were run with throwaway containers against the image the [2.0.1 release](https://github.com/ChefTaco/Oathweave/releases/tag/v2.0.1) publishes, which is the image Hive installs. Original attribution and migration history are preserved. License: Apache-2.0.

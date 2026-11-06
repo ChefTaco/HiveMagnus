@@ -14,19 +14,32 @@ Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive
 
 ## Run it on its own
 
-Requires Node.js 24.22.1+ or 26.13.0+. For admin sign-in, either Linux with `pamtester` or a running identity service. The source package `@hivemagnus/emberpath` is not on npm yet, so these commands use `@hivemagnus/hive-router`, the last published name, with its `HIVE_ROUTER_` settings. That package predates this repository and still bundles the old console on the admin listener; this source has no built-in console and is managed through its administration API, or through HiveXUI in the suite.
+Emberpath 2.x ships only as the container image `ghcr.io/cheftaco/emberpath`. `@hivemagnus/emberpath` is not on npm, and the npm package `@hivemagnus/hive-router` is the legacy Hive Router 1.x line: npm resolves it to `1.2.2`, which still bundles the old console. Requires Docker and OpenSSL. The image serves both listeners with TLS and has no PAM, so administrators sign in through Oathweave. This joins the network of the [Oathweave container example](https://hivemagnus.com/guides/oathweave.md#run-it-on-its-own) and reads the `hive-router` client secret Oathweave generated. Put a certificate and key for the listeners in `tls/` as `server.crt` and `server.key`, readable by uid 1000.
 
 ```bash
-mkdir -p ~/.hive && chmod 700 ~/.hive
-install -m 600 /dev/null ~/.hive/router.env
-echo "HIVE_ROUTER_SECRET=$(openssl rand -hex 32)" >> ~/.hive/router.env
-echo "HIVE_ROUTER_ADMIN_USERS=$USER" >> ~/.hive/router.env
-npx --allow-scripts=better-sqlite3 @hivemagnus/hive-router check --env-file ~/.hive/router.env
-npx --allow-scripts=better-sqlite3 @hivemagnus/hive-router --env-file ~/.hive/router.env
+umask 077
+cat > emberpath.env <<EOF
+HIVE_AUTO_MIGRATE=true
+HIVE_ROUTER_SECRET=$(openssl rand -hex 32)
+HIVE_ROUTER_ADMIN_USERS=admin
+HIVE_ROUTER_AUTH_MODE=iam-oidc
+HIVE_IAM_INTERNAL_URL=http://oathweave:4200
+HIVE_ROUTER_IAM_CLIENT_SECRET=$(docker exec oathweave sed -n 's/^SEED_HIVE_ROUTER_CLIENT_SECRET=//p' /data/iam/initial-credentials.env)
+API_HOST=0.0.0.0
+ADMIN_HOST=0.0.0.0
+TLS_CERT_PATH=/config/tls/server.crt
+TLS_KEY_PATH=/config/tls/server.key
+NODE_EXTRA_CA_CERTS=/config/tls/server.crt
+EOF
+docker run --rm --network oathweave -v emberpath-data:/data -v "$PWD/tls:/config/tls:ro" \
+  --env-file emberpath.env ghcr.io/cheftaco/emberpath:2.0.1 check
+docker run -d --name emberpath --network oathweave \
+  -p 127.0.0.1:4020:4020 -p 127.0.0.1:9443:9443 -v emberpath-data:/data \
+  -v "$PWD/tls:/config/tls:ro" --env-file emberpath.env ghcr.io/cheftaco/emberpath:2.0.1
 ```
 
-Expected result: `check` validates configuration and starts nothing. The server then listens on loopback, with the OpenAI-compatible API at `http://127.0.0.1:4020/v1` and the administration API at `http://127.0.0.1:9443/api`, where operators sign in with `POST /api/auth/login`; both listeners answer `GET /health`. TLS is required when `NODE_ENV=production` or `REQUIRE_TLS=true`. See the README for keys, TLS and remote exposure.
+Expected result: `check` validates configuration, TLS and Oathweave reachability and starts nothing. Once the container is healthy, `curl --cacert tls/server.crt https://localhost:4020/health` answers, with the OpenAI-compatible API at `https://localhost:4020/v1` and the administration API at `https://localhost:9443/api`. Emberpath has no built-in console: it is managed through its administration API, or through HiveXUI in the suite. See the README for keys, public URLs and HiveMem.
 
 ## Source review
 
-Reviewed 2026-11-05 against tag `v2.0.1`, commit `7aada3201bed915d36e37458c3b8a1dc5fe71c84`: [README](https://github.com/ChefTaco/Emberpath/blob/7aada3201bed915d36e37458c3b8a1dc5fe71c84/README.md). The commands follow its npm quick start. The [2.0.1 release](https://github.com/ChefTaco/Emberpath/releases/tag/v2.0.1) publishes the container image that Hive installs; it attaches no other files. Original attribution and migration history are preserved. License: Apache-2.0.
+Reviewed 2026-11-06 against `main` commit `d5fbb8855a70223972f6e2981fb97f9b2b36ba9b`, documentation added after tag `v2.0.1`: [README](https://github.com/ChefTaco/Emberpath/blob/d5fbb8855a70223972f6e2981fb97f9b2b36ba9b/README.md). The commands follow its container example and were run with throwaway containers, together with the Oathweave example, against the image the [2.0.1 release](https://github.com/ChefTaco/Emberpath/releases/tag/v2.0.1) publishes, which is the image Hive installs; the release attaches no other files. Original attribution and migration history are preserved. License: Apache-2.0.

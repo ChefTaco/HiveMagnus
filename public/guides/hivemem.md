@@ -14,19 +14,27 @@ HiveMem and its private Qdrant are part of the core profile; [Hive](https://hive
 
 ## Run it on its own
 
-Requires Node.js 24.22.1+ or 26.13.0+ on Linux or macOS with `flock`, and a Qdrant instance.
+HiveMem 1.3 ships only as the container image `ghcr.io/cheftaco/hivemem`. It is not on npm: npm resolves `@hivemagnus/hivemem-server` to `1.2.2`, the legacy line from the Hive repository. Requires Docker and OpenSSL. This keeps Qdrant on a private Docker network and publishes HiveMem on loopback only:
 
 ```bash
-docker run -d --name hive-qdrant -p 127.0.0.1:6333:6333 \
-  -v hive-qdrant:/qdrant/storage qdrant/qdrant:v1.18.1
 umask 077
-printf 'HIVEMEM_JWT_SECRET=%s\n' "$(openssl rand -hex 32)" > hivemem.env
-npx @hivemagnus/hivemem-server check --env-file hivemem.env
-npx @hivemagnus/hivemem-server --env-file hivemem.env
+cat > hivemem.env <<EOF
+HIVEMEM_JWT_SECRET=$(openssl rand -hex 32)
+HIVEMEM_QDRANT_URL=http://hivemem-qdrant:6333
+HIVEMEM_TS_CORE_HOST=0.0.0.0
+HIVE_AUTO_MIGRATE=true
+HIVE_HEALTH_URL=http://localhost:18790/v1/health/ready
+EOF
+docker network create hivemem
+docker run -d --name hivemem-qdrant --network hivemem -v hivemem-qdrant:/qdrant/storage \
+  qdrant/qdrant:v1.18.1
+docker run --rm --network hivemem --env-file hivemem.env ghcr.io/cheftaco/hivemem:1.3.1 check
+docker run -d --name hivemem --network hivemem -p 127.0.0.1:18790:18790 \
+  -v hivemem-data:/data --env-file hivemem.env ghcr.io/cheftaco/hivemem:1.3.1
 ```
 
-Expected result: from another terminal, `curl http://127.0.0.1:18790/v1/health/ready` reports readiness. Without an OpenAI-compatible embeddings endpoint, HiveMem uses deterministic lexical retrieval. Mint access tokens with `issue-token` as its README describes. HiveMem has no dashboard of its own: on this standalone path use its REST API, and in the suite use HiveXUI. `GET /dashboard` returns only a placeholder page; the `/dashboard/login` and `/dashboard/api/*` compatibility routes remain for existing callers.
+Expected result: `check` reports `Result: ready to start`, and once the container is healthy, `curl http://127.0.0.1:18790/v1/health/ready` reports readiness. Without an OpenAI-compatible embeddings endpoint, HiveMem uses deterministic lexical retrieval. Mint an access token with `docker run --rm --env-file hivemem.env ghcr.io/cheftaco/hivemem:1.3.1 issue-token --subject operator --role admin`. This listener is plain HTTP; serve HTTPS as the README describes before exposing it. HiveMem has no dashboard of its own: on this standalone path use its REST API, and in the suite use HiveXUI. `GET /dashboard` returns only a placeholder page; the `/dashboard/login` and `/dashboard/api/*` compatibility routes remain for existing callers.
 
 ## Source review
 
-Reviewed 2026-11-05 against tag `v1.3.1`, commit `96638e704f1c8b3fa583f42b5ca0de01ee447d23`: [README](https://github.com/ChefTaco/HiveMem/blob/96638e704f1c8b3fa583f42b5ca0de01ee447d23/README.md) and [server README](https://github.com/ChefTaco/HiveMem/blob/96638e704f1c8b3fa583f42b5ca0de01ee447d23/ts-core/README.md). The commands follow its quick start. The [1.3.1 release](https://github.com/ChefTaco/HiveMem/releases/tag/v1.3.1) publishes the container image that Hive installs. Original attribution and migration history are preserved. License: Apache-2.0.
+Reviewed 2026-11-06 against `main` commit `7f382cc05192f07ab1761d0e93754f404449d0c0`, documentation added after tag `v1.3.1`: [README](https://github.com/ChefTaco/HiveMem/blob/7f382cc05192f07ab1761d0e93754f404449d0c0/README.md), [server README](https://github.com/ChefTaco/HiveMem/blob/7f382cc05192f07ab1761d0e93754f404449d0c0/ts-core/README.md) and [architecture](https://github.com/ChefTaco/HiveMem/blob/7f382cc05192f07ab1761d0e93754f404449d0c0/APP_ARCHITECTURE.md). The commands follow the README's container example and were run with throwaway containers against the image the [1.3.1 release](https://github.com/ChefTaco/HiveMem/releases/tag/v1.3.1) publishes, which is the image Hive installs. Original attribution and migration history are preserved. License: Apache-2.0.
