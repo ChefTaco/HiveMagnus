@@ -106,3 +106,7 @@ npm resolves `@hivemagnus/hive-iam-server`, `@hivemagnus/hivemem-server`, `@hive
 | Emberpath | `ghcr.io/cheftaco/emberpath:2.0.1` | `d5fbb8855a70223972f6e2981fb97f9b2b36ba9b` | `README.md` |
 
 The Cindertrace guide already installs from the release tag with Compose and does not claim release assets; its README now says that only `v0.1.0` attaches a native archive and that later releases publish the image. The HiveXUI and Cindertrace guides already keep the investigation lab out of HiveXUI, which now matches the HiveXUI README.
+
+## Hive 2.0.1, 2026-11-06
+
+Hive published suite release 2.0.1, a controller-only release with the same images and product versions as 2.0.0. `migrate-native` now verifies migrated data before serving clients. The Hive guide, the agent index and the walkthrough constant now name `v2.0.1`, commit `02f9f9ff1becb9b14b74a8634f54cdc9ce1fba52`, and every linked file was checked to exist at that commit.
