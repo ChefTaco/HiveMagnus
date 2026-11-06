@@ -4,6 +4,20 @@
 
 [Visual site](https://hivemagnus.com/) · [Agent index](https://hivemagnus.com/llms.txt)
 
+## Install the suite
+
+Hive:Magnus brings model routing, memory, skills, fleet operations, security and chat into one browser console on your own infrastructure. Start the signed Hive installer, choose the `full` profile, then review and confirm the plan:
+
+```bash
+git clone --branch v2.0.0 https://github.com/ChefTaco/hive.git &&
+  cd hive &&
+  ./hive.sh --release 2.0.0
+```
+
+Use a fresh Linux environment with Docker Compose, an HTTPS origin with certificate and key files, and the controller tools listed in the [Hive installation guide](https://hivemagnus.com/guides/hive.md). Inference runtimes and model storage stay external; native agents, including Ardent, are opt-in. Existing installations follow their own upgrade and migration guides.
+
+The visual site leads with this overview and quick start at `#install`. The system atlas, console gallery and product directory follow. Detailed suite and standalone walkthroughs are at `#walkthroughs`.
+
 ## Choose a project
 
 | Need | Project | Guide | Repository |
@@ -39,9 +53,9 @@ Enable only the integrations you configure. Installing every project is not a pr
 
 ## Install and explore
 
-Each linked guide gives prerequisites, copyable commands, expected results, and full repository instructions. The visual site's install lab explains the first steps for Hive, Magnus, Cindertrace, ChatterMost, and Ardent with Emberfold. Commands shown on the site do not execute in visitors' environments.
+Each linked guide gives prerequisites, copyable commands, expected results, and full repository instructions. The visual site's setup walkthroughs explain the first steps for Hive, Magnus, Cindertrace, ChatterMost, and Ardent with Emberfold. Commands shown on the site do not execute in visitors' environments.
 
-Section 3 shows one interface, HiveXUI, across its product areas: Hive, Magnus, Oathweave, Emberpath, HiveMem, HiveSkills, Cindertrace, ChatterMost and the command palette. Magnus and Cindertrace offer several views. Emberfold has no console section, so it appears below the gallery with actual synthetic CLI dry-run output. All captures use a disposable installation with synthetic data. The atlas distinguishes configured connections from bundled components.
+The console gallery shows one interface, HiveXUI, across its product areas: Hive, Magnus, Oathweave, Emberpath, HiveMem, HiveSkills, Cindertrace, ChatterMost and the command palette. Magnus and Cindertrace offer several views. Emberfold has no console section, so it appears below the gallery with actual synthetic CLI dry-run output. All captures use a disposable installation with synthetic data. The atlas distinguishes configured connections from bundled components.
 
 Use `#interface-hive`, `#interface-magnus`, `#interface-oathweave`, `#interface-emberpath`, `#interface-hivemem`, `#interface-hiveskills`, `#interface-cindertrace`, `#interface-chattermost`, `#interface-hivexui`, or `#interface-emberfold` on the visual site to go to an area directly. The earlier `#security` link still opens Cindertrace.
 

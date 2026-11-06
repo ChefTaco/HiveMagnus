@@ -8,6 +8,7 @@ async function checkBrowser(page) {
   const consoleErrors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.addInitScript({ path: "node_modules/axe-core/axe.min.js" });
   await page.reload();
   await page.locator(".atlas-node").first().waitFor();
@@ -29,6 +30,25 @@ async function checkBrowser(page) {
     );
   }
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+  // The first task is understanding and installing the suite; the visual tour follows it.
+  const sectionIds = await page.locator("main > section").evaluateAll(sections => sections.map(section => section.id).filter(Boolean));
+  assert(JSON.stringify(sectionIds.slice(0, 5)) === JSON.stringify(["top", "install", "atlas", "interfaces", "projects"]), "Overview and suite install lead the visual tour");
+  const installLink = page.locator('.hero-actions a[href="#install"]');
+  await installLink.click();
+  assert(new URL(page.url()).hash === "#install", "Hero leads to suite install");
+  const quickStart = await page.locator("#quick-start-code").textContent();
+  assert(quickStart.includes("git clone --branch v2.0.0 https://github.com/ChefTaco/hive.git &&") && quickStart.includes("cd hive &&") && quickStart.endsWith("./hive.sh --release 2.0.0"), "Quick start pins and chains release setup");
+  await page.getByRole("button", { name: "Copy suite installation commands" }).click();
+  assert(await page.evaluate(() => navigator.clipboard.readText()) === quickStart, "Suite quick-start clipboard");
+  assert(await page.locator(".quick-terminal-foot strong").textContent() === "full", "Quick start specifies full profile");
+  const scope = page.locator(".quick-scope");
+  await scope.locator("summary").focus();
+  await page.keyboard.press("Enter");
+  assert(await scope.locator("p").isVisible(), "Full-profile details open by keyboard");
+  assert(await scope.textContent().then(text => text.includes("Native agents, including Ardent, are opt-in.")), "Full profile keeps native agents opt-in");
+  await page.keyboard.press("Enter");
+  await page.locator('.quick-install-note a[href="#walkthroughs"]').click();
+  assert(new URL(page.url()).hash === "#walkthroughs", "Setup help reaches detailed walkthroughs");
   let steps = 0;
   for (const name of ["Hive", "Magnus", "Cindertrace", "ChatterMost", "Ardent + Emberfold"]) {
     await walkthroughs
@@ -118,12 +138,12 @@ async function checkBrowser(page) {
   assert(metadata["@context"] === "https://schema.org", "Schema.org context");
   assert(metadata["@graph"].filter((item) => item["@type"] === "SoftwareSourceCode").length === 11, "Eleven SoftwareSourceCode entries");
 
-  // Section 3 is one console shown across its product areas, in sidebar order.
+  // The gallery is one console shown across its product areas, in sidebar order.
   const consoleAreas = ["Hive", "Magnus", "Oathweave", "Emberpath", "HiveMem", "HiveSkills", "Cindertrace", "ChatterMost", "HiveXUI"];
   const captureViews = { Magnus: ["fleet-overview", "fleet-map", "fleet-mission"], Cindertrace: ["cindertrace-overview", "cindertrace-case"] };
   const tabName = (name) => new RegExp(`^${name}$`, "i");
-  assert(await page.locator("#interfaces .section-kicker").textContent().then(t => t.includes("IN THE CONSOLE / 03")), "Section 3 keeps its heading");
-  assert((await interfaces.getByRole("tab").count()) === consoleAreas.length, "Section 3 includes every console area");
+  assert(await page.locator("#interfaces .section-kicker").textContent().then(t => t.includes("IN THE CONSOLE")), "Console gallery keeps its heading");
+  assert((await interfaces.getByRole("tab").count()) === consoleAreas.length, "Gallery includes every console area");
   assert((await page.locator(".interface-panel").count()) === consoleAreas.length, "One gallery panel per console area");
   assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("Magnus")), "Magnus area selected initially");
   for (const name of consoleAreas) {
@@ -162,10 +182,10 @@ async function checkBrowser(page) {
   assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => t.includes("HiveXUI")), "Interface previous wraps");
   await page.keyboard.press("Home");
   assert(await interfaces.getByRole("tab", {selected: true}).textContent().then(t => /^hive$/i.test(t.trim())), "Interface Home key");
-  // Every entry in the hero and project directory opens the matching area, and Emberfold's scrolls to its excerpt.
-  for (const area of [".stack-index", ".project-grid"]) {
+  // Every project directory entry opens its console area; Emberfold scrolls to its excerpt.
+  for (const area of [".project-grid"]) {
     for (const name of expectedProjects) {
-      const link = area === ".stack-index" ? page.locator(area).getByRole("link", {name: new RegExp(`^\\d{2} ${name} `)}) : page.locator(area).locator(`.project-${name.toLowerCase()} [data-interface-link]`);
+      const link = page.locator(area).locator(`.project-${name.toLowerCase()} [data-interface-link]`);
       await link.click();
       if (name === "Emberfold") {
         assert(await emberfold.evaluate(el => el === document.activeElement), `${area} focuses Emberfold`);
@@ -257,13 +277,14 @@ async function checkBrowser(page) {
     atlasSelections: 10,
     walkthroughs: 5,
     steps,
-    clipboardChecks: 5,
+    clipboardChecks: 6,
+    suiteQuickStart: true,
     agentGuides: 10,
     sourceCodeEntries: 11,
     accessibilityViolations: 0,
     consoleAreas: 9,
     captures: 12,
-    directoryLinks: 20,
+    directoryLinks: 10,
     viewportWidths: [1440, 1024, 768, 390, 320],
     pageErrors: errors.length,
     consoleErrors: consoleErrors.length,

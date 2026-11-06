@@ -13,6 +13,7 @@ type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
 // The published Hive suite release the install walkthrough uses. Keep it in step with the
 // commands in public/guides/hive.md when a new release is published. See docs/deployment.md.
 const HIVE_RELEASE = "2.0.0";
+const HIVE_QUICK_START = `git clone --branch v${HIVE_RELEASE} https://github.com/ChefTaco/hive.git &&\n  cd hive &&\n  ./hive.sh --release ${HIVE_RELEASE}`;
 const HIVE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_RELEASE}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
@@ -460,24 +461,30 @@ app.innerHTML = `
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><div class="shell header-inner">
     <a class="brand" href="#top" aria-label="Hive:Magnus home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>Hive<span class="brand-colon">:</span>Magnus</span></a>
-    <nav class="main-nav" aria-label="Main navigation"><a href="#atlas">The system</a><a href="#projects">Projects</a><a href="#interfaces">The console</a><a href="#install">Install lab</a><a href="#agents">For agents</a></nav>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#install">Install</a><a href="#interfaces">The console</a><a href="#atlas">The system</a><a href="#projects">Projects</a><a href="#agents">Docs for agents</a></nav>
     <a class="header-github" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">GitHub ${icon("external")}</a>
   </div></header>
   <main id="main">
     <section class="hero shell" id="top" aria-labelledby="hero-title">
-      <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-prompt" aria-hidden="true">&gt;_</span> OPEN SOURCE · SELF HOSTED</div>
-        <h1 id="hero-title">Run your stack.<br/><em>On your terms.</em></h1>
-        <p class="hero-lede">Identity, fleet operations, security, conversation, and context. Independent products, one browser console, and a signed installer that keeps their boundaries clear.</p>
-        <div class="hero-actions"><a class="button button-primary" href="#interfaces">See the console ${icon("arrow")}</a><a class="text-link" href="#install">Find your starting point ${icon("down")}</a></div>
-        <p class="hero-proof">Apache-2.0 · Your host · Your choice of integrations</p>
+      <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-prompt" aria-hidden="true">&gt;_</span> OPEN SOURCE · SELF HOSTED · APACHE-2.0</div>
+        <h1 id="hero-title">The suite for<br/><em>self-hosted agents.</em></h1>
       </div>
-      <div class="stack-index"><div class="stack-index-heading"><span class="mini-label">CHOOSE A PIECE</span><span class="stack-index-caption">Independent product boundaries</span></div>
-        ${projectOrder.map((id, i) => `<a class="stack-entry project-${id}" href="#interface-${id}" data-interface-link="${id}"><span class="stack-number">${String(i + 1).padStart(2, "0")}</span><span class="stack-icon">${icon(id)}</span><span class="stack-name">${projects[id].name}<small>${projects[id].role}</small></span>${icon("arrow")}</a>`).join("")}
-        <p class="stack-index-foot">Start with one. Connect the rest when you need them.</p>
+      <div class="hero-overview">
+        <p class="hero-lede">Hive:Magnus brings model routing, memory, skills, fleet operations, security and chat into one browser console. Install the suite on your own infrastructure with Hive.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#install">Install the suite ${icon("down")}</a><a class="text-link" href="#interfaces">Explore the console ${icon("arrow")}</a></div>
+      </div>
+    </section>
+    <section class="quick-install shell" id="install" aria-labelledby="install-title">
+      <div class="quick-install-intro"><span class="section-kicker">START WITH HIVE</span><h2 id="install-title">Install the <br/>whole suite.</h2><p>Run setup, choose the <strong>full</strong> profile, then review and confirm the plan. Hive verifies the signed release and brings the products together in HiveXUI.</p><a class="text-link" href="/guides/hive.md">Read the installation guide ${icon("arrow")}</a></div>
+      <div class="quick-install-main">
+        <div class="quick-terminal"><div class="code-top"><a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">HIVE ${HIVE_RELEASE} / SIGNED RELEASE ${icon("external")}</a><button type="button" id="copy-quick-start" aria-label="Copy suite installation commands">${icon("copy")} Copy</button></div><pre tabindex="0" aria-label="Suite installation commands"><code id="quick-start-code"></code></pre><p class="quick-terminal-foot">When setup asks for a profile, choose <strong>full</strong>.</p></div>
+        <p class="quick-prerequisites"><strong>Before you begin:</strong> a Linux host with Docker Compose and an HTTPS origin with certificate and key files. On the controller: Git, Bash, jq, OpenSSL and sha256sum. Console hosts also need ss, df and coreutils; run setup as UID 1000 or a host administrator.</p>
+        <details class="quick-scope"><summary>What does the full profile include?</summary><p>Oathweave, Emberpath, HiveMem, HiveSkills and HiveXUI, plus Magnus, Cindertrace, ChatterMost and the optional Emberfold HTTP service. Hive also installs the HTTPS ingress, its registry and private datastores. Native agents, including Ardent, are opt-in.</p></details>
+        <p class="quick-install-note">Inference runtimes and model storage stay external. <a href="#walkthroughs">Need setup help or an individual product? ${icon("arrow")}</a></p>
       </div>
     </section>
     <section class="atlas-section" id="atlas" aria-labelledby="atlas-title"><div class="shell">
-      <div class="section-head"><div><span class="section-kicker">SYSTEM ATLAS / 01</span><h2 id="atlas-title">See how the pieces fit.</h2></div><p>Explore each part of the stack. Dashed lines are connections you select or configure. Solid lines show Ardent within Magnus and its bundled Emberfold library.</p></div>
+      <div class="section-head"><div><span class="section-kicker">SYSTEM ATLAS</span><h2 id="atlas-title">See how the pieces fit.</h2></div><p>Explore each part of the stack. Dashed lines are connections you select or configure. Solid lines show Ardent within Magnus and its bundled Emberfold library.</p></div>
       <div class="atlas-layout"><div class="atlas-map" role="group" aria-label="Interactive system atlas">
         <div class="atlas-grid" aria-hidden="true"></div><svg class="atlas-lines" aria-hidden="true">${atlasEdges.map(edge => `<path data-from="${edge.from}" data-to="${edge.to}" class="${edge.bundled ? "atlas-line-bundled" : ""}"/>`).join("")}</svg>
         <a href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" class="atlas-center" target="_blank" rel="noopener noreferrer" aria-label="Ardent agent runtime, part of Magnus"><span>ARDENT<small>AGENT RUNTIME</small></span><i></i></a>
@@ -485,15 +492,8 @@ app.innerHTML = `
         <div class="atlas-annotation"><span class="line-key"></span> CONFIGURED <span class="line-key bundled"></span> BUNDLED</div>
       </div><div class="atlas-detail" id="atlas-detail" aria-live="polite"></div></div>
     </div></section>
-    <section class="projects-section shell" id="projects" aria-labelledby="projects-title"><div class="section-head"><div><span class="section-kicker">OPEN PROJECTS / 02</span><h2 id="projects-title">Pick the tool<br/><span>for the work.</span></h2></div><p>Every project has its own source and installation path. Choose the capability you need first.</p></div>
-      <div class="project-grid">${projectOrder.map((id, i) => {
-        const p = projects[id];
-        return `<article class="project-card project-${id}"><div class="project-identity"><span class="project-number">${String(i + 1).padStart(2, "0")}</span><span class="project-glyph">${icon(id)}</span><div><h3>${p.name}</h3><span class="project-role">${p.role}</span></div></div><p class="project-summary">${p.summary}</p><div class="project-actions"><a href="#interface-${id}" data-interface-link="${id}">${id === "emberfold" ? "See its CLI" : "See in console"} ${icon("arrow")}</a><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} GitHub repository">Source ${icon("external")}</a></div></article>`;
-      }).join("")}</div>
-      <div class="ardent-note"><span class="ardent-symbol" aria-hidden="true">A<span>:</span>E</span><div><span class="mini-label">INSIDE MAGNUS</span><h3>Ardent runs the work. Emberfold carries the context.</h3><p>Ardent is Magnus’s headless agent runtime. It can run on its own or under Magnus management; its pinned Emberfold library helps fit context for the next turn.</p></div><a class="text-link" href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" target="_blank" rel="noopener noreferrer">Explore Ardent ${icon("external")}</a></div>
-    </section>
     <section class="screens-section" id="interfaces" aria-labelledby="screens-title"><div class="shell">
-      <div class="section-head"><div><span class="section-kicker">// IN THE CONSOLE / 03</span><h2 id="screens-title">One console.<br/><span>Every product you install.</span></h2></div><p>HiveXUI is the single browser UI of a Hive installation. These captures are the real console with synthetic data, shown across its product areas.</p></div>
+      <div class="section-head"><div><span class="section-kicker">// IN THE CONSOLE</span><h2 id="screens-title">One console.<br/><span>Every product you install.</span></h2></div><p>HiveXUI is the single browser UI of a Hive installation. These captures are the real console with synthetic data, shown across its product areas.</p></div>
       <div class="interface-tabs" role="tablist" aria-label="Choose a console area">${galleryOrder.map(id => `<button type="button" role="tab" class="project-${id}" id="interface-tab-${id}" aria-controls="interface-${id}" aria-selected="${id === activeInterface}" tabindex="${id === activeInterface ? 0 : -1}" data-interface="${id}"><span class="interface-tab-icon">${icon(id)}</span><span>${projects[id].name}</span></button>`).join("")}</div>
       ${galleryOrder.map(id => {
         const p = projects[id], area = gallery[id], first = area.captures[0];
@@ -516,16 +516,23 @@ app.innerHTML = `
 }</pre><div class="terminal-foot">OUTPUT EXCERPT · NO MODEL CALLS</div></div><div class="console-aside-copy"><span class="mini-label">${projects.emberfold.role}</span><h3 id="emberfold-aside-title">Emberfold has no screen.</h3><p>It is a library, CLI and optional HTTP service, so it is not a console section. This excerpt is from a real synthetic CLI dry run: inspect a context preparation result before using it in an agent.</p><ul><li>Review the token budget</li><li>Check protected spans</li><li>Use the library, CLI, or optional HTTP service</li></ul><a class="text-link" href="/guides/emberfold.md">Emberfold guide ${icon("arrow")}</a></div></section>
       <p class="interface-footnote">You are viewing documentation and sample captures. This site does not connect to an operational fleet or security installation.</p>
     </div></section>
+    <section class="projects-section shell" id="projects" aria-labelledby="projects-title"><div class="section-head"><div><span class="section-kicker">THE PROJECTS</span><h2 id="projects-title">Meet the projects<br/><span>in the suite.</span></h2></div><p>Explore what each product does. Every project also has its own source and installation path.</p></div>
+      <div class="project-grid">${projectOrder.map((id, i) => {
+        const p = projects[id];
+        return `<article class="project-card project-${id}"><div class="project-identity"><span class="project-number">${String(i + 1).padStart(2, "0")}</span><span class="project-glyph">${icon(id)}</span><div><h3>${p.name}</h3><span class="project-role">${p.role}</span></div></div><p class="project-summary">${p.summary}</p><div class="project-actions"><a href="#interface-${id}" data-interface-link="${id}">${id === "emberfold" ? "See its CLI" : "See in console"} ${icon("arrow")}</a><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} GitHub repository">Source ${icon("external")}</a></div></article>`;
+      }).join("")}</div>
+      <div class="ardent-note"><span class="ardent-symbol" aria-hidden="true">A<span>:</span>E</span><div><span class="mini-label">INSIDE MAGNUS</span><h3>Ardent runs the work. Emberfold carries the context.</h3><p>Ardent is Magnus’s headless agent runtime. It can run on its own or under Magnus management; its pinned Emberfold library helps fit context for the next turn.</p></div><a class="text-link" href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" target="_blank" rel="noopener noreferrer">Explore Ardent ${icon("external")}</a></div>
+    </section>
     <section class="suite-boundary shell" aria-label="Release and acceptance status"><h2>Know what you are installing.</h2><p>Hive installs only from a signed release. The current one is <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Hive ${HIVE_RELEASE}</a>; later ones appear on the <a href="https://github.com/ChefTaco/hive/releases" target="_blank" rel="noopener noreferrer">Hive releases page</a>. A passing disposable rehearsal is not production cutover approval, physical multi-host certification or ARM64 certification. Existing installations keep their own recovery paths and upgrade guides. Ollama, llama.cpp and hosted providers remain external; Hive only verifies and registers their endpoints.</p></section>
-    <section class="install-section shell" id="install" aria-labelledby="install-title"><div class="section-head"><div><span class="section-kicker">INSTALL LAB / 04</span><h2 id="install-title">Try it on your host.</h2></div><p>Follow the first steps here, then continue with each project’s full guide. These walkthroughs explain commands; they do not run them for you.</p></div>
+    <section class="install-section shell" id="walkthroughs" aria-labelledby="walkthroughs-title"><div class="section-head"><div><span class="section-kicker">SETUP GUIDES</span><h2 id="walkthroughs-title">A little help getting started.</h2></div><p>Follow the first steps here, then continue with each project’s full guide. These walkthroughs explain commands; they do not run them for you.</p></div>
       <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span class="tab-counter">${String(i + 1).padStart(2, "0")}</span><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh environment for a first install. Existing installations follow their own upgrade guides.</p></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
     </section>
     <section class="agents-section shell" id="agents" aria-labelledby="agents-title">
-      <div class="section-head"><div><span class="section-kicker">FOR AGENTS / 05</span><h2 id="agents-title">A direct path into the docs.</h2></div><p>Plain Markdown guides with prerequisites, commands, expected results, and reviewed source revisions. Start with the part you need.</p></div>
+      <div class="section-head"><div><span class="section-kicker">FOR AGENTS</span><h2 id="agents-title">A direct path into the docs.</h2></div><p>Plain Markdown guides with prerequisites, commands, expected results, and reviewed source revisions. Start with the part you need.</p></div>
       <div class="agent-index-links"><a class="text-link" href="/llms.txt" type="text/plain">Read llms.txt ${icon("arrow")}</a><a class="text-link" href="/index.md" type="text/markdown">Site overview in Markdown ${icon("arrow")}</a></div>
       <ul class="agent-guides" aria-label="Project guides in Markdown">${projectOrder.map((id, i) => `<li><a href="/guides/${id}.md" type="text/markdown"><span class="mini-label">${String(i + 1).padStart(2, "0")} / MARKDOWN GUIDE</span><span class="agent-guide-title">${projects[id].name}${id === "magnus" ? " + Ardent" : ""} ${icon("arrow")}</span><span>${projects[id].role}</span></a></li>`).join("")}</ul>
     </section>
-    <section class="closing"><div class="shell closing-inner"><div><span class="section-kicker">YOUR INFRASTRUCTURE. YOUR CHOICE.</span><h2>Start with one piece.<br/><em>Make it yours.</em></h2></div><a class="button button-light" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">Explore the repositories ${icon("arrow")}</a></div></section>
+    <section class="closing"><div class="shell closing-inner"><div><span class="section-kicker">YOUR INFRASTRUCTURE. YOUR CHOICE.</span><h2>Your infrastructure.<br/><em>Your agent stack.</em></h2></div><a class="button button-light" href="#install">Install the suite ${icon("arrow")}</a></div></section>
   </main>
   <footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="#top"><span>Hive<span class="brand-colon">:</span>Magnus</span></a><p>Open source tools for self-hosted agents.</p><div><a href="https://github.com/ChefTaco/hive">Hive</a><a href="https://github.com/ChefTaco/HiveXUI">HiveXUI</a><a href="https://github.com/ChefTaco/Oathweave">Oathweave</a><a href="https://github.com/ChefTaco/Emberpath">Emberpath</a><a href="https://github.com/ChefTaco/HiveMem">HiveMem</a><a href="https://github.com/ChefTaco/HiveSkills">HiveSkills</a><a href="https://github.com/ChefTaco/magnus">Magnus</a><a href="https://github.com/ChefTaco/cindertrace">Cindertrace</a><a href="https://github.com/ChefTaco/ChatterMost">ChatterMost</a><a href="https://github.com/ChefTaco/emberfold">Emberfold</a><a href="https://github.com/ChefTaco/HiveMagnus">Site source</a></div><p class="footer-legal">Each project is licensed under Apache-2.0. ChatterMost is independently developed and Mattermost-compatible; Mattermost is a trademark of Mattermost, Inc., which does not affiliate with, endorse, or sponsor it.</p></div></footer>
   <div class="sr-only" id="announce" role="status" aria-live="polite"></div>
@@ -624,6 +631,23 @@ galleryOrder.forEach(id => {
   });
 });
 
+async function copyCommand(button: HTMLButtonElement, command: string, label: string) {
+  try {
+    await navigator.clipboard.writeText(command);
+    button.innerHTML = `${icon("check")} Copied`;
+    document.querySelector("#announce")!.textContent = `${label} copied`;
+    window.setTimeout(() => { button.innerHTML = `${icon("copy")} Copy`; }, 2400);
+  } catch {
+    button.textContent = "Select text to copy";
+    document.querySelector("#announce")!.textContent = "Copy failed. Select the command text to copy it.";
+  }
+}
+
+document.querySelector("#quick-start-code")!.textContent = HIVE_QUICK_START;
+document.querySelector<HTMLButtonElement>("#copy-quick-start")!.addEventListener("click", (event) => {
+  void copyCommand(event.currentTarget as HTMLButtonElement, HIVE_QUICK_START, "Suite installation commands");
+});
+
 function renderDemo() {
   const d = demos[activeDemo];
   const s = d.steps[activeStep];
@@ -641,19 +665,7 @@ function renderDemo() {
     ?.addEventListener("click", async (event) => {
       if (!s.code) return;
       const button = event.currentTarget as HTMLButtonElement;
-      try {
-        await navigator.clipboard.writeText(s.code);
-        button.innerHTML = `${icon("check")} Copied`;
-        document.querySelector("#announce")!.textContent =
-          `${s.title} ${s.kind === "address" ? "address" : "command"} copied`;
-        window.setTimeout(() => {
-          button.innerHTML = `${icon("copy")} Copy`;
-        }, 2400);
-      } catch {
-        button.textContent = "Select text to copy";
-        document.querySelector("#announce")!.textContent =
-          "Copy failed. Select the command text to copy it.";
-      }
+      await copyCommand(button, s.code, `${s.title} ${s.kind === "address" ? "address" : "command"}`);
     });
   panel
     .querySelectorAll<HTMLButtonElement>("[data-direction]")
