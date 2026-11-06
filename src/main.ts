@@ -12,7 +12,7 @@ type GalleryId = Exclude<ProjectId, "emberfold">;
 type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
 // The published Hive suite release the install walkthrough uses. Keep it in step with the
 // commands in public/guides/hive.md when a new release is published. See docs/deployment.md.
-const HIVE_RELEASE = "2.0.1";
+const HIVE_RELEASE = "2.0.2";
 const HIVE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_RELEASE}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
@@ -151,10 +151,10 @@ const demos: Record<DemoId, Demo> = {
     intro:
       `Hive's Bash controller installs what a signed release lists and refuses anything it cannot verify. The current suite release is <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Hive ${HIVE_RELEASE}</a>. Choose the core, full or custom profile; inference stays external and Hive only verifies endpoints.`,
     requires: [
-      "Git, Bash, jq, OpenSSL and sha256sum on the controller",
-      "Docker Compose on each host; ss, df and coreutils on the console host",
-      "An HTTPS origin with existing certificate and key files",
-      "Setup run as UID 1000 or a host administrator",
+      "Ubuntu 22.04 or 24.04, or Debian 12 or 13, on amd64 or arm64, with sudo",
+      "2 CPUs, 4 GB of memory and 20 GB of disk for the full profile",
+      "A DNS name for the console, with a certificate from Tailscale, your own CA or an ACME client",
+      "Setup run as UID 1000 (usually the first account) or with sudo",
     ],
     steps: [
       {
@@ -164,8 +164,20 @@ const demos: Record<DemoId, Demo> = {
         note: `The same three files are attached to the <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">v${HIVE_RELEASE} release</a>. To install from downloaded copies, check the key's fingerprint against the one in its release notes first.`,
       },
       {
+        title: "Install the prerequisites",
+        text: "The prerequisites script shows its plan, then installs Docker Engine and the Compose plugin from Docker's apt repository after checking its signing key, plus jq, OpenSSL, curl, git, iproute2 and the other tools hive.sh uses. It adds you to the docker group and creates the installation directory. It is safe to re-run.",
+        code: "sudo ./scripts/install-prerequisites.sh --directory /opt/hive",
+        note: "Log out and back in for the docker group, then run <code>./scripts/install-prerequisites.sh --check</code>. It refuses other distributions, other architectures and Docker from a snap. <code>--controller</code> installs only the tools on a machine that manages hosts over SSH.",
+      },
+      {
+        title: "Get a console certificate",
+        text: "On a Tailscale host with HTTPS certificates turned on, this issues a certificate for the MagicDNS name into /etc/hive/tls, owned by you with an owner-only key. Otherwise bring your own certificate and key, or use an ACME client; Hive runs no ACME client itself.",
+        code: "sudo ./scripts/console-certificate.sh tailscale",
+        note: "Check your own files the way the installer will with <code>./scripts/console-certificate.sh check --cert FILE --key FILE --name NAME</code>.",
+      },
+      {
         title: "Start setup",
-        text: "Run the controller with the exact release. It verifies the manifest signature first, then asks for the installation name, hosts, console origin, profile and certificate references. It never asks for a password on the command line.",
+        text: "Run the controller with the exact release. It verifies the manifest signature first, then asks for the installation name, directory, host, console origin, profile, bind address and certificate files. It never asks for a password on the command line. A setup that stopped after writing its configuration offers to continue with it.",
         code: `./hive.sh --release ${HIVE_RELEASE}`,
         note: `In the checkout the manifest is <code>releases/${HIVE_RELEASE}.json</code>, its signature the same path plus <code>.sig</code>, and the publisher key <code>trust/publisher.pub</code>. Use <code>--manifest</code>, <code>--signature</code> and <code>--trust-key</code> for separately downloaded files. The signed services run as UID/GID 1000 (HiveXUI as 101).`,
       },
@@ -180,7 +192,7 @@ const demos: Record<DemoId, Demo> = {
         text: "Visit the HTTPS origin you configured and sign in through Oathweave. HiveXUI shows a section for each product in this installation, so a core install has no Magnus, Cindertrace or ChatterMost section.",
         code: "https://console.example.com/",
         kind: "address",
-        note: "A fresh install stores initial sign-in instructions in <code>config/initial-credentials.env</code> on the identity host. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. <code>./hive.sh status --config installation.json</code> and <code>./hive.sh registry list --config installation.json</code> report what is running.",
+        note: "The install ends by naming the console and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. <code>./hive.sh status --config installation.json</code> and <code>./hive.sh registry list --config installation.json</code> report what is running.",
       },
     ],
     guide: "/guides/hive.md",
