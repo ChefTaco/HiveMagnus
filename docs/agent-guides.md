@@ -26,7 +26,7 @@ Command review does not install or reconfigure Hive, Magnus, ChatterMost, or a H
 
 Fetch current public docs, record their commit IDs, and compare commands and prerequisites before changing examples. Preserve exact release pins where shown; never substitute mutable image tags. Recheck the interactive install lab if any documented command changes. Update each guide's source review date and immutable source links.
 
-The static JSON-LD graph in `index.html` describes ten repositories and Ardent as a part of Magnus using Schema.org `SoftwareSourceCode`. It includes descriptions, repository URLs, TypeScript language, license links, and links to the guides. Keep its CSP SHA-256 hash in `public/_headers` synchronized with the exact script text, including whitespace. Do not loosen the policy to allow arbitrary inline scripts.
+The static JSON-LD graph in `index.html` describes eleven repositories, Ardent included, using Schema.org `SoftwareSourceCode`. It includes descriptions, repository URLs, TypeScript language, license links, and links to the guides. Keep its CSP SHA-256 hash in `public/_headers` synchronized with the exact script text, including whitespace. Do not loosen the policy to allow arbitrary inline scripts.
 
 Before publishing, build, check local Markdown links and shell syntax, validate the JSON-LD and CSP hash, run the browser check, and inspect the For agents section at desktop/mobile widths. Review the Pages preview before promotion to `main`; verify live Markdown content types, discovery headers, assets, and the intended source revision after deployment.
 
@@ -110,3 +110,8 @@ The Cindertrace guide already installs from the release tag with Compose and doe
 ## Hive 2.0.1, 2026-11-06
 
 Hive published suite release 2.0.1, a controller-only release with the same images and product versions as 2.0.0. `migrate-native` now verifies migrated data before serving clients. The Hive guide, the agent index and the walkthrough constant now name `v2.0.1`, commit `02f9f9ff1becb9b14b74a8634f54cdc9ce1fba52`, and every linked file was checked to exist at that commit.
+
+## Ardent repository, 2026-11-07
+
+Ardent moved out of the Magnus monorepo into its own public repository, `https://github.com/ChefTaco/Ardent`, at extraction commit `90ec90594a15ad412e1385dc6cb9972f15eec66a` (package `@hivemagnus/ardent` 2.1.1, unchanged). The site now presents Ardent as its own product: the metadata graph gives it its own repository and license and no longer nests it in Magnus, the atlas shows Magnus managing Ardent as a configured connection, the fallback and footer link the repository, `security.txt` lists its advisories, and `llms.txt` links its AGENTS.md. Ardent keeps sharing the Magnus guide. The install commands in that guide were compared with the Ardent README at the extraction commit and are unchanged. The earlier review records above, including the Magnus guide's `v2.1.1` source pin, are historical and were not edited.
+

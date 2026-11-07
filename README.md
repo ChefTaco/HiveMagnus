@@ -22,7 +22,7 @@ The public agent index is [`public/llms.txt`](public/llms.txt). The Markdown sit
 
 Each guide records the public source revision and review date. Before changing commands, fetch the current public repository docs and compare prerequisites, arguments, release versions, and expected results. Review existing website walkthroughs for consistency. Do not test installation examples against an existing operator environment. See [the source review record](docs/agent-guides.md).
 
-Project metadata is a static Schema.org `SoftwareSourceCode` JSON-LD graph in `index.html`, including Ardent as part of Magnus. If editing that script, update its exact SHA-256 hash in `public/_headers` to preserve the content security policy.
+Project metadata is a static Schema.org `SoftwareSourceCode` JSON-LD graph in `index.html`, including Ardent, which has its own repository. If editing that script, update its exact SHA-256 hash in `public/_headers` to preserve the content security policy.
 
 ## Deploy
 
