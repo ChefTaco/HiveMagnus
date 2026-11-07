@@ -129,3 +129,11 @@ The site moves from Hive suite release 2.0.2 (commit `a7f8c285ff9d111435d569b0d0
 Since 2.0.2 the suite pins Oathweave 2.0.2, Emberpath 2.0.2 and HiveMem 1.3.2, so their guides now say which versions Hive 2.0.4 installs. Their standalone container examples keep the images reviewed and run on 2026-11-06, which Hive 2.0.0 and 2.0.1 installed, and their review records are otherwise unchanged. HiveSkills 1.3.1 and HiveXUI 0.1.1 are pinned by the same digests as before.
 
 The tag and release did not exist at this review, so the attached manifest, signature and key were not compared with the tree, and no installation command was exercised against an operational environment.
+
+## Homepage install and Tailscale preparation, 2026-11-07
+
+Rechecked the published `v2.0.4` README and `deployment/QUICKSTART.md` through the public repository, and confirmed the release exists with the signed manifest, signature and publisher key attached. The homepage one-line command combines the documented tag checkout and setup invocation; it is explicitly for a prepared Linux host and opens the reviewed plan rather than bypassing setup. The fresh-host prerequisites remain linked beside it.
+
+Checked `scripts/console-certificate.sh` and `scripts/suite/controller.sh` at `v2.0.4`: the helper discovers the Tailscale MagicDNS name with `tailscale status --json`, requires HTTPS Certificates, calls `tailscale cert`, and writes the certificate and owner-only key under `/etc/hive/tls`. Setup asks for existing certificate/key paths. The new modal links the public Tailscale download and HTTPS guide, explains those separate preparation steps and the optional weekly `schedule --config FILE` renewal. No install, certificate or renewal command was executed against an operator environment.
+
+Rechecked Ardent's public README for its headless runtime, independently configured integrations and bundled Emberfold library. The homepage labels its visual as Magnus mission control and keeps native Ardent installation separate from the signed Hive 2.0.4 suite. npm package metadata for `@hivemagnus/ardent` identifies publisher `hivemagnus`; the footer links that public npm profile.

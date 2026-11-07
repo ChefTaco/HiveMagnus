@@ -1,6 +1,6 @@
 # Hive:Magnus
 
-> Open source tools for running agents on your own infrastructure.
+> Full-stack agent management on your own infrastructure.
 
 [Visual site](https://hivemagnus.com/) · [Agent index](https://hivemagnus.com/llms.txt)
 
@@ -39,11 +39,21 @@ Enable only the integrations you configure. Installing every project is not a pr
 
 ## Install and explore
 
-Each linked guide gives prerequisites, copyable commands, expected results, and full repository instructions. The visual site's install lab explains the first steps for Hive, Magnus, Cindertrace, ChatterMost, and Ardent with Emberfold. Commands shown on the site do not execute in visitors' environments.
+The visual homepage leads with a feature overview, a one-line command to launch the signed Hive installer, an interactive architecture, then a section for each of the eleven products. The full-stack installer targets Linux today; macOS and Windows are coming. On a prepared host:
 
-Section 3 shows one interface, HiveXUI, across its product areas: Hive, Magnus, Oathweave, Emberpath, HiveMem, HiveSkills, Cindertrace, ChatterMost and the command palette. Magnus and Cindertrace offer several views. Emberfold has no console section, so it appears below the gallery with actual synthetic CLI dry-run output. All captures use a disposable installation with synthetic data. The atlas distinguishes configured connections from bundled components.
+```bash
+git clone --branch v2.0.4 https://github.com/ChefTaco/hive.git && cd hive && ./hive.sh --release 2.0.4
+```
 
-Use `#interface-hive`, `#interface-magnus`, `#interface-oathweave`, `#interface-emberpath`, `#interface-hivemem`, `#interface-hiveskills`, `#interface-cindertrace`, `#interface-chattermost`, `#interface-hivexui`, or `#interface-emberfold` on the visual site to go to an area directly. The earlier `#security` link still opens Cindertrace.
+Choose the `full` profile in setup, review the plan and confirm to install the suite. First prepare Docker Engine with Compose, Hive's other prerequisite tools, and the console's DNS name and TLS certificate. Follow the [Hive guide](https://hivemagnus.com/guides/hive.md#install) for fresh-host preparation, TLS and sign-in. Ardent is installed separately; the signed Hive 2.0.4 release includes no native Ardent artifact. Model runtimes and storage stay external.
+
+[Tailscale](https://tailscale.com/download) is the recommended optional path to private console access and a certificate. Install and sign in on your Linux host and browser computer, then enable MagicDNS and HTTPS Certificates using [Tailscale's guide](https://tailscale.com/docs/how-to/set-up-https-certificates). After cloning Hive and preparing its prerequisites, run `sudo ./scripts/console-certificate.sh tailscale` from the checkout. This helper discovers the host's Tailscale name, requests a certificate and prints the console origin and file paths to enter in Hive setup. The installer itself asks for existing certificate files. After installation, `sudo ./scripts/console-certificate.sh schedule --config FILE` schedules renewal; replace `FILE` with the protected installation file setup created and rerun from the new checkout after upgrades. Certificates expose the hostname in public Certificate Transparency logs. Your own certificates are supported too. The visual site provides these steps in a keyboard-accessible setup modal.
+
+Each product section pairs an overview with a synthetic capture of its area in the single HiveXUI console. Magnus and Cindertrace offer multiple views. Ardent has no browser screen; its section explicitly shows Magnus mission control, where its host is managed. Emberfold shows actual synthetic CLI dry-run output. The architecture distinguishes suite services, separately configured Ardent, its bundled Emberfold library, and external inference.
+
+Use `#interface-hive`, `#interface-magnus`, `#interface-ardent`, `#interface-oathweave`, `#interface-emberpath`, `#interface-hivemem`, `#interface-hiveskills`, `#interface-cindertrace`, `#interface-chattermost`, `#interface-hivexui`, or `#interface-emberfold` to go directly to a product. The earlier `#security` link still goes to Cindertrace, and `#interfaces` goes to the product overview. The detailed installation walkthroughs are at `#walkthroughs`.
+
+The footer links [GitHub / ChefTaco](https://github.com/ChefTaco) and [npm / hivemagnus](https://www.npmjs.com/~hivemagnus). npm includes SDKs and individual packages; the current full suite is installed from a signed Hive release rather than the legacy npm launcher.
 
 ## Limits and licensing
 

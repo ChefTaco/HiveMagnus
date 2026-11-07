@@ -52,8 +52,12 @@ npx --package @hivemagnus/emberfold-cli@0.2.1 emberfold prepare --input scripts/
 
 The system atlas, brand mark, and project icons are original SVG/CSS artwork; the gallery's colors follow HiveXUI's public design tokens. DM Sans, Space Grotesk, and IBM Plex Mono are self-hosted; their licenses ship in `public/licenses/`.
 
-## Gallery structure
+## Product sections, 2026-11-07
 
-Section 3 shows one interface, HiveXUI, across its product areas instead of one tab per product UI. Magnus and Cindertrace offer several views of the same area. The gallery preserves each capture's aspect ratio and links the original image. Emberfold has no console section, so its verified CLI excerpt sits below the gallery. The earlier per-product captures and their scripts were retired; their provenance is in this file's Git history.
+The scrolling product sections reuse the twelve existing HiveXUI captures above without changing their bytes. Each screen is labeled as an area of the single HiveXUI console and links to its full-size image. Magnus and Cindertrace retain their alternate capture controls. The hero uses the same synthetic `fleet-overview.webp` asset.
+
+Ardent's section reuses `fleet-mission.webp`, explicitly labeled as Magnus mission control in HiveXUI, where the runtime's host is managed. It does not depict a separate Ardent UI. Emberfold retains the verified HTML terminal excerpt described above and has no console section. The architecture is original CSS and SVG artwork; it distinguishes suite services, the separately configured Ardent runtime, its bundled Emberfold library, and external inference.
+
+No new operational captures, user data or generated product screens were introduced. The previous tabbed gallery layout is recorded in Git history.
 
 The social preview (`og.svg` and `og.png`) names all ten projects and shows `captures/fleet-overview.webp`, cropped, in a console-styled frame. The rest is original SVG artwork; the PNG is rendered in Chromium at 1200 × 630 and contains only public project names, website copy and that synthetic capture.

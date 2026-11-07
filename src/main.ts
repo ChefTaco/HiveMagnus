@@ -7,8 +7,8 @@ import "@fontsource/space-grotesk/latin-700.css";
 import "@fontsource/ibm-plex-mono/latin-400.css";
 import "./style.css";
 
-type ProjectId = "hive" | "emberpath" | "oathweave" | "hivemem" | "hiveskills" | "hivexui" | "magnus" | "cindertrace" | "chattermost" | "emberfold";
-type GalleryId = Exclude<ProjectId, "emberfold">;
+type ProjectId = "hive" | "emberpath" | "oathweave" | "hivemem" | "hiveskills" | "hivexui" | "magnus" | "cindertrace" | "chattermost" | "emberfold" | "ardent";
+type GalleryId = Exclude<ProjectId, "emberfold" | "ardent">;
 type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
 // The published Hive suite release the install walkthrough uses. Keep it in step with the
 // commands in public/guides/hive.md when a new release is published. See docs/deployment.md.
@@ -129,6 +129,13 @@ const projects: Record<
       { to: "Ardent", how: "optional Mattermost channel, configured in the Ardent profile" },
     ],
   },
+  ardent: {
+    name: "Ardent", role: "Agent runtime · tasks · tools",
+    summary: "Give your agents a durable place to work.",
+    detail: "A headless agent runtime with durable tasks, typed tools, scheduled jobs and a task journal. Run it on its own or let Magnus manage it on fleet hosts. It uses a pinned Emberfold library for context fitting and can connect to HiveMem and ChatterMost. Configure it separately: Hive 2.0.4 does not ship a native Ardent artifact.",
+    href: "https://github.com/ChefTaco/Ardent",
+    connections: [{ to: "Magnus", how: "optional installation and management on fleet hosts" }, { to: "Emberfold", how: "bundled library for context fitting; no HTTP service required" }, { to: "HiveMem / ChatterMost", how: "optional scoped memory and Mattermost chat channels" }, { to: "Model providers", how: "external OpenAI-compatible inference or Codex App Server" }],
+  },
   emberfold: {
     name: "Emberfold",
     role: "Context · continuity",
@@ -171,7 +178,7 @@ const demos: Record<DemoId, Demo> = {
       },
       {
         title: "Get a console certificate",
-        text: "On a Tailscale host with HTTPS certificates turned on, this issues a certificate for the MagicDNS name into /etc/hive/tls, owned by you with an owner-only key. Otherwise bring your own certificate and key, or use an ACME client; Hive runs no ACME client itself.",
+        text: "First install and sign into Tailscale, and enable MagicDNS and HTTPS Certificates in its admin console. On that host, this issues a certificate for the MagicDNS name into /etc/hive/tls, owned by you with an owner-only key. Otherwise bring your own certificate and key, or use an ACME client; Hive runs no ACME client itself.",
         code: "sudo ./scripts/console-certificate.sh tailscale",
         note: "Check your own files the way the installer will with <code>./scripts/console-certificate.sh check --cert FILE --key FILE --name NAME</code>.",
       },
@@ -340,6 +347,7 @@ const icon = (name: string) => {
     chevron: '<path d="m9 18 6-6-6-6"/>',
     down: '<path d="M12 4v15m-6-6 6 6 6-6"/>',
     hive: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m12 8.5 3 1.75v3.5L12 15.5l-3-1.75v-3.5z"/>',
+    ardent: '<path d="m5 20 7-16 7 16M8 14h8M3 20h5M16 20h5"/>',
     magnus: '<rect x="3" y="4" width="18" height="6.5" rx="1.5"/><rect x="3" y="13.5" width="18" height="6.5" rx="1.5"/><path d="M7 7.25h.01M7 16.75h.01M11 7.25h6M11 16.75h6"/>',
     cindertrace: '<path d="m12 3 8 3v6c0 4-3.7 7.5-8 9-4.3-1.5-8-5-8-9V6z"/><path d="M8 12h3l2-4 1 8 2-4h2"/>',
     chattermost: '<path d="M4 5h16v11H10l-6 4.5z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/>',
@@ -361,23 +369,13 @@ const projectOrder: ProjectId[] = [
   "hivemem",
   "hiveskills",
   "magnus",
+  "ardent",
   "cindertrace",
   "chattermost",
   "emberfold",
 ];
 const demoOrder: DemoId[] = ["hive", "magnus", "cindertrace", "chattermost", "ardent"];
-type AtlasId = ProjectId | "ardent";
-const atlasEdges: { from: AtlasId; to: AtlasId; bundled?: boolean }[] = [
-  { from: "hive", to: "hivexui" }, { from: "hivexui", to: "oathweave" },
-  { from: "hivexui", to: "emberpath" }, { from: "hivexui", to: "hivemem" },
-  { from: "hivexui", to: "hiveskills" }, { from: "hivexui", to: "cindertrace" },
-  { from: "hivexui", to: "chattermost" }, { from: "hivexui", to: "magnus" }, { from: "magnus", to: "ardent" },
-  { from: "emberfold", to: "ardent", bundled: true }, { from: "cindertrace", to: "magnus" },
-];
-// One console, shown across its product areas. The order follows HiveXUI's sidebar; HiveXUI itself
-// comes last because its capture shows the shell rather than a section. Emberfold has no console
-// section, so it appears separately below the gallery.
-const galleryOrder: GalleryId[] = ["hive", "magnus", "oathweave", "emberpath", "hivemem", "hiveskills", "cindertrace", "chattermost", "hivexui"];
+// Real synthetic captures from the single HiveXUI console.
 type Capture = { label: string; file: string; alt: string };
 const gallery: Record<GalleryId, { path: string; captures: Capture[]; title: string; copy: string; points: string[]; extra?: string }> = {
   hive: {
@@ -457,10 +455,6 @@ const gallery: Record<GalleryId, { path: string; captures: Capture[]; title: str
   },
 };
 const captureSrc = (capture: Capture) => `/captures/${capture.file}.webp`;
-let activeInterface: GalleryId = "magnus";
-const isGalleryId = (id: string): id is GalleryId => (galleryOrder as string[]).includes(id);
-const initialInterface = location.hash === "#security" ? "cindertrace" : location.hash.replace("#interface-", "");
-if (isGalleryId(initialInterface)) activeInterface = initialInterface;
 let activeProject: ProjectId = "hive";
 let activeDemo: DemoId = "hive";
 let activeStep = 0;
@@ -468,54 +462,10 @@ let activeStep = 0;
 const app = document.querySelector<HTMLDivElement>("#app");
 if (!app) throw new Error("Missing app root");
 
-app.innerHTML = `
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header"><div class="shell header-inner">
-    <a class="brand" href="#top" aria-label="Hive:Magnus home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>Hive<span class="brand-colon">:</span>Magnus</span></a>
-    <nav class="main-nav" aria-label="Main navigation"><a href="#atlas">The system</a><a href="#projects">Projects</a><a href="#interfaces">The console</a><a href="#install">Install lab</a><a href="#agents">For agents</a></nav>
-    <a class="header-github" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">GitHub ${icon("external")}</a>
-  </div></header>
-  <main id="main">
-    <section class="hero shell" id="top" aria-labelledby="hero-title">
-      <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-prompt" aria-hidden="true">&gt;_</span> OPEN SOURCE · SELF HOSTED</div>
-        <h1 id="hero-title">Run your stack.<br/><em>On your terms.</em></h1>
-        <p class="hero-lede">Identity, fleet operations, security, conversation, and context. Independent products, one browser console, and a signed installer that keeps their boundaries clear.</p>
-        <div class="hero-actions"><a class="button button-primary" href="#interfaces">See the console ${icon("arrow")}</a><a class="text-link" href="#install">Find your starting point ${icon("down")}</a></div>
-        <p class="hero-proof">Apache-2.0 · Your host · Your choice of integrations</p>
-      </div>
-      <div class="stack-index"><div class="stack-index-heading"><span class="mini-label">CHOOSE A PIECE</span><span class="stack-index-caption">Independent product boundaries</span></div>
-        ${projectOrder.map((id, i) => `<a class="stack-entry project-${id}" href="#interface-${id}" data-interface-link="${id}"><span class="stack-number">${String(i + 1).padStart(2, "0")}</span><span class="stack-icon">${icon(id)}</span><span class="stack-name">${projects[id].name}<small>${projects[id].role}</small></span>${icon("arrow")}</a>`).join("")}
-        <p class="stack-index-foot">Start with one. Connect the rest when you need them.</p>
-      </div>
-    </section>
-    <section class="atlas-section" id="atlas" aria-labelledby="atlas-title"><div class="shell">
-      <div class="section-head"><div><span class="section-kicker">SYSTEM ATLAS / 01</span><h2 id="atlas-title">See how the pieces fit.</h2></div><p>Explore each part of the stack. Dashed lines are connections you select or configure. Solid lines show the Emberfold library bundled in Ardent.</p></div>
-      <div class="atlas-layout"><div class="atlas-map" role="group" aria-label="Interactive system atlas">
-        <div class="atlas-grid" aria-hidden="true"></div><svg class="atlas-lines" aria-hidden="true">${atlasEdges.map(edge => `<path data-from="${edge.from}" data-to="${edge.to}" class="${edge.bundled ? "atlas-line-bundled" : ""}"/>`).join("")}</svg>
-        <a href="https://github.com/ChefTaco/Ardent" class="atlas-center" target="_blank" rel="noopener noreferrer" aria-label="Ardent agent runtime repository"><span>ARDENT<small>AGENT RUNTIME</small></span><i></i></a>
-        ${projectOrder.map((id, i) => `<button type="button" class="atlas-node node-${id}${i === 0 ? " is-active" : ""}" data-project="${id}" aria-pressed="${i === 0}"><span class="node-index">${String(i + 1).padStart(2, "0")}</span><span class="node-name">${projects[id].name}</span><span class="node-role">${projects[id].role}</span></button>`).join("")}
-        <div class="atlas-annotation"><span class="line-key"></span> CONFIGURED <span class="line-key bundled"></span> BUNDLED</div>
-      </div><div class="atlas-detail" id="atlas-detail" aria-live="polite"></div></div>
-    </div></section>
-    <section class="projects-section shell" id="projects" aria-labelledby="projects-title"><div class="section-head"><div><span class="section-kicker">OPEN PROJECTS / 02</span><h2 id="projects-title">Pick the tool<br/><span>for the work.</span></h2></div><p>Every project has its own source and installation path. Choose the capability you need first.</p></div>
-      <div class="project-grid">${projectOrder.map((id, i) => {
-        const p = projects[id];
-        return `<article class="project-card project-${id}"><div class="project-identity"><span class="project-number">${String(i + 1).padStart(2, "0")}</span><span class="project-glyph">${icon(id)}</span><div><h3>${p.name}</h3><span class="project-role">${p.role}</span></div></div><p class="project-summary">${p.summary}</p><div class="project-actions"><a href="#interface-${id}" data-interface-link="${id}">${id === "emberfold" ? "See its CLI" : "See in console"} ${icon("arrow")}</a><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} GitHub repository">Source ${icon("external")}</a></div></article>`;
-      }).join("")}</div>
-      <div class="ardent-note"><span class="ardent-symbol" aria-hidden="true">A<span>:</span>E</span><div><span class="mini-label">ITS OWN REPOSITORY</span><h3>Ardent runs the work. Emberfold carries the context.</h3><p>Ardent is a headless agent runtime with its own repository. It runs on its own or under Magnus management; its pinned Emberfold library helps fit context for the next turn.</p></div><a class="text-link" href="https://github.com/ChefTaco/Ardent" target="_blank" rel="noopener noreferrer">Explore Ardent ${icon("external")}</a></div>
-    </section>
-    <section class="screens-section" id="interfaces" aria-labelledby="screens-title"><div class="shell">
-      <div class="section-head"><div><span class="section-kicker">// IN THE CONSOLE / 03</span><h2 id="screens-title">One console.<br/><span>Every product you install.</span></h2></div><p>HiveXUI is the single browser UI of a Hive installation. These captures are the real console with synthetic data, shown across its product areas.</p></div>
-      <div class="interface-tabs" role="tablist" aria-label="Choose a console area">${galleryOrder.map(id => `<button type="button" role="tab" class="project-${id}" id="interface-tab-${id}" aria-controls="interface-${id}" aria-selected="${id === activeInterface}" tabindex="${id === activeInterface ? 0 : -1}" data-interface="${id}"><span class="interface-tab-icon">${icon(id)}</span><span>${projects[id].name}</span></button>`).join("")}</div>
-      ${galleryOrder.map(id => {
-        const p = projects[id], area = gallery[id], first = area.captures[0];
-        return `<section class="interface-panel project-${id}" id="interface-${id}" role="tabpanel" aria-labelledby="interface-tab-${id}" tabindex="0" ${id !== activeInterface ? "hidden" : ""}>
-          <div class="interface-toolbar"><span><span class="interface-prompt" aria-hidden="true">&gt;_</span> ${area.path}</span>${area.captures.length > 1 ? `<div class="capture-switch" role="group" aria-label="${p.name} capture">${area.captures.map((capture, i) => `<button type="button" data-capture="${i}" aria-pressed="${i === 0}">${capture.label}</button>`).join("")}</div>` : `<span>SELECT IMAGE TO OPEN FULL SIZE</span>`}</div>
-          <figure class="interface-figure"><div class="interface-visual"><div class="screen-frame"><a class="capture-link" href="${captureSrc(first)}" target="_blank" rel="noopener noreferrer" aria-label="Open full ${p.name} capture"><img src="${captureSrc(first)}" alt="${first.alt}" loading="lazy" decoding="async" width="1440" height="900" /></a></div><p class="capture-caption">HiveXUI · <span class="capture-name">${first.label}</span> · synthetic data · <a class="capture-full-link" href="${captureSrc(first)}" target="_blank" rel="noopener noreferrer">Open full capture ${icon("external")}</a></p></div>
-          <figcaption class="interface-story"><span class="mini-label">${p.role}</span><h3>${area.title}</h3><p>${area.copy}</p><ul>${area.points.map(point => `<li>${point}</li>`).join("")}</ul><a class="text-link" href="/guides/${id}.md">${p.name} guide ${icon("arrow")}</a>${area.extra ?? ""}</figcaption></figure>
-        </section>`;
-      }).join("")}
-      <section class="console-aside project-emberfold" id="interface-emberfold" tabindex="-1" aria-labelledby="emberfold-aside-title"><div class="screen-terminal"><div class="terminal-top"><span>EMBERFOLD / CLI</span><span>SYNTHETIC INPUT</span></div><p><span>$</span> emberfold prepare --input emberfold.json --dry-run</p><pre tabindex="0" aria-label="Excerpt from actual Emberfold dry run output">{
+const installCommand = `git clone --branch v${HIVE_RELEASE} https://github.com/ChefTaco/hive.git && cd hive && ./hive.sh --release ${HIVE_RELEASE}`;
+const guidePath = (id: ProjectId) => id === "ardent" ? "/guides/magnus.md#ardent-with-bundled-emberfold" : `/guides/${id}.md`;
+const atlasNode = (id: ProjectId, label: string) => `<button type="button" class="atlas-node project-${id}${id === "hive" ? " is-active" : ""}" data-project="${id}" aria-pressed="${id === "hive"}">${icon(id)}<span><strong>${projects[id].name}</strong><small>${label}</small></span></button>`;
+const emberfoldTerminal = `<div class="screen-terminal"><div class="terminal-top"><span>EMBERFOLD / CLI</span><span>SYNTHETIC INPUT</span></div><p><span>$</span> emberfold prepare --input emberfold.json --dry-run</p><pre tabindex="0" aria-label="Excerpt from actual Emberfold dry run output">{
   "tokens": {
     "input_tokens": 100,
     "max_input_tokens": 12000,
@@ -525,103 +475,96 @@ app.innerHTML = `
   "protected_spans_verified": 0,
   "compacted": false,
   "fits": true
-}</pre><div class="terminal-foot">OUTPUT EXCERPT · NO MODEL CALLS</div></div><div class="console-aside-copy"><span class="mini-label">${projects.emberfold.role}</span><h3 id="emberfold-aside-title">Emberfold has no screen.</h3><p>It is a library, CLI and optional HTTP service, so it is not a console section. This excerpt is from a real synthetic CLI dry run: inspect a context preparation result before using it in an agent.</p><ul><li>Review the token budget</li><li>Check protected spans</li><li>Use the library, CLI, or optional HTTP service</li></ul><a class="text-link" href="/guides/emberfold.md">Emberfold guide ${icon("arrow")}</a></div></section>
-      <p class="interface-footnote">You are viewing documentation and sample captures. This site does not connect to an operational fleet or security installation.</p>
+}</pre><div class="terminal-foot">ACTUAL OUTPUT EXCERPT · NO MODEL CALLS</div></div>`;
+
+function productSection(id: ProjectId) {
+  const p = projects[id];
+  const area = id === "ardent" ? {
+    ...gallery.magnus, title: "An agent that can keep going.",
+    copy: "Durable tasks, typed tools, scheduled jobs and a journal of every run. Ardent works on its own or under Magnus management, with Emberfold context fitting built in.",
+    points: ["Run tasks, tools and scheduled jobs", "Connect optional memory and chat", "Install separately on your agent hosts"],
+    captures: [gallery.magnus.captures[2]], extra: '<p>Ardent is headless. The image shows Magnus mission control in HiveXUI, where its host is managed. Hive 2.0.4 does not include a native Ardent artifact.</p>',
+  } : id === "emberfold" ? {
+    title: "Bring the right context forward.",
+    copy: "Fit context to the next model turn with a portable library, CLI, optional HTTP service or Hermes plugin. Ardent uses the library directly and keeps its own authoritative history.",
+    points: ["Fit a context window’s token budget", "Preserve protected source spans", "Use it inside or outside the suite"],
+    captures: [], extra: '<p>Emberfold is a context engine with no console screen. This is an excerpt from a real CLI dry run using synthetic input.</p>',
+  } : gallery[id];
+  const first = area.captures[0];
+  return `<article class="product-section project-${id}" id="interface-${id}" tabindex="-1" aria-labelledby="product-title-${id}">
+    <div class="product-copy"><div class="product-label">${icon(id)}<span>${p.role}</span></div><h3 id="product-title-${id}">${p.name}</h3><h4>${area.title}</h4><p>${area.copy}</p><ul class="product-points">${area.points.map(point => `<li>${icon("check")}${point}</li>`).join("")}</ul><div class="product-links"><a class="text-link" href="${guidePath(id)}">Read the guide ${icon("arrow")}</a><a class="text-link source-link" href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} GitHub repository">Source ${icon("external")}</a></div>${area.extra ? `<details class="product-notes"><summary>More about ${p.name}</summary>${area.extra}</details>` : ""}</div>
+    <div class="product-visual">${first ? `<div class="capture-window"><div class="window-bar"><span class="window-dots" aria-hidden="true">● ● ●</span><span>HiveXUI / ${id === "ardent" ? "Magnus mission control" : p.name}</span>${icon("hivexui")}</div><a class="capture-link" href="${captureSrc(first)}" target="_blank" rel="noopener noreferrer" aria-label="Open full ${p.name} capture"><img src="${captureSrc(first)}" alt="${first.alt}" loading="lazy" decoding="async" width="2880" height="1800" /></a></div><div class="capture-footer"><p class="capture-caption">${id === "ardent" ? "Managed through Magnus" : "HiveXUI"} · <span class="capture-name">${first.label}</span> · synthetic data</p>${area.captures.length > 1 ? `<div class="capture-switch" role="group" aria-label="${p.name} capture">${area.captures.map((capture, i) => `<button type="button" data-capture="${i}" aria-pressed="${i === 0}">${capture.label}</button>`).join("")}</div>` : ""}<a class="capture-full-link" href="${captureSrc(first)}" target="_blank" rel="noopener noreferrer" aria-label="Open full ${p.name} image">Full image ${icon("external")}</a></div>` : emberfoldTerminal}</div>
+  </article>`;
+}
+
+app.innerHTML = `
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><div class="shell header-inner">
+    <a class="brand" href="#top" aria-label="Hive:Magnus home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>Hive<span class="brand-colon">:</span>Magnus</span></a>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#install">Install</a><a href="#atlas">Architecture</a><a href="#projects">Products</a><a href="#walkthroughs">Guides</a></nav>
+    <a class="header-github" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">GitHub ${icon("external")}</a>
+  </div></header>
+  <main id="main">
+    <section class="hero shell" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-prompt" aria-hidden="true">&gt;_</span> YOUR AGENTS. YOUR INFRASTRUCTURE.</div>
+        <h1 id="hero-title">Full-stack<br/><em>agent management.</em></h1>
+        <p class="hero-lede">Deploy the stack. Manage your fleet. Give your agents identity, model access, memory and skills — with security and conversation in the same console.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#install">Install the full stack ${icon("down")}</a><a class="text-link" href="#atlas">See how it connects ${icon("arrow")}</a></div>
+        <p class="hero-proof">Open source · Apache-2.0 · Self hosted</p>
+      </div>
+      <figure class="hero-console"><div class="hero-console-label"><span class="status-dot" aria-hidden="true"></span> ONE CONSOLE. THE WHOLE PICTURE.</div><div class="capture-window"><div class="window-bar"><span class="window-dots" aria-hidden="true">● ● ●</span><span>HiveXUI / Magnus</span>${icon("hivexui")}</div><img src="/captures/fleet-overview.webp" alt="HiveXUI fleet console with synthetic hosts, health gauges and recent commands" width="2880" height="1800" fetchpriority="high" /></div><figcaption>Fleet, identity, models, memory, skills, security and chat.<span>Real HiveXUI capture · synthetic data</span></figcaption></figure>
+    </section>
+    <div class="shell feature-strip" aria-label="Product features">
+      <div>${icon("magnus")}<span><strong>Operate your fleet</strong><small>Hosts, jobs and agent rollouts</small></span></div><div>${icon("emberpath")}<span><strong>Connect your models</strong><small>Provider routing, quotas and traces</small></span></div><div>${icon("hivemem")}<span><strong>Give agents continuity</strong><small>Memory, skills and context</small></span></div><div>${icon("cindertrace")}<span><strong>Stay in control</strong><small>Identity, investigations and chat</small></span></div>
+    </div>
+    <section class="quick-start shell" id="install" aria-labelledby="install-title">
+      <div class="quick-start-heading"><div><span class="section-kicker">START WITH HIVE</span><h2 id="install-title">One installer. A connected stack.</h2></div><div class="platforms" aria-label="Installer platforms"><span class="platform-current">Linux</span><span>macOS <small>coming</small></span><span>Windows <small>coming</small></span></div></div>
+      <p>On a prepared Linux host, run this line to open setup. Choose the <code>full</code> profile, review the plan, and confirm to install.</p>
+      <div class="install-command"><span class="command-prompt" aria-hidden="true">$</span><pre tabindex="0" aria-label="Hive guided install command"><code>${installCommand}</code></pre><button type="button" data-copy-install aria-label="Copy Hive install command">${icon("copy")}<span>Copy</span></button></div>
+      <div class="install-meta"><span><a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Hive ${HIVE_RELEASE}</a> · Signed release · Ubuntu / Debian · amd64 / arm64</span><a class="text-link" href="#walkthroughs">Fresh host? Start here ${icon("arrow")}</a></div>
+      <div class="tailscale-recommendation"><span class="recommendation-icon">${icon("oathweave")}</span><p><strong>Set up <a href="https://tailscale.com/download" target="_blank" rel="noopener noreferrer">Tailscale</a> first.</strong> Our recommended path to a private console and HTTPS certificate. Enable MagicDNS and HTTPS Certificates, then run Hive’s certificate helper before setup.</p><button class="text-link" type="button" data-open-tailscale>Setup guide ${icon("arrow")}</button></div>
+      <p class="install-prerequisites">Before you run: Git, Docker Engine with Compose, Hive’s prerequisite tools, and a console DNS name with a TLS certificate. <a href="/guides/hive.md#prerequisites">All prerequisites</a> · <a href="/guides/hive.md#install">Use your own certificate</a>. Model inference stays external.</p>
+    </section>
+    <section class="atlas-section" id="atlas" aria-labelledby="atlas-title"><div class="shell">
+      <div class="section-head"><div><span class="section-kicker">THE ARCHITECTURE</span><h2 id="atlas-title">Independent tools.<br/><span>One connected system.</span></h2></div><p>Hive installs the suite. HiveXUI brings it together. Select a product to explore what it does and where it connects.</p></div>
+      <div class="atlas-layout"><div class="atlas-map" role="group" aria-label="Interactive product architecture">
+        <div class="architecture-layer deploy-layer"><span class="layer-label">DEPLOY & RECOVER</span>${atlasNode("hive", "Signed releases · backups · upgrades")}<p>Installs the services, their private datastores, HTTPS ingress and the Hive Registry.</p></div>
+        <div class="architecture-flow" aria-hidden="true">↓ <span>ONE HTTPS ENTRY POINT</span></div>
+        <div class="architecture-layer console-layer"><span class="layer-label">YOUR CONSOLE & IDENTITY</span><div class="node-pair">${atlasNode("hivexui", "One browser console")}${atlasNode("oathweave", "Sign-in & scoped access")}</div></div>
+        <div class="architecture-flow" aria-hidden="true">↓ <span>EACH PRODUCT’S OWN API</span></div>
+        <div class="architecture-layer services-layer"><span class="layer-label">SUITE SERVICES</span><div class="service-nodes">${atlasNode("magnus", "Fleet & host operations")}${atlasNode("emberpath", "Model routing")}${atlasNode("hivemem", "Durable memory")}${atlasNode("hiveskills", "Skill distribution")}${atlasNode("cindertrace", "Security investigations")}${atlasNode("chattermost", "People & agent chat")}</div></div>
+        <div class="architecture-flow"><span>MAGNUS CAN MANAGE ARDENT ON FLEET HOSTS</span> ↓</div>
+        <div class="architecture-layer runtime-layer"><span class="layer-label">AGENT RUNTIME · CONFIGURED SEPARATELY</span><div class="runtime-nodes">${atlasNode("ardent", "Durable tasks & tools")}<span class="library-arrow" aria-label="bundles">→<small>bundles library</small></span>${atlasNode("emberfold", "Context fitting")}</div><p>The full profile also installs the optional Emberfold HTTP service.</p></div>
+        <div class="external-inference"><span>${icon("emberpath")} EXTERNAL INFERENCE</span><p>Emberpath routes to your hosted APIs, Ollama or llama.cpp. Ardent can also use a provider directly. Models, storage and runtimes stay outside Hive.</p></div>
+      </div><div class="atlas-detail" id="atlas-detail" aria-live="polite" aria-atomic="true"></div></div>
     </div></section>
-    <section class="suite-boundary shell" aria-label="Release and acceptance status"><h2>Know what you are installing.</h2><p>Hive installs only from a signed release. The current one is <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Hive ${HIVE_RELEASE}</a>; later ones appear on the <a href="https://github.com/ChefTaco/hive/releases" target="_blank" rel="noopener noreferrer">Hive releases page</a>. A passing disposable rehearsal is not production cutover approval, physical multi-host certification or ARM64 certification. Existing installations keep their own recovery paths and upgrade guides. Ollama, llama.cpp and hosted providers remain external; Hive only verifies and registers their endpoints.</p></section>
-    <section class="install-section shell" id="install" aria-labelledby="install-title"><div class="section-head"><div><span class="section-kicker">INSTALL LAB / 04</span><h2 id="install-title">Try it on your host.</h2></div><p>Follow the first steps here, then continue with each project’s full guide. These walkthroughs explain commands; they do not run them for you.</p></div>
-      <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span class="tab-counter">${String(i + 1).padStart(2, "0")}</span><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh environment for a first install. Existing installations follow their own upgrade guides.</p></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
+    <section class="products-section shell" id="projects" aria-labelledby="projects-title"><span id="interfaces" class="anchor-alias" aria-hidden="true"></span>
+      <div class="section-head"><div><span class="section-kicker">MEET THE PRODUCTS</span><h2 id="projects-title">The tools behind<br/><span>your agents.</span></h2></div><p>Each has a clear job. Together, they cover the stack. The screens below are areas of one HiveXUI console, captured with synthetic data.</p></div>
+      <nav class="product-jump-links" aria-label="Explore products">${projectOrder.map(id => `<a href="#interface-${id}">${projects[id].name}</a>`).join("")}</nav>
+      ${projectOrder.map(productSection).join("")}
     </section>
-    <section class="agents-section shell" id="agents" aria-labelledby="agents-title">
-      <div class="section-head"><div><span class="section-kicker">FOR AGENTS / 05</span><h2 id="agents-title">A direct path into the docs.</h2></div><p>Plain Markdown guides with prerequisites, commands, expected results, and reviewed source revisions. Start with the part you need.</p></div>
-      <div class="agent-index-links"><a class="text-link" href="/llms.txt" type="text/plain">Read llms.txt ${icon("arrow")}</a><a class="text-link" href="/index.md" type="text/markdown">Site overview in Markdown ${icon("arrow")}</a></div>
-      <ul class="agent-guides" aria-label="Project guides in Markdown">${projectOrder.map((id, i) => `<li><a href="/guides/${id}.md" type="text/markdown"><span class="mini-label">${String(i + 1).padStart(2, "0")} / MARKDOWN GUIDE</span><span class="agent-guide-title">${projects[id].name}${id === "magnus" ? " + Ardent" : ""} ${icon("arrow")}</span><span>${projects[id].role}</span></a></li>`).join("")}</ul>
-    </section>
-    <section class="closing"><div class="shell closing-inner"><div><span class="section-kicker">YOUR INFRASTRUCTURE. YOUR CHOICE.</span><h2>Start with one piece.<br/><em>Make it yours.</em></h2></div><a class="button button-light" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">Explore the repositories ${icon("arrow")}</a></div></section>
+    <section class="install-section" id="walkthroughs" aria-labelledby="walkthroughs-title"><div class="shell"><div class="section-head"><div><span class="section-kicker">INSTALLATION GUIDES</span><h2 id="walkthroughs-title">From first host<br/><span>to your own stack.</span></h2></div><p>Start with Hive for the full suite, or follow a standalone product guide. These walkthroughs explain the commands without running them.</p></div>
+      <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh host. For an existing installation, follow its upgrade guide.</p><button class="text-link" type="button" data-open-tailscale>Tailscale setup guide ${icon("arrow")}</button></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
+    </div></section>
+    <section class="agents-section shell" id="agents" aria-labelledby="agents-title"><div class="section-head"><div><span class="section-kicker">FOR PEOPLE & AGENTS</span><h2 id="agents-title">Docs you can work with.</h2></div><p>Plain Markdown guides with prerequisites, commands and reviewed source revisions.</p></div><div class="agent-index-links"><a class="text-link" href="/llms.txt">Read llms.txt ${icon("arrow")}</a><a class="text-link" href="/index.md">Site overview in Markdown ${icon("arrow")}</a></div><ul class="agent-guides">${projectOrder.filter(id => id !== "ardent").map(id => `<li><a href="/guides/${id}.md"><span class="agent-guide-title">${projects[id].name}${id === "magnus" ? " + Ardent" : ""} ${icon("arrow")}</span><span>${projects[id].role}</span></a></li>`).join("")}</ul></section>
   </main>
-  <footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="#top"><span>Hive<span class="brand-colon">:</span>Magnus</span></a><p>Open source tools for self-hosted agents.</p><div><a href="https://github.com/ChefTaco/hive">Hive</a><a href="https://github.com/ChefTaco/HiveXUI">HiveXUI</a><a href="https://github.com/ChefTaco/Oathweave">Oathweave</a><a href="https://github.com/ChefTaco/Emberpath">Emberpath</a><a href="https://github.com/ChefTaco/HiveMem">HiveMem</a><a href="https://github.com/ChefTaco/HiveSkills">HiveSkills</a><a href="https://github.com/ChefTaco/magnus">Magnus</a><a href="https://github.com/ChefTaco/Ardent">Ardent</a><a href="https://github.com/ChefTaco/cindertrace">Cindertrace</a><a href="https://github.com/ChefTaco/ChatterMost">ChatterMost</a><a href="https://github.com/ChefTaco/emberfold">Emberfold</a><a href="https://github.com/ChefTaco/HiveMagnus">Site source</a></div><p class="footer-legal">Each project is licensed under Apache-2.0. ChatterMost is independently developed and Mattermost-compatible; Mattermost is a trademark of Mattermost, Inc., which does not affiliate with, endorse, or sponsor it.</p></div></footer>
+  <footer class="site-footer" id="links"><div class="shell"><div class="footer-top"><div><a class="brand" href="#top"><span>Hive<span class="brand-colon">:</span>Magnus</span></a><p>Full-stack agent management.<br/>Open source. On your infrastructure.</p></div><div class="ecosystem-links"><a href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer"><small>EXPLORE THE SOURCE</small><strong>GitHub / ChefTaco ${icon("external")}</strong></a><a href="https://www.npmjs.com/~hivemagnus" target="_blank" rel="noopener noreferrer"><small>PACKAGES & SDKS</small><strong>npm / hivemagnus ${icon("external")}</strong></a></div></div><div class="footer-projects">${projectOrder.map(id => `<a href="${projects[id].href}">${projects[id].name}</a>`).join("")}<a href="https://github.com/ChefTaco/HiveMagnus">Site source</a><a href="/.well-known/security.txt">Security</a></div><p class="footer-legal">Apache-2.0. Product capabilities and release status are documented in each repository. ChatterMost is independently developed and Mattermost-compatible; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.</p></div></footer>
+  <dialog id="tailscale-dialog" aria-labelledby="tailscale-title" aria-describedby="tailscale-intro"><div class="modal-heading"><span class="section-kicker">BEFORE YOU INSTALL</span><button class="modal-close" type="button" aria-label="Close Tailscale setup guide" data-close-tailscale>×</button></div><h2 id="tailscale-title">Get your host ready<br/>with Tailscale.</h2><p id="tailscale-intro">A recommended, optional way to reach your Hive console privately and get its HTTPS certificate. Hive does not install or sign you into Tailscale.</p><ol class="tailscale-steps"><li><h3>Install and sign in</h3><p>Install Tailscale on your Linux host and the computer you’ll use to open the console. Sign both into the same tailnet.</p><a class="text-link" href="https://tailscale.com/download" target="_blank" rel="noopener noreferrer">Download Tailscale ${icon("external")}</a></li><li><h3>Enable MagicDNS and HTTPS</h3><p>In your Tailscale admin console’s DNS settings, turn on MagicDNS and HTTPS Certificates.</p><a class="text-link" href="https://tailscale.com/docs/how-to/set-up-https-certificates" target="_blank" rel="noopener noreferrer">Follow Tailscale’s HTTPS guide ${icon("external")}</a></li><li><h3>Request the console certificate</h3><p>After cloning the Hive release and installing its prerequisites, run this from the checkout. The helper discovers this host’s Tailscale name and calls <code>tailscale cert</code>.</p><div class="modal-command"><pre tabindex="0"><code>sudo ./scripts/console-certificate.sh tailscale</code></pre><button type="button" data-copy-text="sudo ./scripts/console-certificate.sh tailscale" aria-label="Copy Tailscale certificate command">${icon("copy")}</button></div><p>It prints the console origin and writes <code>/etc/hive/tls/console.crt</code> and <code>/etc/hive/tls/console.key</code>. Enter that origin and those paths when Hive setup asks. Certificate names appear in public Certificate Transparency logs.</p></li><li><h3>Schedule renewal after installing</h3><p>Run this with the protected installation file setup created. Replace <code>FILE</code> with that path. It schedules weekly renewal and refreshes Hive’s ingress certificate; rerun it from the new checkout after upgrades.</p><div class="modal-command"><pre tabindex="0"><code>sudo ./scripts/console-certificate.sh schedule --config FILE</code></pre><button type="button" data-copy-text="sudo ./scripts/console-certificate.sh schedule --config FILE" aria-label="Copy certificate renewal command">${icon("copy")}</button></div></li></ol><div class="modal-footer"><p>Using your own DNS and certificate? <a href="/guides/hive.md#install">Follow the Hive installation guide</a>.</p><button class="button button-primary" type="button" data-close-tailscale>Back to Hive setup ${icon("arrow")}</button></div></dialog>
   <div class="sr-only" id="announce" role="status" aria-live="polite"></div>
 `;
 
 function renderAtlas() {
   const p = projects[activeProject];
-  const detail = document.querySelector<HTMLDivElement>("#atlas-detail")!;
-  detail.innerHTML = `<span class="detail-meta">SELECTED SYSTEM / ${p.role.toUpperCase()}</span><div class="detail-body"><h3>${p.name}</h3><p>${p.detail}</p><h4>Connects to</h4><ul class="detail-links">${p.connections.map((c) => `<li><strong>${c.to}</strong> <span>${c.how}</span></li>`).join("")}</ul><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="Open ${p.name} GitHub repository">Project source ${icon("external")}</a></div>`;
-  document
-    .querySelectorAll<HTMLButtonElement>(".atlas-node")
-    .forEach((button) => {
-      const active = button.dataset.project === activeProject;
-      button.classList.toggle("is-active", active);
-      button.setAttribute("aria-pressed", String(active));
-    });
-  renderAtlasLines();
-}
-
-function renderAtlasLines() {
-  const map = document.querySelector<HTMLElement>(".atlas-map")!;
-  const svg = map.querySelector<SVGSVGElement>(".atlas-lines")!;
-  const bounds = map.getBoundingClientRect();
-  svg.setAttribute("viewBox", `0 0 ${bounds.width} ${bounds.height}`);
-  const center = (id: string) => {
-    const node = map.querySelector<HTMLElement>(id === "ardent" ? ".atlas-center" : `.node-${id}`)!;
-    const rect = node.getBoundingClientRect();
-    return [rect.left - bounds.left + rect.width / 2, rect.top - bounds.top + rect.height / 2];
-  };
-  svg.querySelectorAll<SVGPathElement>("path").forEach(path => {
-    const from = path.dataset.from!, to = path.dataset.to!;
-    path.setAttribute("d", `M${center(from).join(" ")} L${center(to).join(" ")}`);
-    path.classList.toggle("atlas-line-active", from === activeProject || to === activeProject);
+  document.querySelector<HTMLDivElement>("#atlas-detail")!.innerHTML = `<span class="detail-meta">EXPLORE THE SYSTEM</span><div class="detail-body">${icon(activeProject)}<h3>${p.name}</h3><p>${p.detail}</p><h4>How it connects</h4><ul class="detail-links">${p.connections.map(c => `<li><strong>${c.to}</strong><span>${c.how}</span></li>`).join("")}</ul><a href="#interface-${activeProject}">Explore ${p.name} ${icon("arrow")}</a></div>`;
+  document.querySelectorAll<HTMLButtonElement>(".atlas-node").forEach(button => {
+    const active = button.dataset.project === activeProject;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
   });
 }
 
-function selectInterface(id: GalleryId, focus = false) {
-  activeInterface = id;
-  document.querySelectorAll<HTMLButtonElement>("[data-interface]").forEach(button => {
-    const active = button.dataset.interface === id;
-    button.setAttribute("aria-selected", String(active));
-    button.tabIndex = active ? 0 : -1;
-    if (active && focus) button.focus();
-  });
-  galleryOrder.forEach(area => {
-    document.querySelector<HTMLElement>(`#interface-${area}`)!.hidden = area !== id;
-  });
-}
-
-// Emberfold sits below the gallery rather than in it, so its links scroll there instead of selecting.
-function showInterface(id: string) {
-  if (isGalleryId(id)) {
-    selectInterface(id);
-    document.querySelector<HTMLElement>("#interfaces")!.scrollIntoView();
-  } else if (id === "emberfold") {
-    document.querySelector<HTMLElement>("#interface-emberfold")!.scrollIntoView();
-  }
-}
-
-document.querySelectorAll<HTMLButtonElement>("[data-interface]").forEach(button => {
-  button.addEventListener("click", () => selectInterface(button.dataset.interface as GalleryId));
-  button.addEventListener("keydown", event => {
-    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
-    event.preventDefault();
-    const index = galleryOrder.indexOf(activeInterface);
-    const next = event.key === "Home" ? 0 : event.key === "End" ? galleryOrder.length - 1
-      : (index + (event.key === "ArrowRight" ? 1 : -1) + galleryOrder.length) % galleryOrder.length;
-    selectInterface(galleryOrder[next], true);
-  });
-});
-document.querySelectorAll<HTMLAnchorElement>("[data-interface-link]").forEach(link => {
-  link.addEventListener("click", event => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    const id = link.dataset.interfaceLink!;
-    showInterface(id);
-    history.pushState(null, "", `#interface-${id}`);
-    document.querySelector<HTMLElement>(`#interface-${id}`)!.focus({ preventScroll: true });
-  });
-});
-window.addEventListener("hashchange", () => {
-  showInterface(location.hash === "#security" ? "cindertrace" : location.hash.replace("#interface-", ""));
-});
-galleryOrder.forEach(id => {
+projectOrder.forEach(id => {
+  if (id === "emberfold" || id === "ardent") return;
   const panel = document.querySelector<HTMLElement>(`#interface-${id}`)!;
   panel.querySelectorAll<HTMLButtonElement>("[data-capture]").forEach(button => {
     button.addEventListener("click", () => {
@@ -635,6 +578,49 @@ galleryOrder.forEach(id => {
     });
   });
 });
+
+async function copyText(button: HTMLButtonElement, value: string) {
+  try {
+    await navigator.clipboard.writeText(value);
+    document.querySelector("#announce")!.textContent = "Command copied";
+    const original = button.innerHTML;
+    button.innerHTML = `${icon("check")}<span>Copied</span>`;
+    window.setTimeout(() => { button.innerHTML = original; }, 2400);
+  } catch {
+    document.querySelector("#announce")!.textContent = "Copy failed. Select the command text to copy it.";
+  }
+}
+document.querySelector<HTMLButtonElement>("[data-copy-install]")!.addEventListener("click", event => { void copyText(event.currentTarget as HTMLButtonElement, installCommand); });
+document.querySelectorAll<HTMLButtonElement>("[data-copy-text]").forEach(button => button.addEventListener("click", () => { void copyText(button, button.dataset.copyText!); }));
+const tailscaleDialog = document.querySelector<HTMLDialogElement>("#tailscale-dialog")!;
+let modalTrigger: HTMLElement | null = null;
+document.querySelectorAll<HTMLButtonElement>("[data-open-tailscale]").forEach(button => button.addEventListener("click", () => {
+  modalTrigger = button;
+  tailscaleDialog.showModal();
+  document.body.classList.add("modal-open");
+}));
+document.querySelectorAll<HTMLButtonElement>("[data-close-tailscale]").forEach(button => button.addEventListener("click", () => tailscaleDialog.close()));
+tailscaleDialog.addEventListener("click", event => {
+  const bounds = tailscaleDialog.getBoundingClientRect();
+  if (event.target === tailscaleDialog && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)) tailscaleDialog.close();
+});
+tailscaleDialog.addEventListener("keydown", event => {
+  if (event.key !== "Tab") return;
+  const focusable = Array.from(tailscaleDialog.querySelectorAll<HTMLElement>('a[href], button, [tabindex="0"]')).filter(el => !el.hasAttribute("disabled"));
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+});
+tailscaleDialog.addEventListener("close", () => {
+  document.body.classList.remove("modal-open");
+  modalTrigger?.focus({ preventScroll: true });
+});
+tailscaleDialog.querySelectorAll<HTMLAnchorElement>('a[href^="/"]').forEach(link => link.addEventListener("click", () => tailscaleDialog.close()));
+// Preserve legacy console and security deep links; every product is now visible in the page.
+function followProductHash() {
+  if (location.hash === "#security") document.querySelector("#interface-cindertrace")!.scrollIntoView();
+}
+window.addEventListener("hashchange", followProductHash);
 
 function renderDemo() {
   const d = demos[activeDemo];
@@ -729,9 +715,5 @@ document
     });
   });
 renderAtlas();
-new ResizeObserver(renderAtlasLines).observe(document.querySelector(".atlas-map")!);
-void document.fonts.ready.then(renderAtlasLines);
 renderDemo();
-if (location.hash === "#security" || location.hash.startsWith("#interface-")) {
-  requestAnimationFrame(() => showInterface(location.hash === "#security" ? "cindertrace" : location.hash.replace("#interface-", "")));
-}
+requestAnimationFrame(followProductHash);
