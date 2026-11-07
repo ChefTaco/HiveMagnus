@@ -326,7 +326,7 @@ const demos: Record<DemoId, Demo> = {
       },
     ],
     guide:
-      "https://github.com/ChefTaco/magnus/tree/main/packages/ardent#install",
+      "https://github.com/ChefTaco/Ardent#install",
     guideLabel: "Ardent installation guide",
   },
 };
@@ -492,7 +492,7 @@ app.innerHTML = `
       <div class="section-head"><div><span class="section-kicker">SYSTEM ATLAS / 01</span><h2 id="atlas-title">See how the pieces fit.</h2></div><p>Explore each part of the stack. Dashed lines are connections you select or configure. Solid lines show Ardent within Magnus and its bundled Emberfold library.</p></div>
       <div class="atlas-layout"><div class="atlas-map" role="group" aria-label="Interactive system atlas">
         <div class="atlas-grid" aria-hidden="true"></div><svg class="atlas-lines" aria-hidden="true">${atlasEdges.map(edge => `<path data-from="${edge.from}" data-to="${edge.to}" class="${edge.bundled ? "atlas-line-bundled" : ""}"/>`).join("")}</svg>
-        <a href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" class="atlas-center" target="_blank" rel="noopener noreferrer" aria-label="Ardent agent runtime, part of Magnus"><span>ARDENT<small>AGENT RUNTIME</small></span><i></i></a>
+        <a href="https://github.com/ChefTaco/Ardent" class="atlas-center" target="_blank" rel="noopener noreferrer" aria-label="Ardent agent runtime, part of Magnus"><span>ARDENT<small>AGENT RUNTIME</small></span><i></i></a>
         ${projectOrder.map((id, i) => `<button type="button" class="atlas-node node-${id}${i === 0 ? " is-active" : ""}" data-project="${id}" aria-pressed="${i === 0}"><span class="node-index">${String(i + 1).padStart(2, "0")}</span><span class="node-name">${projects[id].name}</span><span class="node-role">${projects[id].role}</span></button>`).join("")}
         <div class="atlas-annotation"><span class="line-key"></span> CONFIGURED <span class="line-key bundled"></span> BUNDLED</div>
       </div><div class="atlas-detail" id="atlas-detail" aria-live="polite"></div></div>
@@ -502,7 +502,7 @@ app.innerHTML = `
         const p = projects[id];
         return `<article class="project-card project-${id}"><div class="project-identity"><span class="project-number">${String(i + 1).padStart(2, "0")}</span><span class="project-glyph">${icon(id)}</span><div><h3>${p.name}</h3><span class="project-role">${p.role}</span></div></div><p class="project-summary">${p.summary}</p><div class="project-actions"><a href="#interface-${id}" data-interface-link="${id}">${id === "emberfold" ? "See its CLI" : "See in console"} ${icon("arrow")}</a><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} GitHub repository">Source ${icon("external")}</a></div></article>`;
       }).join("")}</div>
-      <div class="ardent-note"><span class="ardent-symbol" aria-hidden="true">A<span>:</span>E</span><div><span class="mini-label">INSIDE MAGNUS</span><h3>Ardent runs the work. Emberfold carries the context.</h3><p>Ardent is Magnus’s headless agent runtime. It can run on its own or under Magnus management; its pinned Emberfold library helps fit context for the next turn.</p></div><a class="text-link" href="https://github.com/ChefTaco/magnus/tree/main/packages/ardent" target="_blank" rel="noopener noreferrer">Explore Ardent ${icon("external")}</a></div>
+      <div class="ardent-note"><span class="ardent-symbol" aria-hidden="true">A<span>:</span>E</span><div><span class="mini-label">INSIDE MAGNUS</span><h3>Ardent runs the work. Emberfold carries the context.</h3><p>Ardent is Magnus’s headless agent runtime. It can run on its own or under Magnus management; its pinned Emberfold library helps fit context for the next turn.</p></div><a class="text-link" href="https://github.com/ChefTaco/Ardent" target="_blank" rel="noopener noreferrer">Explore Ardent ${icon("external")}</a></div>
     </section>
     <section class="screens-section" id="interfaces" aria-labelledby="screens-title"><div class="shell">
       <div class="section-head"><div><span class="section-kicker">// IN THE CONSOLE / 03</span><h2 id="screens-title">One console.<br/><span>Every product you install.</span></h2></div><p>HiveXUI is the single browser UI of a Hive installation. These captures are the real console with synthetic data, shown across its product areas.</p></div>
