@@ -10,7 +10,7 @@ Oathweave issues RS256-signed JWTs and keeps sessions, roles, clients, service a
 
 ## In a Hive installation
 
-Oathweave and its private Redis are required in every profile; [Hive](https://hivemagnus.com/guides/hive.md) 2.0.4 installs Oathweave 2.0.2 as a digest-pinned image. Hive provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
+Oathweave and its private Redis are required in every profile; [Hive](https://hivemagnus.com/guides/hive.md) 2.0.5 installs Oathweave 2.0.3 as a digest-pinned image. Hive provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
 
 ## Run it on its own
 

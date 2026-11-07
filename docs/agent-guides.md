@@ -137,3 +137,14 @@ Rechecked the published `v2.0.4` README and `deployment/QUICKSTART.md` through t
 Checked `scripts/console-certificate.sh` and `scripts/suite/controller.sh` at `v2.0.4`: the helper discovers the Tailscale MagicDNS name with `tailscale status --json`, requires HTTPS Certificates, calls `tailscale cert`, and writes the certificate and owner-only key under `/etc/hive/tls`. Setup asks for existing certificate/key paths. The new modal links the public Tailscale download and HTTPS guide, explains those separate preparation steps and the optional weekly `schedule --config FILE` renewal. No install, certificate or renewal command was executed against an operator environment.
 
 Rechecked Ardent's public README for its headless runtime, independently configured integrations and bundled Emberfold library. The homepage labels its visual as Magnus mission control and keeps native Ardent installation separate from the signed Hive 2.0.4 suite. npm package metadata for `@hivemagnus/ardent` identifies publisher `hivemagnus`; the footer links that public npm profile.
+
+## Hive 2.0.5, 2026-11-07
+
+The site moves from Hive suite release 2.0.4 to 2.0.5. The Hive guide, the agent index, the overview, the walkthrough constant, the product guides' "Hive installs" lines and the deployment note now name `v2.0.5`, which marks commit `91bd31da798e6a3ddd986728301a5119c6a53d0c`. Every Hive link the guides carry points at that commit, and every linked file and anchor was checked to exist there.
+
+| Project | Release | Commit | Reviewed sources |
+| --- | --- | --- | --- |
+| Hive | `v2.0.5` | `91bd31da798e6a3ddd986728301a5119c6a53d0c` | `README.md`, `deployment/README.md`, `deployment/QUICKSTART.md`, `CHANGELOG.md` `[2.0.5]`, `releases/2.0.5.json` |
+| Oathweave | `v2.0.3` | `7f9770ea03254b1a99b6e35ab75ffb741ef0c8db` | `CHANGELOG.md` `2.0.3` |
+
+`releases/2.0.5.json` differs from `releases/2.0.4.json` only in the Oathweave image, now 2.0.3, which updates `@simplewebauthn/server` to 14.1.0 for GHSA-2g3p-m8c9-hhwh; `controllerSHA256` and the publisher key are unchanged. The release attaches the manifest, signature and publisher key; they are byte-identical to the tagged tree and the signature verifies. The Oathweave guide's standalone container example keeps the image reviewed and run on 2026-11-06; its review record is otherwise unchanged. The install commands are those of 2.0.4 with the new version, as in the README and installation guide at that commit.

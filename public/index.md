@@ -20,7 +20,7 @@
 | Self-host channels, DMs, threads, and agent conversations | ChatterMost | [ChatterMost](https://hivemagnus.com/guides/chattermost.md) | [ChefTaco/ChatterMost](https://github.com/ChefTaco/ChatterMost) |
 | Fit context and carry continuity into the next model turn | Emberfold | [Emberfold](https://hivemagnus.com/guides/emberfold.md) | [ChefTaco/emberfold](https://github.com/ChefTaco/emberfold) |
 
-Hive installs only from a signed release. The current suite release is [Hive 2.0.4](https://github.com/ChefTaco/hive/releases/tag/v2.0.4); later ones appear on the [releases page](https://github.com/ChefTaco/hive/releases). A passing disposable rehearsal is not production cutover approval. Existing installations keep their own recovery paths and upgrade guides.
+Hive installs only from a signed release. The current suite release is [Hive 2.0.5](https://github.com/ChefTaco/hive/releases/tag/v2.0.5); later ones appear on the [releases page](https://github.com/ChefTaco/hive/releases). A passing disposable rehearsal is not production cutover approval. Existing installations keep their own recovery paths and upgrade guides.
 
 Ollama, llama.cpp, other inference services and hosted providers remain external. Hive only configures and verifies endpoints and protected credential references, then registers verified providers with Emberpath. It never installs, manages or stores inference services or model assets.
 
@@ -42,10 +42,10 @@ Enable only the integrations you configure. Installing every project is not a pr
 The visual homepage leads with a feature overview, a one-line command to launch the signed Hive installer, an interactive architecture, then a section for each of the eleven products. The full-stack installer targets Linux today; macOS and Windows are coming. On a prepared host:
 
 ```bash
-git clone --branch v2.0.4 https://github.com/ChefTaco/hive.git && cd hive && ./hive.sh --release 2.0.4
+git clone --branch v2.0.5 https://github.com/ChefTaco/hive.git && cd hive && ./hive.sh --release 2.0.5
 ```
 
-Choose the `full` profile in setup, review the plan and confirm to install the suite. First prepare Docker Engine with Compose, Hive's other prerequisite tools, and the console's DNS name and TLS certificate. Follow the [Hive guide](https://hivemagnus.com/guides/hive.md#install) for fresh-host preparation, TLS and sign-in. Ardent is installed separately; the signed Hive 2.0.4 release includes no native Ardent artifact. Model runtimes and storage stay external.
+Choose the `full` profile in setup, review the plan and confirm to install the suite. First prepare Docker Engine with Compose, Hive's other prerequisite tools, and the console's DNS name and TLS certificate. Follow the [Hive guide](https://hivemagnus.com/guides/hive.md#install) for fresh-host preparation, TLS and sign-in. Ardent is installed separately; the signed Hive 2.0.5 release includes no native Ardent artifact. Model runtimes and storage stay external.
 
 [Tailscale](https://tailscale.com/download) is the recommended optional path to private console access and a certificate. Install and sign in on your Linux host and browser computer, then enable MagicDNS and HTTPS Certificates using [Tailscale's guide](https://tailscale.com/docs/how-to/set-up-https-certificates). After cloning Hive and preparing its prerequisites, run `sudo ./scripts/console-certificate.sh tailscale` from the checkout. This helper discovers the host's Tailscale name, requests a certificate and prints the console origin and file paths to enter in Hive setup. The installer itself asks for existing certificate files. After installation, `sudo ./scripts/console-certificate.sh schedule --config FILE` schedules renewal; replace `FILE` with the protected installation file setup created and rerun from the new checkout after upgrades. Certificates expose the hostname in public Certificate Transparency logs. Your own certificates are supported too. The visual site provides these steps in a keyboard-accessible setup modal.
 
