@@ -89,13 +89,13 @@ const projects: Record<
   },
   magnus: {
     name: "Magnus",
-    role: "Fleet · operations · Ardent",
+    role: "Fleet · operations · hosts",
     summary: "See and operate the hosts where your agents live.",
     detail:
-      "Fleet inventory, jobs, skills, rollouts and audit for Linux hosts. In a Hive installation its console is the Magnus section of HiveXUI, signed in through Oathweave. Its Ardent runtime runs durable agent tasks on a host or under fleet management. The web terminal is a separate gateway requiring step-up, off unless you deploy it.",
+      "Fleet inventory, jobs, skills, rollouts and audit for Linux hosts. In a Hive installation its console is the Magnus section of HiveXUI, signed in through Oathweave. It can install and manage Ardent, a separate agent runtime, on fleet hosts. The web terminal is a separate gateway requiring step-up, off unless you deploy it.",
     href: "https://github.com/ChefTaco/magnus",
     connections: [
-      { to: "Ardent", how: "ships the runtime and can manage it on fleet hosts" },
+      { to: "Ardent", how: "installs the published runtime and manages it on fleet hosts" },
       { to: "HiveXUI", how: "the fleet console, through an allowlist of browser routes" },
       { to: "Fleet gateway", how: "holds the restricted SSH key for the optional web terminal" },
       { to: "Oathweave / Emberpath / HiveMem", how: "optional sign-in, model routing and shared memory" },
@@ -301,7 +301,7 @@ const demos: Record<DemoId, Demo> = {
     kicker: "Agent runtime",
     title: "Give an agent a durable home",
     intro:
-      "Ardent is part of Magnus. Its package includes the pinned Emberfold library for context fitting; the separate Emberfold server is optional. To use Emberfold without Ardent, start from its repository.",
+      "Ardent is its own product with its own repository; Magnus can manage it on fleet hosts. Its package includes the pinned Emberfold library for context fitting; the separate Emberfold server is optional. To use Emberfold without Ardent, start from its repository.",
     requires: [
       "Node.js 24.22.1+ or 26.13.0+",
       "An OpenAI-compatible model endpoint or Codex App Server",
@@ -371,7 +371,7 @@ const atlasEdges: { from: AtlasId; to: AtlasId; bundled?: boolean }[] = [
   { from: "hive", to: "hivexui" }, { from: "hivexui", to: "oathweave" },
   { from: "hivexui", to: "emberpath" }, { from: "hivexui", to: "hivemem" },
   { from: "hivexui", to: "hiveskills" }, { from: "hivexui", to: "cindertrace" },
-  { from: "hivexui", to: "chattermost" }, { from: "hivexui", to: "magnus" }, { from: "magnus", to: "ardent", bundled: true },
+  { from: "hivexui", to: "chattermost" }, { from: "hivexui", to: "magnus" }, { from: "magnus", to: "ardent" },
   { from: "emberfold", to: "ardent", bundled: true }, { from: "cindertrace", to: "magnus" },
 ];
 // One console, shown across its product areas. The order follows HiveXUI's sidebar; HiveXUI itself
@@ -489,10 +489,10 @@ app.innerHTML = `
       </div>
     </section>
     <section class="atlas-section" id="atlas" aria-labelledby="atlas-title"><div class="shell">
-      <div class="section-head"><div><span class="section-kicker">SYSTEM ATLAS / 01</span><h2 id="atlas-title">See how the pieces fit.</h2></div><p>Explore each part of the stack. Dashed lines are connections you select or configure. Solid lines show Ardent within Magnus and its bundled Emberfold library.</p></div>
+      <div class="section-head"><div><span class="section-kicker">SYSTEM ATLAS / 01</span><h2 id="atlas-title">See how the pieces fit.</h2></div><p>Explore each part of the stack. Dashed lines are connections you select or configure. Solid lines show the Emberfold library bundled in Ardent.</p></div>
       <div class="atlas-layout"><div class="atlas-map" role="group" aria-label="Interactive system atlas">
         <div class="atlas-grid" aria-hidden="true"></div><svg class="atlas-lines" aria-hidden="true">${atlasEdges.map(edge => `<path data-from="${edge.from}" data-to="${edge.to}" class="${edge.bundled ? "atlas-line-bundled" : ""}"/>`).join("")}</svg>
-        <a href="https://github.com/ChefTaco/Ardent" class="atlas-center" target="_blank" rel="noopener noreferrer" aria-label="Ardent agent runtime, part of Magnus"><span>ARDENT<small>AGENT RUNTIME</small></span><i></i></a>
+        <a href="https://github.com/ChefTaco/Ardent" class="atlas-center" target="_blank" rel="noopener noreferrer" aria-label="Ardent agent runtime repository"><span>ARDENT<small>AGENT RUNTIME</small></span><i></i></a>
         ${projectOrder.map((id, i) => `<button type="button" class="atlas-node node-${id}${i === 0 ? " is-active" : ""}" data-project="${id}" aria-pressed="${i === 0}"><span class="node-index">${String(i + 1).padStart(2, "0")}</span><span class="node-name">${projects[id].name}</span><span class="node-role">${projects[id].role}</span></button>`).join("")}
         <div class="atlas-annotation"><span class="line-key"></span> CONFIGURED <span class="line-key bundled"></span> BUNDLED</div>
       </div><div class="atlas-detail" id="atlas-detail" aria-live="polite"></div></div>
@@ -502,7 +502,7 @@ app.innerHTML = `
         const p = projects[id];
         return `<article class="project-card project-${id}"><div class="project-identity"><span class="project-number">${String(i + 1).padStart(2, "0")}</span><span class="project-glyph">${icon(id)}</span><div><h3>${p.name}</h3><span class="project-role">${p.role}</span></div></div><p class="project-summary">${p.summary}</p><div class="project-actions"><a href="#interface-${id}" data-interface-link="${id}">${id === "emberfold" ? "See its CLI" : "See in console"} ${icon("arrow")}</a><a href="${p.href}" target="_blank" rel="noopener noreferrer" aria-label="${p.name} GitHub repository">Source ${icon("external")}</a></div></article>`;
       }).join("")}</div>
-      <div class="ardent-note"><span class="ardent-symbol" aria-hidden="true">A<span>:</span>E</span><div><span class="mini-label">INSIDE MAGNUS</span><h3>Ardent runs the work. Emberfold carries the context.</h3><p>Ardent is Magnus’s headless agent runtime. It can run on its own or under Magnus management; its pinned Emberfold library helps fit context for the next turn.</p></div><a class="text-link" href="https://github.com/ChefTaco/Ardent" target="_blank" rel="noopener noreferrer">Explore Ardent ${icon("external")}</a></div>
+      <div class="ardent-note"><span class="ardent-symbol" aria-hidden="true">A<span>:</span>E</span><div><span class="mini-label">ITS OWN REPOSITORY</span><h3>Ardent runs the work. Emberfold carries the context.</h3><p>Ardent is a headless agent runtime with its own repository. It runs on its own or under Magnus management; its pinned Emberfold library helps fit context for the next turn.</p></div><a class="text-link" href="https://github.com/ChefTaco/Ardent" target="_blank" rel="noopener noreferrer">Explore Ardent ${icon("external")}</a></div>
     </section>
     <section class="screens-section" id="interfaces" aria-labelledby="screens-title"><div class="shell">
       <div class="section-head"><div><span class="section-kicker">// IN THE CONSOLE / 03</span><h2 id="screens-title">One console.<br/><span>Every product you install.</span></h2></div><p>HiveXUI is the single browser UI of a Hive installation. These captures are the real console with synthetic data, shown across its product areas.</p></div>
@@ -539,7 +539,7 @@ app.innerHTML = `
     </section>
     <section class="closing"><div class="shell closing-inner"><div><span class="section-kicker">YOUR INFRASTRUCTURE. YOUR CHOICE.</span><h2>Start with one piece.<br/><em>Make it yours.</em></h2></div><a class="button button-light" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">Explore the repositories ${icon("arrow")}</a></div></section>
   </main>
-  <footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="#top"><span>Hive<span class="brand-colon">:</span>Magnus</span></a><p>Open source tools for self-hosted agents.</p><div><a href="https://github.com/ChefTaco/hive">Hive</a><a href="https://github.com/ChefTaco/HiveXUI">HiveXUI</a><a href="https://github.com/ChefTaco/Oathweave">Oathweave</a><a href="https://github.com/ChefTaco/Emberpath">Emberpath</a><a href="https://github.com/ChefTaco/HiveMem">HiveMem</a><a href="https://github.com/ChefTaco/HiveSkills">HiveSkills</a><a href="https://github.com/ChefTaco/magnus">Magnus</a><a href="https://github.com/ChefTaco/cindertrace">Cindertrace</a><a href="https://github.com/ChefTaco/ChatterMost">ChatterMost</a><a href="https://github.com/ChefTaco/emberfold">Emberfold</a><a href="https://github.com/ChefTaco/HiveMagnus">Site source</a></div><p class="footer-legal">Each project is licensed under Apache-2.0. ChatterMost is independently developed and Mattermost-compatible; Mattermost is a trademark of Mattermost, Inc., which does not affiliate with, endorse, or sponsor it.</p></div></footer>
+  <footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="#top"><span>Hive<span class="brand-colon">:</span>Magnus</span></a><p>Open source tools for self-hosted agents.</p><div><a href="https://github.com/ChefTaco/hive">Hive</a><a href="https://github.com/ChefTaco/HiveXUI">HiveXUI</a><a href="https://github.com/ChefTaco/Oathweave">Oathweave</a><a href="https://github.com/ChefTaco/Emberpath">Emberpath</a><a href="https://github.com/ChefTaco/HiveMem">HiveMem</a><a href="https://github.com/ChefTaco/HiveSkills">HiveSkills</a><a href="https://github.com/ChefTaco/magnus">Magnus</a><a href="https://github.com/ChefTaco/Ardent">Ardent</a><a href="https://github.com/ChefTaco/cindertrace">Cindertrace</a><a href="https://github.com/ChefTaco/ChatterMost">ChatterMost</a><a href="https://github.com/ChefTaco/emberfold">Emberfold</a><a href="https://github.com/ChefTaco/HiveMagnus">Site source</a></div><p class="footer-legal">Each project is licensed under Apache-2.0. ChatterMost is independently developed and Mattermost-compatible; Mattermost is a trademark of Mattermost, Inc., which does not affiliate with, endorse, or sponsor it.</p></div></footer>
   <div class="sr-only" id="announce" role="status" aria-live="polite"></div>
 `;
 

@@ -1,8 +1,8 @@
 # Magnus and Ardent: agent guide
 
-> Magnus operates Linux fleets. Its Ardent runtime runs durable agent tasks, standalone or under fleet management, with bundled Emberfold context fitting.
+> Magnus operates Linux fleets. Ardent, a separate product with [its own repository](https://github.com/ChefTaco/Ardent), runs durable agent tasks, standalone or under Magnus management, with bundled Emberfold context fitting.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/magnus) · [Current Magnus instructions](https://github.com/ChefTaco/magnus#quick-start-standalone) · [Current Ardent instructions](https://github.com/ChefTaco/Ardent#install)
+[Agent index](https://hivemagnus.com/llms.txt) · [Magnus repository](https://github.com/ChefTaco/magnus) · [Ardent repository](https://github.com/ChefTaco/Ardent) · [Current Magnus instructions](https://github.com/ChefTaco/magnus#quick-start-standalone) · [Current Ardent instructions](https://github.com/ChefTaco/Ardent#install)
 
 ## Choose an entry point
 
@@ -75,6 +75,7 @@ Ardent imports its pinned Emberfold library directly. No separate Emberfold acco
 - [Node agent setup](https://github.com/ChefTaco/magnus/tree/main/packages/agent)
 - [Ardent configuration and integrations](https://github.com/ChefTaco/Ardent)
 - [Ardent OpenAPI contract](https://github.com/ChefTaco/Ardent/blob/main/openapi/ardent.json)
+- [Ardent repository instructions](https://github.com/ChefTaco/Ardent/blob/main/AGENTS.md)
 - [Repository instructions](https://github.com/ChefTaco/magnus/blob/main/AGENTS.md)
 
 ## Source review
