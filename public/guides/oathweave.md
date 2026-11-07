@@ -10,7 +10,7 @@ Oathweave issues RS256-signed JWTs and keeps sessions, roles, clients, service a
 
 ## In a Hive installation
 
-Oathweave and its private Redis are required in every profile; [Hive](https://hivemagnus.com/guides/hive.md) 2.0.0 installs Oathweave 2.0.1 as a digest-pinned image. Hive provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
+Oathweave and its private Redis are required in every profile; [Hive](https://hivemagnus.com/guides/hive.md) 2.0.4 installs Oathweave 2.0.2 as a digest-pinned image. Hive provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
 
 ## Run it on its own
 
@@ -41,4 +41,4 @@ Expected result: `check` reports `Result: OK`, and once the container is healthy
 
 ## Source review
 
-Reviewed 2026-11-06 against `main` commit `056b33500181db6fbd3c124a40f5bfa7b90a9873`, documentation added after tag `v2.0.1`: [README](https://github.com/ChefTaco/Oathweave/blob/056b33500181db6fbd3c124a40f5bfa7b90a9873/README.md) and [server README](https://github.com/ChefTaco/Oathweave/blob/056b33500181db6fbd3c124a40f5bfa7b90a9873/apps/iam-core/README.md). The commands follow the server README's container example and were run with throwaway containers against the image the [2.0.1 release](https://github.com/ChefTaco/Oathweave/releases/tag/v2.0.1) publishes, which is the image Hive installs. Original attribution and migration history are preserved. License: Apache-2.0.
+Reviewed 2026-11-06 against `main` commit `056b33500181db6fbd3c124a40f5bfa7b90a9873`, documentation added after tag `v2.0.1`: [README](https://github.com/ChefTaco/Oathweave/blob/056b33500181db6fbd3c124a40f5bfa7b90a9873/README.md) and [server README](https://github.com/ChefTaco/Oathweave/blob/056b33500181db6fbd3c124a40f5bfa7b90a9873/apps/iam-core/README.md). The commands follow the server README's container example and were run with throwaway containers against the image the [2.0.1 release](https://github.com/ChefTaco/Oathweave/releases/tag/v2.0.1) publishes, which Hive 2.0.0 and 2.0.1 installed. Original attribution and migration history are preserved. License: Apache-2.0.

@@ -115,3 +115,17 @@ Hive published suite release 2.0.1, a controller-only release with the same imag
 
 Ardent moved out of the Magnus monorepo into its own public repository, `https://github.com/ChefTaco/Ardent`, at extraction commit `90ec90594a15ad412e1385dc6cb9972f15eec66a` (package `@hivemagnus/ardent` 2.1.1, unchanged). The site now presents Ardent as its own product: the metadata graph gives it its own repository and license and no longer nests it in Magnus, the atlas shows Magnus managing Ardent as a configured connection, the fallback and footer link the repository, `security.txt` lists its advisories, and `llms.txt` links its AGENTS.md. Ardent keeps sharing the Magnus guide. The install commands in that guide were compared with the Ardent README at the extraction commit and are unchanged. The earlier review records above, including the Magnus guide's `v2.1.1` source pin, are historical and were not edited.
 
+
+## Hive 2.0.4, 2026-11-07
+
+The site moves from Hive suite release 2.0.2 (commit `a7f8c285ff9d111435d569b0d068f1381828109e`, presented without a record in this file) to 2.0.4; 2.0.3 was never presented. The Hive guide, the agent index, the overview, the walkthrough constant and the deployment note now name `v2.0.4`, which marks commit `f16a80c71a546e950867d6987c42ff2b6b1b9b50`. Every Hive link the guide carries points at that commit, and every linked file and anchor was checked to exist there.
+
+| Project | Release | Commit | Reviewed sources |
+| --- | --- | --- | --- |
+| Hive | `v2.0.4` | `f16a80c71a546e950867d6987c42ff2b6b1b9b50` | `README.md`, `deployment/README.md`, `deployment/QUICKSTART.md`, `deployment/FULL.md`, `deployment/MIGRATE_NATIVE.md`, `deployment/BACKUPS.md`, `docs/RELEASING.md`, `docs/hive-registry-api.md`, `CHANGELOG.md` `[2.0.4]`, `releases/2.0.4.json`, `hive.sh --help` |
+
+`releases/2.0.4.json` pins the images and versions of 2.0.3 and adds the Magnus agent package `@hivemagnus/magnus-agent` 2.1.1 with its npm integrity as `components.magnus.agentPackage`; the guide's component list follows the manifest. In the tree at that commit the manifest verifies against `releases/2.0.4.json.sig` with `trust/publisher.pub`, whose DER SHA-256 matches the fingerprint in the changelog. The install, plan and setup commands match the README and installation guide at that commit. The guide adds what the changelog and `hive.sh --help` document for 2.0.4: online backup pauses that no longer grow with the data, `hive.sh magnus-agent install|status|remove`, `hive.sh cindertrace-collector add|list|remove` and the optional Magnus agent port on fresh installations.
+
+Since 2.0.2 the suite pins Oathweave 2.0.2, Emberpath 2.0.2 and HiveMem 1.3.2, so their guides now say which versions Hive 2.0.4 installs. Their standalone container examples keep the images reviewed and run on 2026-11-06, which Hive 2.0.0 and 2.0.1 installed, and their review records are otherwise unchanged. HiveSkills 1.3.1 and HiveXUI 0.1.1 are pinned by the same digests as before.
+
+The tag and release did not exist at this review, so the attached manifest, signature and key were not compared with the tree, and no installation command was exercised against an operational environment.
