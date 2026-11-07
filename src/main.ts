@@ -130,7 +130,7 @@ const projects: Record<
   ardent: {
     name: "Ardent", role: "Agent runtime · tasks · tools",
     summary: "Give your agents a durable place to work.",
-    detail: "A headless agent runtime with durable tasks, typed tools, scheduled jobs and a task journal. Run it on its own or let Magnus manage it on fleet hosts. It uses a pinned Emberfold library for context fitting and can connect to HiveMem and ChatterMost. Configure it separately: Hive 2.0.5 does not ship a native Ardent artifact.",
+    detail: "A headless agent runtime with durable tasks, typed tools, scheduled jobs and a task journal. Run it on its own or let Magnus manage it on fleet hosts. It uses a pinned Emberfold library for context fitting and can connect to HiveMem and ChatterMost. Configure it separately: Hive 2.0.6 does not ship a native Ardent artifact.",
     href: "https://github.com/ChefTaco/Ardent",
     connections: [{ to: "Magnus", how: "optional installation and management on fleet hosts" }, { to: "Emberfold", how: "bundled library for context fitting; no HTTP service required" }, { to: "HiveMem / ChatterMost", how: "optional scoped memory and Mattermost chat channels" }, { to: "Model providers", how: "external OpenAI-compatible inference or Codex App Server" }],
   },
@@ -182,15 +182,15 @@ const demos: Record<DemoId, Demo> = {
       },
       {
         title: "Start setup",
-        text: "Use latest to select the published stable release, or replace it with an exact version. The launcher reports the version and retained checkout path, verifies the signature, then asks for the installation name, directory, host, console origin, profile, bind address and certificate files. It never asks for a password on the command line. A setup that stopped after writing its configuration offers to continue with it.",
+        text: "Use latest to select the published stable release, or replace it with an exact version. The launcher reports the version, verifies the signature, then asks for the installation name, directory, host, console origin, profile, bind address and certificate files. It never asks for a password on the command line. A setup that stopped after writing its configuration offers to continue with it.",
         code: "./hive.sh --release latest",
-        note: "For example, <code>./hive.sh --release 2.0.5</code> chooses that version. After setup, switch to the retained checkout path the launcher prints for lifecycle commands and certificate renewal. Keep that directory. The signed services run as UID/GID 1000 (HiveXUI as 101).",
+        note: "For example, <code>./hive.sh --release 2.0.6</code> chooses that version. Use the matching release checkout for lifecycle commands and certificate renewal. If the launcher downloads one, it prints that retained path; otherwise keep using this checkout. Keep that directory. The signed services run as UID/GID 1000 (HiveXUI as 101).",
       },
       {
         title: "Review the plan",
         text: "Setup shows a plan and applies it only after you confirm. To repeat or automate it, keep the installation JSON and run the same reviewed configuration. Planning does not contact hosts, and retries check the exact inputs.",
         code: "./hive.sh plan --config installation.json\n./hive.sh install --config installation.json",
-        note: "Run these from the retained release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten.",
+        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten.",
       },
       {
         title: "Open the console",
@@ -481,7 +481,7 @@ function productSection(id: ProjectId) {
     ...gallery.magnus, title: "An agent that can keep going.",
     copy: "Durable tasks, typed tools, scheduled jobs and a journal of every run. Ardent works on its own or under Magnus management, with Emberfold context fitting built in.",
     points: ["Run tasks, tools and scheduled jobs", "Connect optional memory and chat", "Install separately on your agent hosts"],
-    captures: [gallery.magnus.captures[2]], extra: '<p>Ardent is headless. The image shows Magnus mission control in HiveXUI, where its host is managed. Hive 2.0.5 does not include a native Ardent artifact.</p>',
+    captures: [gallery.magnus.captures[2]], extra: '<p>Ardent is headless. The image shows Magnus mission control in HiveXUI, where its host is managed. Hive 2.0.6 does not include a native Ardent artifact.</p>',
   } : id === "emberfold" ? {
     title: "Bring the right context forward.",
     copy: "Fit context to the next model turn with a portable library, CLI, optional HTTP service or Hermes plugin. Ardent uses the library directly and keeps its own authoritative history.",
