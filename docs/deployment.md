@@ -10,7 +10,7 @@ The `hivemagnus` Pages project connects to `ChefTaco/HiveMagnus`. Production fol
 | Node | `.node-version` |
 | Hosting | static Cloudflare Pages; no Functions or service bindings |
 
-The site shows Hive suite release 2.0.5. When Hive publishes a new suite release, update the `HIVE_RELEASE` constant in `src/main.ts` and the commands, tag links and source review in `public/guides/hive.md` together, after checking them against that release's tagged docs and attached files.
+The quick start clones Hive’s launcher and uses `./hive.sh --release latest`. The launcher resolves the published release at install time, so the site stays static and its install command needs no version bump. Users can replace `latest` with an exact version. Keep installation commands aligned with Hive’s public launcher docs. The product details and source review in `public/guides/hive.md` remain explicitly versioned historical reviews; refresh them after checking a new release’s tagged docs and attached files.
 
 For a site change, run `npm ci`, `npm run build`, and the browser check documented in the README. Push a branch, review its Pages preview, then fast-forward or merge the reviewed change to `main`. Pages builds the committed source automatically.
 

@@ -10,10 +10,8 @@ import "./style.css";
 type ProjectId = "hive" | "emberpath" | "oathweave" | "hivemem" | "hiveskills" | "hivexui" | "magnus" | "cindertrace" | "chattermost" | "emberfold" | "ardent";
 type GalleryId = Exclude<ProjectId, "emberfold" | "ardent">;
 type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
-// The published Hive suite release the install walkthrough uses. Keep it in step with the
-// commands in public/guides/hive.md when a new release is published. See docs/deployment.md.
-const HIVE_RELEASE = "2.0.5";
-const HIVE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_RELEASE}`;
+// The launcher resolves the published release at install time; source reviews stay versioned.
+const HIVE_RELEASE_URL = "https://github.com/ChefTaco/hive/releases/latest";
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
   label: string;
@@ -156,7 +154,7 @@ const demos: Record<DemoId, Demo> = {
     kicker: "Suite installer",
     title: "Install from a signed release",
     intro:
-      `Hive's Bash controller installs what a signed release lists and refuses anything it cannot verify. The current suite release is <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Hive ${HIVE_RELEASE}</a>. Choose the core, full or custom profile; inference stays external and Hive only verifies endpoints.`,
+      `Hive's Bash controller installs what a signed release lists and refuses anything it cannot verify. Use the <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">latest published suite release</a> or choose an exact version. Choose the core, full or custom profile; inference stays external and Hive only verifies endpoints.`,
     requires: [
       "Ubuntu 22.04 or 24.04, or Debian 12 or 13, on amd64 or arm64, with sudo",
       "2 CPUs, 4 GB of memory and 20 GB of disk for the full profile",
@@ -165,10 +163,10 @@ const demos: Record<DemoId, Demo> = {
     ],
     steps: [
       {
-        title: "Check out the release",
-        text: "Clone the repository at the release tag. The tag holds the signed manifest, its signature and the publisher key. The manifest pins the controller's SHA-256, so run hive.sh from this same checkout.",
-        code: `git clone --branch v${HIVE_RELEASE} https://github.com/ChefTaco/hive.git && cd hive`,
-        note: `The same three files are attached to the <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">v${HIVE_RELEASE} release</a>. To install from downloaded copies, check the key's fingerprint against the one in its release notes first.`,
+        title: "Get the launcher",
+        text: "Clone Hive. Its launcher selects the requested release and runs the matching tagged controller, which verifies the signed manifest and its controller source digest.",
+        code: "git clone https://github.com/ChefTaco/hive.git && cd hive",
+        note: `Each <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">published release</a> attaches its manifest, signature and publisher key. To install from downloaded copies, check the key's fingerprint against the release notes first.`,
       },
       {
         title: "Install the prerequisites",
@@ -184,15 +182,15 @@ const demos: Record<DemoId, Demo> = {
       },
       {
         title: "Start setup",
-        text: "Run the controller with the exact release. It verifies the manifest signature first, then asks for the installation name, directory, host, console origin, profile, bind address and certificate files. It never asks for a password on the command line. A setup that stopped after writing its configuration offers to continue with it.",
-        code: `./hive.sh --release ${HIVE_RELEASE}`,
-        note: `In the checkout the manifest is <code>releases/${HIVE_RELEASE}.json</code>, its signature the same path plus <code>.sig</code>, and the publisher key <code>trust/publisher.pub</code>. Use <code>--manifest</code>, <code>--signature</code> and <code>--trust-key</code> for separately downloaded files. The signed services run as UID/GID 1000 (HiveXUI as 101).`,
+        text: "Use latest to select the published stable release, or replace it with an exact version. The launcher reports the version and retained checkout path, verifies the signature, then asks for the installation name, directory, host, console origin, profile, bind address and certificate files. It never asks for a password on the command line. A setup that stopped after writing its configuration offers to continue with it.",
+        code: "./hive.sh --release latest",
+        note: "For example, <code>./hive.sh --release 2.0.5</code> chooses that version. After setup, switch to the retained checkout path the launcher prints for lifecycle commands and certificate renewal. Keep that directory. The signed services run as UID/GID 1000 (HiveXUI as 101).",
       },
       {
         title: "Review the plan",
         text: "Setup shows a plan and applies it only after you confirm. To repeat or automate it, keep the installation JSON and run the same reviewed configuration. Planning does not contact hosts, and retries check the exact inputs.",
-        code: `./hive.sh plan --config installation.json --release ${HIVE_RELEASE}\n./hive.sh install --config installation.json --release ${HIVE_RELEASE}`,
-        note: "Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten.",
+        code: "./hive.sh plan --config installation.json\n./hive.sh install --config installation.json",
+        note: "Run these from the retained release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten.",
       },
       {
         title: "Open the console",
@@ -462,7 +460,7 @@ let activeStep = 0;
 const app = document.querySelector<HTMLDivElement>("#app");
 if (!app) throw new Error("Missing app root");
 
-const installCommand = `git clone --branch v${HIVE_RELEASE} https://github.com/ChefTaco/hive.git && cd hive && ./hive.sh --release ${HIVE_RELEASE}`;
+const installCommand = "git clone https://github.com/ChefTaco/hive.git && cd hive && ./hive.sh --release latest";
 const guidePath = (id: ProjectId) => id === "ardent" ? "/guides/magnus.md#ardent-with-bundled-emberfold" : `/guides/${id}.md`;
 const atlasNode = (id: ProjectId, label: string) => `<button type="button" class="atlas-node project-${id}${id === "hive" ? " is-active" : ""}" data-project="${id}" aria-pressed="${id === "hive"}">${icon(id)}<span><strong>${projects[id].name}</strong><small>${label}</small></span></button>`;
 const emberfoldTerminal = `<div class="screen-terminal"><div class="terminal-top"><span>EMBERFOLD / CLI</span><span>SYNTHETIC INPUT</span></div><p><span>$</span> emberfold prepare --input emberfold.json --dry-run</p><pre tabindex="0" aria-label="Excerpt from actual Emberfold dry run output">{
@@ -519,9 +517,9 @@ app.innerHTML = `
     </div>
     <section class="quick-start shell" id="install" aria-labelledby="install-title">
       <div class="quick-start-heading"><div><span class="section-kicker">START WITH HIVE</span><h2 id="install-title">One installer. A connected stack.</h2></div><div class="platforms" aria-label="Installer platforms"><span class="platform-current">Linux</span><span>macOS <small>coming</small></span><span>Windows <small>coming</small></span></div></div>
-      <p>On a prepared Linux host, run this line to open setup. Choose the <code>full</code> profile, review the plan, and confirm to install.</p>
+      <p>On a prepared Linux host, run this line to open setup. Choose the <code>full</code> profile, review the plan, and confirm to install. Replace <code>latest</code> with an exact version to choose it.</p>
       <div class="install-command"><span class="command-prompt" aria-hidden="true">$</span><pre tabindex="0" aria-label="Hive guided install command"><code>${installCommand}</code></pre><button type="button" data-copy-install aria-label="Copy Hive install command">${icon("copy")}<span>Copy</span></button></div>
-      <div class="install-meta"><span><a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Hive ${HIVE_RELEASE}</a> · Signed release · Ubuntu / Debian · amd64 / arm64</span><a class="text-link" href="#walkthroughs">Fresh host? Start here ${icon("arrow")}</a></div>
+      <div class="install-meta"><span><a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Latest Hive release</a> · Signed release · Ubuntu / Debian · amd64 / arm64</span><a class="text-link" href="#walkthroughs">Fresh host? Start here ${icon("arrow")}</a></div>
       <div class="tailscale-recommendation"><span class="recommendation-icon">${icon("oathweave")}</span><p><strong>Set up <a href="https://tailscale.com/download" target="_blank" rel="noopener noreferrer">Tailscale</a> first.</strong> Our recommended path to a private console and HTTPS certificate. Enable MagicDNS and HTTPS Certificates, then run Hive’s certificate helper before setup.</p><button class="text-link" type="button" data-open-tailscale>Setup guide ${icon("arrow")}</button></div>
       <p class="install-prerequisites">Before you run: Git, Docker Engine with Compose, Hive’s prerequisite tools, and a console DNS name with a TLS certificate. <a href="/guides/hive.md#prerequisites">All prerequisites</a> · <a href="/guides/hive.md#install">Use your own certificate</a>. Model inference stays external.</p>
     </section>

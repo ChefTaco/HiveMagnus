@@ -17,7 +17,8 @@ async function checkBrowser(page) {
   assert(await page.locator("h1").textContent().then(t => t.includes("Full-stack") && t.includes("agent management")), "Full-stack overview");
   assert(await page.locator(".platforms").textContent().then(t => /Linux/.test(t) && /macOS.*coming/.test(t) && /Windows.*coming/.test(t)), "Platform availability");
   const command = await page.locator(".install-command code").textContent();
-  assert(!command.includes("\n") && /git clone --branch v2\.0\.4/.test(command) && /&& cd hive && \.\/hive.sh --release 2\.0\.4$/.test(command), "One-line pinned suite installer");
+  assert(command === "git clone https://github.com/ChefTaco/hive.git && cd hive && ./hive.sh --release latest", "One-line latest suite installer");
+  assert(await page.locator(".quick-start").textContent().then(t => t.includes("Replace latest with an exact version")), "Explicit release selection is explained");
   assert(await page.locator(".quick-start").textContent().then(t => t.includes("full") && t.includes("Docker Engine") && t.includes("TLS certificate")), "Profile and prerequisites are explained");
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.getByRole("button", { name: "Copy Hive install command" }).click();
