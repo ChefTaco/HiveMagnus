@@ -10,7 +10,7 @@ Clients talk to one endpoint. Emberpath picks an upstream provider, fails over w
 
 ## In a Hive installation
 
-Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive.md) 2.0.0 installs Emberpath 2.0.1 as a digest-pinned image, verifies external endpoints and registers verified providers. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), reached through a separate administration listener; the native model API keeps its own listener and API keys.
+Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive.md) 2.0.4 installs Emberpath 2.0.2 as a digest-pinned image, verifies external endpoints and registers verified providers. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), reached through a separate administration listener; the native model API keeps its own listener and API keys.
 
 ## Run it on its own
 
@@ -42,4 +42,4 @@ Expected result: `check` validates configuration, TLS and Oathweave reachability
 
 ## Source review
 
-Reviewed 2026-11-06 against `main` commit `d5fbb8855a70223972f6e2981fb97f9b2b36ba9b`, documentation added after tag `v2.0.1`: [README](https://github.com/ChefTaco/Emberpath/blob/d5fbb8855a70223972f6e2981fb97f9b2b36ba9b/README.md). The commands follow its container example and were run with throwaway containers, together with the Oathweave example, against the image the [2.0.1 release](https://github.com/ChefTaco/Emberpath/releases/tag/v2.0.1) publishes, which is the image Hive installs; the release attaches no other files. Original attribution and migration history are preserved. License: Apache-2.0.
+Reviewed 2026-11-06 against `main` commit `d5fbb8855a70223972f6e2981fb97f9b2b36ba9b`, documentation added after tag `v2.0.1`: [README](https://github.com/ChefTaco/Emberpath/blob/d5fbb8855a70223972f6e2981fb97f9b2b36ba9b/README.md). The commands follow its container example and were run with throwaway containers, together with the Oathweave example, against the image the [2.0.1 release](https://github.com/ChefTaco/Emberpath/releases/tag/v2.0.1) publishes, which Hive 2.0.0 and 2.0.1 installed; the release attaches no other files. Original attribution and migration history are preserved. License: Apache-2.0.

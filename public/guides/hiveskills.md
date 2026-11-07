@@ -10,7 +10,7 @@ The registry distributes authenticated manifests and immutable archives. It is u
 
 ## In a Hive installation
 
-HiveSkills is part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 2.0.0 installs HiveSkills 1.3.1 as a digest-pinned image. Its catalogue, archive and assignment screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md). Native host mappings are prepared separately and are never activated by installation alone.
+HiveSkills is part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 2.0.4 installs HiveSkills 1.3.1 as a digest-pinned image. Its catalogue, archive and assignment screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md). Native host mappings are prepared separately and are never activated by installation alone.
 
 ## Run it on its own
 

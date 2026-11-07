@@ -27,7 +27,7 @@ The HiveXUI README keeps native frontends and clients available until each modul
 
 ## In a Hive installation
 
-[Hive](https://hivemagnus.com/guides/hive.md) 2.0.0 installs HiveXUI 0.1.1, a digest-pinned image, next to the ingress on the console host, in every profile, and writes its public runtime file. There is nothing else to configure.
+[Hive](https://hivemagnus.com/guides/hive.md) 2.0.4 installs HiveXUI 0.1.1, a digest-pinned image, next to the ingress on the console host, in every profile, and writes its public runtime file. There is nothing else to configure.
 
 ## Build it
 

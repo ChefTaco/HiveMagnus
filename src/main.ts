@@ -12,7 +12,7 @@ type GalleryId = Exclude<ProjectId, "emberfold">;
 type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
 // The published Hive suite release the install walkthrough uses. Keep it in step with the
 // commands in public/guides/hive.md when a new release is published. See docs/deployment.md.
-const HIVE_RELEASE = "2.0.2";
+const HIVE_RELEASE = "2.0.4";
 const HIVE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_RELEASE}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
