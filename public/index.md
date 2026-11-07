@@ -15,7 +15,7 @@
 | Long-term agent memory, sessions, graph and workspaces | HiveMem | [HiveMem](https://hivemagnus.com/guides/hivemem.md) | [ChefTaco/HiveMem](https://github.com/ChefTaco/HiveMem) |
 | Distribute immutable skills to agents | HiveSkills | [HiveSkills](https://hivemagnus.com/guides/hiveskills.md) | [ChefTaco/HiveSkills](https://github.com/ChefTaco/HiveSkills) |
 | Inventory and operate Linux hosts, jobs, skills, and agent rollouts | Magnus | [Magnus](https://hivemagnus.com/guides/magnus.md) | [ChefTaco/magnus](https://github.com/ChefTaco/magnus) |
-| Run durable agent tasks, locally or under fleet management | Ardent, inside Magnus | [Ardent](https://hivemagnus.com/guides/magnus.md#ardent-with-bundled-emberfold) | [Ardent source](https://github.com/ChefTaco/magnus/tree/main/packages/ardent) |
+| Run durable agent tasks, locally or under fleet management | Ardent, inside Magnus | [Ardent](https://hivemagnus.com/guides/magnus.md#ardent-with-bundled-emberfold) | [Ardent source](https://github.com/ChefTaco/Ardent) |
 | Investigate security observations, preserve evidence, and approve response | Cindertrace | [Cindertrace](https://hivemagnus.com/guides/cindertrace.md) | [ChefTaco/cindertrace](https://github.com/ChefTaco/cindertrace) |
 | Self-host channels, DMs, threads, and agent conversations | ChatterMost | [ChatterMost](https://hivemagnus.com/guides/chattermost.md) | [ChefTaco/ChatterMost](https://github.com/ChefTaco/ChatterMost) |
 | Fit context and carry continuity into the next model turn | Emberfold | [Emberfold](https://hivemagnus.com/guides/emberfold.md) | [ChefTaco/emberfold](https://github.com/ChefTaco/emberfold) |
