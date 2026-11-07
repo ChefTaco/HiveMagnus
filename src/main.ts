@@ -12,7 +12,7 @@ type GalleryId = Exclude<ProjectId, "emberfold" | "ardent">;
 type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
 // The published Hive suite release the install walkthrough uses. Keep it in step with the
 // commands in public/guides/hive.md when a new release is published. See docs/deployment.md.
-const HIVE_RELEASE = "2.0.4";
+const HIVE_RELEASE = "2.0.5";
 const HIVE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_RELEASE}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
@@ -132,7 +132,7 @@ const projects: Record<
   ardent: {
     name: "Ardent", role: "Agent runtime · tasks · tools",
     summary: "Give your agents a durable place to work.",
-    detail: "A headless agent runtime with durable tasks, typed tools, scheduled jobs and a task journal. Run it on its own or let Magnus manage it on fleet hosts. It uses a pinned Emberfold library for context fitting and can connect to HiveMem and ChatterMost. Configure it separately: Hive 2.0.4 does not ship a native Ardent artifact.",
+    detail: "A headless agent runtime with durable tasks, typed tools, scheduled jobs and a task journal. Run it on its own or let Magnus manage it on fleet hosts. It uses a pinned Emberfold library for context fitting and can connect to HiveMem and ChatterMost. Configure it separately: Hive 2.0.5 does not ship a native Ardent artifact.",
     href: "https://github.com/ChefTaco/Ardent",
     connections: [{ to: "Magnus", how: "optional installation and management on fleet hosts" }, { to: "Emberfold", how: "bundled library for context fitting; no HTTP service required" }, { to: "HiveMem / ChatterMost", how: "optional scoped memory and Mattermost chat channels" }, { to: "Model providers", how: "external OpenAI-compatible inference or Codex App Server" }],
   },
@@ -483,7 +483,7 @@ function productSection(id: ProjectId) {
     ...gallery.magnus, title: "An agent that can keep going.",
     copy: "Durable tasks, typed tools, scheduled jobs and a journal of every run. Ardent works on its own or under Magnus management, with Emberfold context fitting built in.",
     points: ["Run tasks, tools and scheduled jobs", "Connect optional memory and chat", "Install separately on your agent hosts"],
-    captures: [gallery.magnus.captures[2]], extra: '<p>Ardent is headless. The image shows Magnus mission control in HiveXUI, where its host is managed. Hive 2.0.4 does not include a native Ardent artifact.</p>',
+    captures: [gallery.magnus.captures[2]], extra: '<p>Ardent is headless. The image shows Magnus mission control in HiveXUI, where its host is managed. Hive 2.0.5 does not include a native Ardent artifact.</p>',
   } : id === "emberfold" ? {
     title: "Bring the right context forward.",
     copy: "Fit context to the next model turn with a portable library, CLI, optional HTTP service or Hermes plugin. Ardent uses the library directly and keeps its own authoritative history.",
