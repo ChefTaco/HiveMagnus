@@ -577,14 +577,15 @@ projectOrder.forEach(id => {
   });
 });
 
-async function copyText(button: HTMLButtonElement, value: string) {
+async function copyText(button: HTMLButtonElement, value: string, feedback: { copiedHtml?: string; announcement?: string; failureText?: string; resetHtml?: string } = {}) {
   try {
     await navigator.clipboard.writeText(value);
-    document.querySelector("#announce")!.textContent = "Command copied";
-    const original = button.innerHTML;
-    button.innerHTML = `${icon("check")}<span>Copied</span>`;
+    document.querySelector("#announce")!.textContent = feedback.announcement ?? "Command copied";
+    const original = feedback.resetHtml ?? button.innerHTML;
+    button.innerHTML = feedback.copiedHtml ?? `${icon("check")}<span>Copied</span>`;
     window.setTimeout(() => { button.innerHTML = original; }, 2400);
   } catch {
+    if (feedback.failureText) button.textContent = feedback.failureText;
     document.querySelector("#announce")!.textContent = "Copy failed. Select the command text to copy it.";
   }
 }
@@ -634,22 +635,14 @@ function renderDemo() {
   if (code && s.code) code.textContent = s.code;
   panel
     .querySelector<HTMLButtonElement>(".copy-command")
-    ?.addEventListener("click", async (event) => {
+    ?.addEventListener("click", (event) => {
       if (!s.code) return;
-      const button = event.currentTarget as HTMLButtonElement;
-      try {
-        await navigator.clipboard.writeText(s.code);
-        button.innerHTML = `${icon("check")} Copied`;
-        document.querySelector("#announce")!.textContent =
-          `${s.title} ${s.kind === "address" ? "address" : "command"} copied`;
-        window.setTimeout(() => {
-          button.innerHTML = `${icon("copy")} Copy`;
-        }, 2400);
-      } catch {
-        button.textContent = "Select text to copy";
-        document.querySelector("#announce")!.textContent =
-          "Copy failed. Select the command text to copy it.";
-      }
+      void copyText(event.currentTarget as HTMLButtonElement, s.code, {
+        copiedHtml: `${icon("check")} Copied`,
+        announcement: `${s.title} ${s.kind === "address" ? "address" : "command"} copied`,
+        failureText: "Select text to copy",
+        resetHtml: `${icon("copy")} Copy`,
+      });
     });
   panel
     .querySelectorAll<HTMLButtonElement>("[data-direction]")
