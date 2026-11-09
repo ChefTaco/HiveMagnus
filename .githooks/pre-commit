@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Check exact index bytes as well as the existing privacy policy.
+bash "$(git rev-parse --show-toplevel)/scripts/gitleaks.sh" --staged
