@@ -2,6 +2,7 @@
 // playwright-cli run-code --filename scripts/check-browser.js
 async function checkBrowser(page) {
   const assert = (ok, message) => { if (!ok) throw new Error(message); };
+  const hasEcosystemLinks = hrefs => { const destinations = new Set(hrefs); return destinations.has("https://github.com/ChefTaco") && destinations.has("https://www.npmjs.com/~hivemagnus"); };
   const errors = [], consoleErrors = [];
   page.on("pageerror", error => errors.push(error.message));
   page.on("console", message => { if (message.type() === "error") consoleErrors.push(message.text()); });
@@ -136,7 +137,9 @@ async function checkBrowser(page) {
   const metadata = JSON.parse(await page.locator("#project-metadata").textContent());
   assert(metadata["@graph"].filter(item => item["@type"] === "SoftwareSourceCode").length === 11, "Eleven source metadata entries");
   assert(await page.locator('link[rel="describedby"][href="/llms.txt"]').count(), "Agent discovery metadata");
-  assert(await page.locator('.ecosystem-links a').evaluateAll(links => links.map(link => link.href)).then(hrefs => hrefs.includes("https://github.com/ChefTaco") && hrefs.includes("https://www.npmjs.com/~hivemagnus")), "GitHub and npm footer links");
+  assert(await page.locator('.ecosystem-links a').evaluateAll(links => links.map(link => link.href)).then(hasEcosystemLinks), "GitHub and npm footer links");
+  const deceptiveFooterLinks = await page.locator('.ecosystem-links a').evaluateAll(links => links.map(link => { const url = new URL(link.href); return `https://example.com/?redirect=${encodeURIComponent(url.href)}`; }));
+  assert(!hasEcosystemLinks(deceptiveFooterLinks), "Footer destinations require exact URL membership");
   await walkthroughs.getByRole("tab", { name: "ChatterMost", exact: true }).click();
   let accessibilityAudits = 0;
   for (const width of [1440, 1024, 768, 390, 320]) {
