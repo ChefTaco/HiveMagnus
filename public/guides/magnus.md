@@ -14,7 +14,7 @@ Cindertrace is the separate security product for correlated cases, evidence, inv
 
 ## Install Magnus on its own
 
-Prerequisites: Linux with systemd, npm, Node.js 24.22.1+ in the 24 series or 26.13.0+ in the 26 series, and Docker Compose or existing PostgreSQL and Redis. The docs recommend PostgreSQL 17 (15+ works) and Redis 7.
+Prerequisites: Linux with systemd, npm, Node.js 24.22.3+ in the 24 series or 26.13.1+ in the 26 series, and Docker Compose or existing PostgreSQL and Redis. The docs recommend PostgreSQL 17 (15+ works) and Redis 7.
 
 ```bash
 npx @hivemagnus/magnus init

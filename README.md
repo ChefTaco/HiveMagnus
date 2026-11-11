@@ -4,7 +4,7 @@ Public home for the Hive:Magnus ecosystem at [hivemagnus.com](https://hivemagnus
 
 ## Develop
 
-Use Node.js 24.22.1, then run `npm ci` and `npm run dev`. `npm run build` typechecks and emits static files in `dist/`.
+Use Node.js 24.22.3, then run `npm ci` and `npm run dev`. `npm run build` typechecks and emits static files in `dist/`.
 
 The interactive walkthroughs are browser-only explanations. Commands are sourced from the linked repository installation guides and must be rechecked when releases change. UI captures use synthetic data on a disposable installation; never publish a live operator screen, credential, or private endpoint.
 

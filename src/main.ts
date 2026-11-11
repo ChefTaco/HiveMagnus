@@ -211,7 +211,7 @@ const demos: Record<DemoId, Demo> = {
       "Hive's full profile adds Magnus with HiveXUI as its console, at /fleet. To run Magnus without Hive, this published installer sets up the server and its own Next.js console on a single host, then gives you a path to add managed nodes.",
     requires: [
       "Linux with systemd",
-      "Node.js 24.22.1+ or 26.13.0+",
+      "Node.js 24.22.3+ or 26.13.1+",
       "Docker Compose or existing PostgreSQL and Redis",
     ],
     steps: [
@@ -241,7 +241,7 @@ const demos: Record<DemoId, Demo> = {
     title: "Run it on its own",
     intro:
       "In a Hive installation, Cindertrace is a section of HiveXUI. To run it alone, start its retained console, API, PostgreSQL, and Redis together. Local administrator login works without Hive or Magnus; collectors and integrations are opt-in.",
-    requires: ["Node.js 24.22.1+ (24.x) or 26.13.0+ (26.x)", "npm and Git", "OpenSSL", "Docker Engine and Compose v2"],
+    requires: ["Node.js 24.22.3+ (24.x) or 26.13.1+ (26.x)", "npm and Git", "OpenSSL", "Docker Engine and Compose v2"],
     steps: [
       {
         title: "Get the reviewed release",
@@ -308,7 +308,7 @@ const demos: Record<DemoId, Demo> = {
     intro:
       "Ardent is its own product with its own repository; Magnus can manage it on fleet hosts. Its package includes the pinned Emberfold library for context fitting; the separate Emberfold server is optional. To use Emberfold without Ardent, start from its repository.",
     requires: [
-      "Node.js 24.22.1+ or 26.13.0+",
+      "Node.js 24.22.3+ or 26.13.1+",
       "An OpenAI-compatible model endpoint or Codex App Server",
     ],
     steps: [

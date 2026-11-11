@@ -12,7 +12,7 @@ Cindertrace owns security cases, evidence, correlation, investigations, assuranc
 
 ## Install a fresh Compose stack on its own
 
-Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.1 or later on the 24.x line, or 26.13.0 or later on the 26.x line. Use a fresh checkout and installation directory. The current release is [`v0.2.1`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.2.1).
+Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.3 or later on the 24.x line, or 26.13.1 or later on the 26.x line. Use a fresh checkout and installation directory. The current release is [`v0.2.1`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.2.1).
 
 ```bash
 git clone --branch v0.2.1 https://github.com/ChefTaco/cindertrace.git
