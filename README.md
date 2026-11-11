@@ -4,7 +4,7 @@ Public home for the Hive:Magnus ecosystem at [hivemagnus.com](https://hivemagnus
 
 ## Develop
 
-Use Node.js 24.22.1, then run `npm ci` and `npm run dev`. `npm run build` typechecks and emits static files in `dist/`.
+Use Node.js 24.22.3, then run `npm ci` and `npm run dev`. `npm run build` typechecks and emits static files in `dist/`.
 
 The interactive walkthroughs are browser-only explanations. Commands are sourced from the linked repository installation guides and must be rechecked when releases change. UI captures use synthetic data on a disposable installation; never publish a live operator screen, credential, or private endpoint.
 
@@ -37,3 +37,17 @@ See the [deployment and rollback guide](docs/deployment.md).
 ## License
 
 Apache-2.0. Product names and screenshots belong to their respective open source projects.
+
+## Cloudflare Pages Node.js selection
+
+The preview and production build environments use
+`NODE_BUILD_DEFINITIONS=/opt/buildhome/repo/deployment/node-build`.
+This is [node-build's supported definition search path](https://github.com/nodenv/node-build#custom-build-configuration).
+The repository definition selects the official Node.js 24.22.3 archive and verifies
+its SHA-256 from the [upstream release checksums](https://nodejs.org/dist/v24.22.3/SHASUMS256.txt).
+It lets Pages install the security release before its shared node-build catalog
+includes that version. Cloudflare documents the checkout directory in its
+[build configuration guide](https://developers.cloudflare.com/pages/how-to/npm-private-registry/#managing-multiple-environments).
+
+When changing `.node-version`, add the matching definition with reviewed upstream
+checksums and prove a preview build before updating production settings.

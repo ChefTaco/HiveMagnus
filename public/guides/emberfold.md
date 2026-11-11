@@ -15,7 +15,7 @@ Ardent already imports the pinned library. Installing an additional service is u
 
 ## Prerequisites
 
-Node.js 24.22.1+ in the 24 series or 26.13.0+ in the 26 series, and npm. The synthetic dry run below requires no model credentials or running services.
+Node.js 24.22.3+ in the 24 series or 26.13.1+ in the 26 series, and npm. The synthetic dry run below requires no model credentials or running services.
 
 ## Try a synthetic CLI dry run
 
