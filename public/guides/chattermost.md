@@ -13,14 +13,14 @@
 
 The distribution includes PostgreSQL, persistent files, and optional Redis for abuse counters. It requires one application writer. It does not require Node, a source checkout, or a registry login. Existing installations use their current manager and the upgrade guide.
 
-## Verify and install release 0.4.4
+## Verify and install release 0.5.1
 
 The following is the public agent runbook's first-install sequence. Replace `https://chat.example.test` with the actual HTTPS origin before running. Run the complete block in one shell:
 
 ```bash
 set -eu
 umask 077
-VERSION=0.4.4
+VERSION=0.5.1
 INSTALL_DIR="$HOME/chattermost-installation"
 test ! -e "$INSTALL_DIR"
 DOWNLOAD_DIR="$(mktemp -d)"
@@ -63,7 +63,7 @@ Restart an existing gateway through its current supervisor instead. Keep one gat
 
 Mattermost-compatible REST lives under `/api/v4`; WebSocket events use `/api/v4/websocket`. Connect official clients using the HTTPS origin, without an API path. Mobile background push, calls and upstream plugins/marketplace are not implemented.
 
-In a [Hive](https://hivemagnus.com/guides/hive.md) installation (3.1.1 pins ChatterMost 0.4.4 with its private PostgreSQL in the `full` profile), the browser interface is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md). An explicitly linked Oathweave identity is exchanged for a short native session; existing user IDs, roles, memberships and Mattermost sessions remain product-owned. ChatterMost keeps its small included web UI, which the official desktop app loads and recovery relies on. ChatterMost is independently developed; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.
+In a [Hive](https://hivemagnus.com/guides/hive.md) installation (3.3.0 pins ChatterMost 0.5.1 with its private PostgreSQL in the `full` profile), the browser interface is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md). An explicitly linked Oathweave identity is exchanged for a short native session; existing user IDs, roles, memberships and Mattermost sessions remain product-owned. ChatterMost keeps its small included web UI, which the official desktop app loads and recovery relies on. ChatterMost is independently developed; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.
 
 - [Container installation](https://github.com/ChefTaco/ChatterMost/blob/main/docs/containers.md)
 - [Hermes setup](https://github.com/ChefTaco/ChatterMost/blob/main/docs/hermes-compatibility.md)
@@ -76,3 +76,5 @@ In a [Hive](https://hivemagnus.com/guides/hive.md) installation (3.1.1 pins Chat
 Reviewed 2026-11-05 against tag `v0.4.1`, commit `8962cebeca1473957e2358a22c2855c106b85303`: [README](https://github.com/ChefTaco/ChatterMost/blob/8962cebeca1473957e2358a22c2855c106b85303/README.md), [container guide](https://github.com/ChefTaco/ChatterMost/blob/8962cebeca1473957e2358a22c2855c106b85303/docs/containers.md), [agent runbook](https://github.com/ChefTaco/ChatterMost/blob/8962cebeca1473957e2358a22c2855c106b85303/AGENTS.md) and [Oathweave integration](https://github.com/ChefTaco/ChatterMost/blob/8962cebeca1473957e2358a22c2855c106b85303/docs/oathweave.md). The installation block matches the runbook at that tag. The [0.4.1 release](https://github.com/ChefTaco/ChatterMost/releases/tag/v0.4.1) attaches `chattermost-0.4.1.tar.gz` and `SHA256SUMS`, and the archive's line in `SHA256SUMS` matches both the asset digest GitHub reports and the downloaded file. Release `0.4.1` is pinned intentionally. Follow current docs for later versions. License: Apache-2.0.
 
 Release update, 2026-11-12: [Hive 3.1.1](https://github.com/ChefTaco/hive/releases/tag/v3.1.1) pins ChatterMost 0.4.4, so the installation block now uses tag [`v0.4.4`](https://github.com/ChefTaco/ChatterMost/releases/tag/v0.4.4), commit `c777c786667e75ad7cf544b21d8c44bf2c3a3807`. The [agent runbook](https://github.com/ChefTaco/ChatterMost/blob/v0.4.4/AGENTS.md) block at that tag differs from 0.4.1 only in `VERSION`. The release attaches `chattermost-0.4.4.tar.gz` and `SHA256SUMS`; the archive's line matches the asset digest GitHub reports and the downloaded file, which contains `chattermost-0.4.4/`. The [container guide](https://github.com/ChefTaco/ChatterMost/blob/v0.4.4/docs/containers.md) lists 0.3.2, 0.3.3, 0.4.1 and 0.4.2 as reviewed upgrade sources for 0.4.4; container releases from 0.4.2 run Node 26 on a maintained glibc distribution.
+
+Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releases/tag/v3.3.0) pins ChatterMost 0.5.1, so the installation block now uses tag [`v0.5.1`](https://github.com/ChefTaco/ChatterMost/releases/tag/v0.5.1), commit `848d317aa9df6a8e94b318997d859aa8d68cacd2`. The [agent runbook](https://github.com/ChefTaco/ChatterMost/blob/v0.5.1/AGENTS.md) block at that tag differs from 0.4.4 only in `VERSION`. The release attaches `chattermost-0.5.1.tar.gz` and `SHA256SUMS`; the archive's line matches the asset digest GitHub reports and the downloaded file, which contains `chattermost-0.5.1/`. The [container guide](https://github.com/ChefTaco/ChatterMost/blob/v0.5.1/docs/containers.md) lists 0.3.2, 0.3.3, 0.4.1, 0.4.2, 0.4.4 and 0.4.5 as reviewed upgrade sources for 0.5.1. Since 0.5.0, Oathweave tokens are checked by the suite's shared verifier with ChatterMost's existing rules (user tokens only, no clock tolerance, an exact `chattermost:session` permission and online session checks), and the service adds `/health/live` and `/health/ready`. Because ChatterMost is internet-facing, it generates its own request ID for every request rather than accepting one from the caller. Mattermost error responses are unchanged.

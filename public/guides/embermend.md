@@ -53,6 +53,8 @@ Reviewed 2026-11-12 against Embermend `v0.1.0`, source
 inference guide, provider authorization, recovery guide and acceptance ledger.
 The compatible installer is reviewed against signed Hive `v3.2.2`,
 Magnus `v2.5.0`, Oathweave `v2.2.0` and HiveXUI `v0.3.0`.
+Signed Hive `v3.3.0` keeps Embermend 0.1.0, Magnus 2.5.0 and Oathweave 2.2.0
+unchanged and pins HiveXUI 0.4.0.
 The public example uses no operational configuration or credentials.
 
 Operational acceptance was reviewed at documentation commit `31390ff520d13ed0faf598b4151dba424e095aea`: [AC-01–AC-24 ledger](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/ACCEPTANCE.md), [production scope and restore proof](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/acceptance/2026-11-12-production-assessment.json), and [permissions and operations](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/OPERATIONS.md). All three profiles completed after the signed upgrade; the Ubuntu baseline retains three unassessed checks. Initial production access is scoped assessment with mutation policies disabled.

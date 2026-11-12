@@ -13,7 +13,7 @@ type DemoId = "embermend" | "hive" | "magnus" | "cindertrace" | "chattermost" | 
 // The launcher resolves the published release at install time; source reviews stay versioned.
 const HIVE_RELEASE_URL = "https://github.com/ChefTaco/hive/releases/latest";
 // The signed suite release the product details are reviewed against. Bump this one value per release.
-const HIVE_SUITE_VERSION = "3.2.2";
+const HIVE_SUITE_VERSION = "3.3.0";
 const HIVE_SUITE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_SUITE_VERSION}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
@@ -110,7 +110,7 @@ const projects: Record<
   embermend: {
     name: "Embermend", role: "Hardening · remediation · verification",
     summary: "Turn security findings into reviewed, verified changes.",
-    detail: "Continuous hardening and vulnerability remediation for Magnus-managed hosts and applications. Embermend records findings, evidence, recommendations, decisions and verification; Magnus owns enrollment, bounded execution and receipts. Source fixes, published images, deployed fixes and operational health stay separate. Available as an optional product in Hive 3.2.2 with compatible Magnus. Production automation starts disabled.",
+    detail: "Continuous hardening and vulnerability remediation for Magnus-managed hosts and applications. Embermend records findings, evidence, recommendations, decisions and verification; Magnus owns enrollment, bounded execution and receipts. Source fixes, published images, deployed fixes and operational health stay separate. Available as an optional product from Hive 3.2.2 with compatible Magnus. Production automation starts disabled.",
     href: "https://github.com/ChefTaco/Embermend",
     connections: [{ to: "Magnus", how: "required capability admission, isolated workers, execution ownership and receipts" }, { to: "HiveXUI / Oathweave", how: "recommendations and decisions using scoped product access" }, { to: "Ardent", how: "typed investigation and planning tools; no self-approval" }, { to: "External inference", how: "approved Codex or Claude local CLI, llama.cpp, or OpenAI-compatible model endpoint" }, { to: "Cindertrace / ChatterMost / HiveMem / HiveSkills", how: "optional context and notifications" }],
   },
@@ -272,7 +272,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the reviewed release",
         text: "Clone the public repository at the current release into a new directory. Use a fresh environment for this walkthrough.",
-        code: "git clone --branch v0.2.2 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
+        code: "git clone --branch v0.3.0 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
         note: "Use the repository’s release notes when choosing a version. There is no npm installer for Cindertrace.",
       },
       {
@@ -308,7 +308,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the release",
         text: "Download the pinned release and its checksum file into a new temporary directory. Keep the following steps in the same terminal.",
-        code: 'VERSION=0.4.4\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
+        code: 'VERSION=0.5.1\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
       },
       {
         title: "Verify before setup",

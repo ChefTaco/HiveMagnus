@@ -2,7 +2,7 @@
 
 > The single browser UI for a Hive installation: fleet, identity, models, memory, skills, security, chat and team projects in one shell, with sections only for installed products.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/HiveXUI) · [Release 0.2.7](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.2.7) · [Theme](https://github.com/ChefTaco/HiveXUI/blob/v0.2.7/docs/THEME.md)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/HiveXUI) · [Release 0.4.0](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.4.0) · [Theme](https://github.com/ChefTaco/HiveXUI/blob/v0.4.0/docs/THEME.md)
 
 ## Responsibility
 
@@ -28,7 +28,7 @@ The HiveXUI README keeps native frontends and clients available until each modul
 
 ## In a Hive installation
 
-[Hive](https://hivemagnus.com/guides/hive.md) 3.1.1 installs HiveXUI 0.2.7, a digest-pinned image, next to the ingress, in every profile, and writes its public runtime file. There is nothing else to configure. In 0.2.7, command status and selected output follow read-only updates without a manual refresh.
+[Hive](https://hivemagnus.com/guides/hive.md) 3.3.0 installs HiveXUI 0.4.0, a digest-pinned image, next to the ingress, in every profile, and writes its public runtime file. There is nothing else to configure. In 0.4.0, every product's errors show a consistent message with the product's code and request ID, destructive actions are confirmed in one shared dialog, and the Magnus fleet timeline and data retention have their own pages again.
 
 ## Build it
 
@@ -43,3 +43,5 @@ Expected result: compiled assets in `dist/`. `Dockerfile` serves them as UID 101
 ## Source review
 
 Reviewed 2026-11-12 against tag `v0.2.7`, commit `de613008a438a90d660e5a7161b3fe805095572b`, the version Hive `v3.1.1` pins: [README](https://github.com/ChefTaco/HiveXUI/blob/v0.2.7/README.md), [changelog](https://github.com/ChefTaco/HiveXUI/blob/v0.2.7/CHANGELOG.md) and [theme](https://github.com/ChefTaco/HiveXUI/blob/v0.2.7/docs/THEME.md). The [0.2.7 release](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.2.7) publishes the container image that Hive installs. License: Apache-2.0.
+
+Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releases/tag/v3.3.0) pins HiveXUI 0.4.0, tag [`v0.4.0`](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.4.0), commit `96dd09e5b6b6989d73a738a0c0c26bdb2c4be50d`. Compared with 0.2.7, its [README](https://github.com/ChefTaco/HiveXUI/blob/v0.4.0/README.md) keeps the same sections and build commands and now notes that every page of the earlier Magnus dashboard has an equivalent, apart from the deliberate omissions listed in the Magnus module. Per its [changelog](https://github.com/ChefTaco/HiveXUI/blob/v0.4.0/CHANGELOG.md), 0.3.0 added the Embermend section, and 0.4.0 sends an `x-request-id` with every API request, presents every section through the shared UI kit, names audit and incident pages by product, derives navigation and deep links from one route table without changing any address, adds automated WCAG 2.1 A/AA checks and updates the Magnus agent upgrade drawer.

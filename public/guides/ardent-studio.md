@@ -2,7 +2,7 @@
 
 > Team projects for Ardent agents: team assignment, the conversation room and deliverable review, as the Studio section of HiveXUI.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/ArdentStudio) · [Release 0.2.0](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.2.0) · [npm package](https://www.npmjs.com/package/@hivemagnus/ardent-studio) · [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.2.0/README.md)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/ArdentStudio) · [Release 0.3.0](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.3.0) · [npm package](https://www.npmjs.com/package/@hivemagnus/ardent-studio) · [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.3.0/README.md)
 
 ## Responsibility
 
@@ -19,8 +19,8 @@ Each product keeps its own records. Studio owns projects, templates, team revisi
 ## Requirements
 
 - Magnus with **at least one Ardent agent**, HiveMem and Oathweave. All three are required.
-- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.1.1 pins Ardent Project Studio 0.2.0.
-- Node.js 24.22.3+ or 26.13.1+ only when running the service outside the suite. The 0.2.0 README lists 24.22.1+ or 26.13.0+; the 0.2.1 security patch raises it to these patched lines.
+- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.3.0 pins Ardent Project Studio 0.3.0.
+- Node.js 24.22.3+ or 26.13.1+ only when running the service outside the suite.
 
 ## In a Hive installation
 
@@ -60,13 +60,15 @@ Expected result: the service listens on `127.0.0.1:8097` by default and serves i
 
 ## Full instructions
 
-- [Configuration, architecture and API](https://github.com/ChefTaco/ArdentStudio/blob/v0.2.0/README.md)
-- [Conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.2.0/docs/CONDUCTOR.md)
-- [Oathweave account links](https://github.com/ChefTaco/ArdentStudio/blob/v0.2.0/docs/OATHWEAVE.md)
-- [Operations and backups](https://github.com/ChefTaco/ArdentStudio/blob/v0.2.0/docs/OPERATIONS.md)
-- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.1.1/deployment/FULL.md#ardent-project-studio)
-- [Repository instructions](https://github.com/ChefTaco/ArdentStudio/blob/v0.2.0/AGENTS.md)
+- [Configuration, architecture and API](https://github.com/ChefTaco/ArdentStudio/blob/v0.3.0/README.md)
+- [Conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.3.0/docs/CONDUCTOR.md)
+- [Oathweave account links](https://github.com/ChefTaco/ArdentStudio/blob/v0.3.0/docs/OATHWEAVE.md)
+- [Operations and backups](https://github.com/ChefTaco/ArdentStudio/blob/v0.3.0/docs/OPERATIONS.md)
+- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.3.0/deployment/FULL.md#ardent-project-studio)
+- [Repository instructions](https://github.com/ChefTaco/ArdentStudio/blob/v0.3.0/AGENTS.md)
 
 ## Source review
 
 Reviewed 2026-11-12 against tag `v0.2.0`, commit `7f1279f2726ad9665c1de24eb5168d98548bb8a1`, the version Hive `v3.1.1` pins: [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.2.0/README.md) and [changelog](https://github.com/ChefTaco/ArdentStudio/blob/v0.2.0/CHANGELOG.md), with the Hive [full-profile guide](https://github.com/ChefTaco/hive/blob/v3.1.1/deployment/FULL.md#ardent-project-studio) and `releases/3.1.1.json`. The later `v0.2.1` security patch requires the patched Node.js lines and updates Hono; its README changes only the Node.js requirement. No installation command was run against an operational environment. License: Apache-2.0.
+
+Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releases/tag/v3.3.0) pins Ardent Project Studio 0.3.0, so the release and documentation links now use tag [`v0.3.0`](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.3.0), commit `490c60d8fe381c27434518c455e4f479ac3187cd`, with the Hive [full-profile guide](https://github.com/ChefTaco/hive/blob/v3.3.0/deployment/FULL.md#ardent-project-studio) at `v3.3.0`. Its README changes from 0.2.0 only in the patched Node.js requirement listed above; the quick start is unchanged. Per its [changelog](https://github.com/ChefTaco/ArdentStudio/blob/v0.3.0/CHANGELOG.md), 0.3.0 verifies Oathweave tokens with the suite's shared verifier and keeps the same accepted principals, audience, permissions and link rules, but now refuses a malformed `roles` claim, a token over 16 KiB, or a user token whose client ID equals its subject. It calls HiveMem through `@hivemagnus/hivemem-sdk`, carries `x-request-id` and `traceparent` through to HiveMem, and adds an optional `agentRef` filter to `GET /projects` that lists only projects where that agent is bound to a role.
