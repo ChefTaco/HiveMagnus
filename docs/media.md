@@ -1,10 +1,10 @@
 # Public media provenance
 
-All console captures show the real HiveXUI build. Data is synthetic and the installation is disposable; the images are illustrative, not evidence of a production fleet, live agent activity, or workflow parity.
+All HiveXUI captures show the real HiveXUI build. Data is synthetic and the installation is disposable; the images are illustrative, not evidence of a production fleet, live agent activity, or workflow parity.
 
 ## HiveXUI gallery, 2026-11-05
 
-| Asset (`public/captures/`) | Console screen | Gallery area |
+| Asset (`public/captures/`) | HiveXUI screen | Gallery area |
 | --- | --- | --- |
 | `hive-overview.webp` | Hive > Installation | Hive |
 | `fleet-overview.webp` | Magnus > Fleet overview | Magnus |
@@ -42,19 +42,19 @@ The script refuses anything but a `https://localhost:PORT` origin. Review each P
 
 | Asset | Source revision | Capture scenario |
 | --- | --- | --- |
-| Emberfold CLI excerpt | `@hivemagnus/emberfold-cli@0.2.1` | Selected fields from actual `prepare --dry-run` output for `scripts/samples/emberfold.json`, with values unchanged; no model calls. First captured with `0.1.0`; `0.2.1` produces identical output |
+| Emberfold CLI excerpt | `@hivemagnus/emberfold-cli@0.2.2` | Selected fields from actual `prepare --dry-run` output for `scripts/samples/emberfold.json`, with values unchanged; no model calls. First captured with `0.1.0`; `0.2.1` and `0.2.2` produce identical output |
 
 Reproduce the Emberfold output from the site checkout:
 
 ```bash
-npx --package @hivemagnus/emberfold-cli@0.2.1 emberfold prepare --input scripts/samples/emberfold.json --dry-run
+npx --package @hivemagnus/emberfold-cli@0.2.2 emberfold prepare --input scripts/samples/emberfold.json --dry-run
 ```
 
 The system atlas, brand mark, and project icons are original SVG/CSS artwork; the gallery's colors follow HiveXUI's public design tokens. DM Sans, Space Grotesk, and IBM Plex Mono are self-hosted; their licenses ship in `public/licenses/`.
 
 ## Product sections, 2026-11-07
 
-The scrolling product sections reuse the twelve existing HiveXUI captures above without changing their bytes. Each screen is labeled as an area of the single HiveXUI console and links to its full-size image. Magnus and Cindertrace retain their alternate capture controls. The hero uses the same synthetic `fleet-overview.webp` asset.
+The scrolling product sections reuse the twelve existing HiveXUI captures above without changing their bytes. Each screen is labeled as an area of HiveXUI, the single browser UI, and links to its full-size image. Magnus and Cindertrace retain their alternate capture controls. The hero uses the same synthetic `fleet-overview.webp` asset.
 
 Ardent's section reuses `fleet-mission.webp`, explicitly labeled as Magnus mission control in HiveXUI, where the runtime's host is managed. It does not depict a separate Ardent UI. Emberfold retains the verified HTML terminal excerpt described above and has no console section. The architecture is original CSS and SVG artwork; it distinguishes suite services, the separately configured Ardent runtime, its bundled Emberfold library, and external inference.
 

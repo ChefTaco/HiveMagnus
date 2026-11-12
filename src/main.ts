@@ -12,6 +12,9 @@ type GalleryId = Exclude<ProjectId, "emberfold" | "ardent">;
 type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
 // The launcher resolves the published release at install time; source reviews stay versioned.
 const HIVE_RELEASE_URL = "https://github.com/ChefTaco/hive/releases/latest";
+// The signed suite release the product details are reviewed against. Bump this one value per release.
+const HIVE_SUITE_VERSION = "3.1.1";
+const HIVE_SUITE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_SUITE_VERSION}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
   label: string;
@@ -44,9 +47,10 @@ const projects: Record<
     href: "https://github.com/ChefTaco/hive",
     connections: [
       { to: "Oathweave / Emberpath / HiveMem / HiveSkills", how: "the core profile; each keeps its own data and credentials" },
-      { to: "HiveXUI", how: "static console behind the HTTPS ingress Hive assembles" },
+      { to: "HiveXUI", how: "static browser UI behind the HTTPS ingress Hive assembles" },
       { to: "Hive Registry", how: "what this installation offers and runs: written by hive.sh, read through /api/registry" },
       { to: "Magnus / Cindertrace / ChatterMost", how: "added by the full or custom profile" },
+      { to: "Ardent Project Studio", how: "optional product; setup suggests it with the full profile" },
       { to: "External inference", how: "verified endpoints and protected references; no model or runtime provisioning" },
     ],
   },
@@ -79,22 +83,23 @@ const projects: Record<
     connections: [{ to: "HiveXUI", how: "catalogue, archive and assignment administration" }, { to: "Magnus", how: "approved host deployment execution" }, { to: "Agents", how: "authenticated manifests and immutable archive distribution" }],
   },
   hivexui: {
-    name: "HiveXUI", role: "The console · browser only",
-    summary: "One browser console for every product you install.",
-    detail: "The single browser UI of a Hive installation: fleet, identity, models, memory, skills, security and chat in one shell, with sections only for the products you installed. It is a static TypeScript and React application, dark only for now, with no backend of its own. Every call goes to the owning product's API with your own credentials.",
+    name: "HiveXUI", role: "Browser UI · one sign-in",
+    summary: "One browser UI for every product you install.",
+    detail: "The single browser UI of a Hive installation: fleet, identity, models, memory, skills, security, chat and team projects in one shell, with sections only for the products you installed. It is a static TypeScript and React application, dark only for now, with no backend of its own. Every call goes to the owning product's API with your own credentials.",
     href: "https://github.com/ChefTaco/HiveXUI",
-    connections: [{ to: "Oathweave", how: "one sign-in and resource-specific access" }, { to: "Product APIs", how: "same-origin HTTPS ingress; no database access or signing keys" }, { to: "Magnus", how: "the fleet console, as the module at /fleet" }],
+    connections: [{ to: "Oathweave", how: "one sign-in and resource-specific access" }, { to: "Product APIs", how: "same-origin HTTPS ingress; no database access or signing keys" }, { to: "Magnus", how: "the fleet pages, as the module at /fleet" }, { to: "Ardent Project Studio", how: "the Studio section, a fullscreen page at /studio" }],
   },
   magnus: {
     name: "Magnus",
     role: "Fleet · operations · hosts",
     summary: "See and operate the hosts where your agents live.",
     detail:
-      "Fleet inventory, jobs, skills, rollouts and audit for Linux hosts. In a Hive installation its console is the Magnus section of HiveXUI, signed in through Oathweave. It can install and manage Ardent, a separate agent runtime, on fleet hosts. The web terminal is a separate gateway requiring step-up, off unless you deploy it.",
+      "Fleet inventory, jobs, skills, rollouts and audit for Linux hosts. In a Hive installation its browser pages are the Magnus section of HiveXUI, signed in through Oathweave. It can install and manage Ardent, a separate agent runtime, on fleet hosts. The web terminal is a separate gateway requiring step-up, off unless you deploy it.",
     href: "https://github.com/ChefTaco/magnus",
     connections: [
-      { to: "Ardent", how: "installs the published runtime and manages it on fleet hosts" },
-      { to: "HiveXUI", how: "the fleet console, through an allowlist of browser routes" },
+      { to: "Ardent", how: "installs the pinned runtime package and manages it on fleet hosts" },
+      { to: "HiveXUI", how: "the fleet pages, through an allowlist of browser routes" },
+      { to: "Ardent Project Studio", how: "the only path from team projects to Ardent agents" },
       { to: "Fleet gateway", how: "holds the restricted SSH key for the optional web terminal" },
       { to: "Oathweave / Emberpath / HiveMem", how: "optional sign-in, model routing and shared memory" },
       { to: "Cindertrace", how: "optional observations, fleet context, and approved host response" },
@@ -108,7 +113,7 @@ const projects: Record<
       "Correlated cases, hashed evidence, investigations, policies and audit. In a Hive installation it is a section of HiveXUI, signed in through Oathweave. It also runs on its own with its retained console and local administrator login, then optionally connects Magnus fleet context and approved response. A separate disposable lab lets people and agents revise an investigation as evidence arrives.",
     href: "https://github.com/ChefTaco/cindertrace",
     connections: [
-      { to: "HiveXUI", how: "the suite's security console, using resource tokens" },
+      { to: "HiveXUI", how: "the suite's security section, using resource tokens" },
       { to: "Oathweave / Emberpath", how: "optional sign-in and scoped identity and routing security metadata" },
       { to: "Magnus", how: "optional fleet context and execution of explicitly approved host responses" },
       { to: "Configured sources", how: "signed observations from endpoint, network, identity, and application adapters" },
@@ -130,16 +135,16 @@ const projects: Record<
   ardent: {
     name: "Ardent", role: "Agent runtime · tasks · tools",
     summary: "Give your agents a durable place to work.",
-    detail: "A headless agent runtime with durable tasks, typed tools, scheduled jobs and a task journal. Run it on its own or let Magnus manage it on fleet hosts. It uses a pinned Emberfold library for context fitting and can connect to HiveMem and ChatterMost. Configure it separately: Hive 2.0.6 does not ship a native Ardent artifact.",
+    detail: `A headless agent runtime with durable tasks, typed tools, scheduled jobs and a task journal. Run it on its own or let Magnus manage it on fleet hosts. It uses a pinned Emberfold library for context fitting and can connect to HiveMem and ChatterMost. Hive ${HIVE_SUITE_VERSION} ships no Ardent container: the Magnus host agent stages the pinned package and Magnus installs it.`,
     href: "https://github.com/ChefTaco/Ardent",
-    connections: [{ to: "Magnus", how: "optional installation and management on fleet hosts" }, { to: "Emberfold", how: "bundled library for context fitting; no HTTP service required" }, { to: "HiveMem / ChatterMost", how: "optional scoped memory and Mattermost chat channels" }, { to: "Model providers", how: "external OpenAI-compatible inference or Codex App Server" }],
+    connections: [{ to: "Magnus", how: "optional installation and management on fleet hosts" }, { to: "Emberfold", how: "bundled library for context fitting; no HTTP service required" }, { to: "HiveMem / ChatterMost", how: "optional scoped memory and Mattermost chat channels" }, { to: "Model providers", how: "external OpenAI-compatible inference or Codex App Server" }, { to: "Ardent Project Studio", how: "optional team projects for several agents, through Magnus" }],
   },
   emberfold: {
     name: "Emberfold",
     role: "Context · continuity",
     summary: "Carry the right context into the next agent turn.",
     detail:
-      "A portable context engine with a TypeScript library, CLI, HTTP service, and Hermes plugin. It has no console section. Ardent uses its library for context fitting while retaining its own authoritative history.",
+      "A portable context engine with a TypeScript library, CLI, HTTP service, and Hermes plugin. It has no HiveXUI section. Ardent uses its library for context fitting while retaining its own authoritative history.",
     href: "https://github.com/ChefTaco/emberfold",
     connections: [
       { to: "Ardent", how: "pinned library for context fitting; the HTTP service is optional" },
@@ -158,7 +163,7 @@ const demos: Record<DemoId, Demo> = {
     requires: [
       "Ubuntu 22.04 or 24.04, or Debian 12 or 13, on amd64 or arm64, with sudo",
       "2 CPUs, 4 GB of memory and 20 GB of disk for the full profile",
-      "A DNS name for the console, with a certificate from Tailscale, your own CA or an ACME client",
+      "A DNS name for the browser address, with a certificate from Tailscale, your own CA or an ACME client",
       "Setup run as UID 1000 (usually the first account) or with sudo",
     ],
     steps: [
@@ -170,34 +175,34 @@ const demos: Record<DemoId, Demo> = {
       },
       {
         title: "Install the prerequisites",
-        text: "The prerequisites script shows its plan, then installs Docker Engine and the Compose plugin from Docker's apt repository after checking its signing key, plus jq, OpenSSL, curl, git, iproute2 and the other tools hive.sh uses. It adds you to the docker group and creates the installation directory. It is safe to re-run.",
+        text: "Guided local setup offers this step itself, with consent and no logout. To prepare a host yourself, the prerequisites script shows its plan, then installs Docker Engine and the Compose plugin from Docker's apt repository after checking its signing key, plus jq, OpenSSL, curl, git, iproute2 and the other tools hive.sh uses. It adds you to the docker group and creates the installation directory. It is safe to re-run.",
         code: "sudo ./scripts/install-prerequisites.sh --directory /opt/hive",
         note: "Log out and back in for the docker group, then run <code>./scripts/install-prerequisites.sh --check</code>. It refuses other distributions, other architectures and Docker from a snap. <code>--controller</code> installs only the tools on a machine that manages hosts over SSH.",
       },
       {
-        title: "Get a console certificate",
-        text: "First install and sign into Tailscale, and enable MagicDNS and HTTPS Certificates in its admin console. On that host, this issues a certificate for the MagicDNS name into /etc/hive/tls, owned by you with an owner-only key. Otherwise bring your own certificate and key, or use an ACME client; Hive runs no ACME client itself.",
+        title: "Get a certificate",
+        text: "If Tailscale is already signed in with HTTPS Certificates enabled, guided setup can request this for you. Otherwise first install and sign into Tailscale, and enable MagicDNS and HTTPS Certificates in its admin console. On that host, this issues a certificate for the MagicDNS name into /etc/hive/tls, owned by you with an owner-only key. Otherwise bring your own certificate and key, or use an ACME client; Hive runs no ACME client itself.",
         code: "sudo ./scripts/console-certificate.sh tailscale",
         note: "Check your own files the way the installer will with <code>./scripts/console-certificate.sh check --cert FILE --key FILE --name NAME</code>.",
       },
       {
         title: "Start setup",
-        text: "Use latest to select the published stable release, or replace it with an exact version. The launcher reports the version, verifies the signature, then asks for the installation name, directory, host, console origin, profile, bind address and certificate files. It never asks for a password on the command line. A setup that stopped after writing its configuration offers to continue with it.",
+        text: "Use latest to select the published stable release, or replace it with an exact version. The launcher reports the version, verifies the signature, then asks for the installation name, directory, host, HTTPS origin, profile, bind address and certificate files. It never asks for a password on the command line. A setup that stopped after writing its configuration offers to continue with it.",
         code: "./hive.sh --release latest",
-        note: "For example, <code>./hive.sh --release 2.0.6</code> chooses that version. Use the matching release checkout for lifecycle commands and certificate renewal. If the launcher downloads one, it prints that retained path; otherwise keep using this checkout. Keep that directory. The signed services run as UID/GID 1000 (HiveXUI as 101).",
+        note: `For example, <code>./hive.sh --release ${HIVE_SUITE_VERSION}</code> chooses that version. Use the matching release checkout for lifecycle commands and certificate renewal. If the launcher downloads one, it prints that retained path; otherwise keep using this checkout. Keep that directory. The signed services run as UID/GID 1000 (HiveXUI as 101).`,
       },
       {
         title: "Review the plan",
         text: "Setup shows a plan and applies it only after you confirm. To repeat or automate it, keep the installation JSON and run the same reviewed configuration. Planning does not contact hosts, and retries check the exact inputs.",
         code: "./hive.sh plan --config installation.json\n./hive.sh install --config installation.json",
-        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten.",
+        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten. Upgrading a 2.x installation with PostgreSQL stores needs <code>--allow-migrations</code>, and code-only rollback across it is refused; see the guide.",
       },
       {
-        title: "Open the console",
+        title: "Open HiveXUI",
         text: "Visit the HTTPS origin you configured and sign in through Oathweave. HiveXUI shows a section for each product in this installation, so a core install has no Magnus, Cindertrace or ChatterMost section.",
-        code: "https://console.example.com/",
+        code: "https://hive.example.com/",
         kind: "address",
-        note: "The install ends by naming the console and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. <code>./hive.sh status --config installation.json</code> and <code>./hive.sh registry list --config installation.json</code> report what is running.",
+        note: "The install ends by naming the HTTPS origin and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. <code>./hive.sh status --config installation.json</code> and <code>./hive.sh registry list --config installation.json</code> report what is running.",
       },
     ],
     guide: "/guides/hive.md",
@@ -208,7 +213,7 @@ const demos: Record<DemoId, Demo> = {
     kicker: "Fleet manager",
     title: "Start with one host",
     intro:
-      "Hive's full profile adds Magnus with HiveXUI as its console, at /fleet. To run Magnus without Hive, this published installer sets up the server and its own Next.js console on a single host, then gives you a path to add managed nodes.",
+      "Hive's full profile adds Magnus as the fleet section of HiveXUI, at /fleet. To run Magnus without Hive, this published installer sets up the server and its own Next.js console on a single host, then gives you a path to add managed nodes.",
     requires: [
       "Linux with systemd",
       "Node.js 24.22.3+ or 26.13.1+",
@@ -224,7 +229,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Open the console",
         text: "Use the URL and login printed by the installer. The generated password is printed once, so save it. The self-signed certificate is for evaluation.",
-        note: "This is the standalone path. In a Hive installation there is no separate console to open: sign in to HiveXUI and choose Magnus.",
+        note: "This is the standalone path. In a Hive installation there is no separate Magnus UI to open: sign in to HiveXUI and choose Magnus.",
       },
       {
         title: "Add a node",
@@ -246,7 +251,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the reviewed release",
         text: "Clone the public repository at the current release into a new directory. Use a fresh environment for this walkthrough.",
-        code: "git clone --branch v0.2.1 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
+        code: "git clone --branch v0.2.2 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
         note: "Use the repository’s release notes when choosing a version. There is no npm installer for Cindertrace.",
       },
       {
@@ -282,7 +287,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the release",
         text: "Download the pinned release and its checksum file into a new temporary directory. Keep the following steps in the same terminal.",
-        code: 'VERSION=0.4.1\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
+        code: 'VERSION=0.4.4\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
       },
       {
         title: "Verify before setup",
@@ -330,9 +335,8 @@ const demos: Record<DemoId, Demo> = {
         note: "For the management API, channels, and scheduled jobs, use <code>ardent gateway run</code> and the full guide.",
       },
     ],
-    guide:
-      "https://github.com/ChefTaco/Ardent#install",
-    guideLabel: "Ardent installation guide",
+    guide: "/guides/ardent.md",
+    guideLabel: "Ardent guide",
   },
 };
 
@@ -373,7 +377,7 @@ const projectOrder: ProjectId[] = [
   "emberfold",
 ];
 const demoOrder: DemoId[] = ["hive", "magnus", "cindertrace", "chattermost", "ardent"];
-// Real synthetic captures from the single HiveXUI console.
+// Real synthetic captures from HiveXUI, the single browser UI.
 type Capture = { label: string; file: string; alt: string };
 const gallery: Record<GalleryId, { path: string; captures: Capture[]; title: string; copy: string; points: string[]; extra?: string }> = {
   hive: {
@@ -392,9 +396,9 @@ const gallery: Record<GalleryId, { path: string; captures: Capture[]; title: str
       { label: "Mission control", file: "fleet-mission", alt: "HiveXUI mission control showing fleet posture, dependency health and synthetic fleet figures" },
     ],
     title: "Know your fleet.",
-    copy: "Magnus's console is this section of HiveXUI, at /fleet: move from host inventory to the jobs, agents, and rollouts running across it.",
+    copy: "Magnus's browser pages are this section of HiveXUI, at /fleet: move from host inventory to the jobs, agents, and rollouts running across it.",
     points: ["Review host health and the fleet map", "Operate jobs and managed agents", "Inspect changes in the audit log"],
-    extra: `<div class="response-note"><h4>The web terminal stays off.</h4><p>It runs through a separate fleet gateway that holds the SSH key, so neither the browser nor the Magnus API does. Until you deploy it, the console offers no terminal. Opening one needs an ADMIN link, the terminal permission, identity verified in the last five minutes and an approved host key.</p><a href="https://github.com/ChefTaco/magnus/tree/main/services/fleet-gateway" target="_blank" rel="noopener noreferrer">Fleet gateway security model ${icon("external")}</a></div>`,
+    extra: `<div class="response-note"><h4>The web terminal stays off.</h4><p>It runs through a separate fleet gateway that holds the SSH key, so neither the browser nor the Magnus API does. Until you deploy it, HiveXUI offers no terminal. Opening one needs an ADMIN link, the terminal permission, identity verified in the last five minutes and an approved host key.</p><a href="https://github.com/ChefTaco/magnus/tree/main/services/fleet-gateway" target="_blank" rel="noopener noreferrer">Fleet gateway security model ${icon("external")}</a></div>`,
   },
   oathweave: {
     path: "OATHWEAVE > USERS",
@@ -433,7 +437,7 @@ const gallery: Record<GalleryId, { path: string; captures: Capture[]; title: str
     title: "Follow the evidence.",
     copy: "Connect security observations to a case, preserve evidence, and revise hypotheses, signed in through Oathweave like every other section.",
     points: ["Correlate signed observations", "Compare revisions as evidence arrives", "Keep containment under human approval"],
-    extra: `<div class="response-note"><h4>The lab runs apart from this console.</h4><p>The investigation lab is a separate disposable installation with synthetic evidence. It forbids external identity and integrations, so it keeps its own console with local login and is not reached through HiveXUI. Containment there is a human-approved simulation.</p><a href="/guides/cindertrace.md#try-the-evolving-investigation-lab">Try the disposable investigation lab ${icon("arrow")}</a></div><div class="response-note" id="security"><h4>Response stays deliberate.</h4><p>Administrator approval binds the exact plan, expires after ten minutes, and is used once. Optional Magnus executes host actions; response controls require its configured bridge.</p><a href="https://github.com/ChefTaco/cindertrace/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy and data handling ${icon("external")}</a></div>`,
+    extra: `<div class="response-note"><h4>The lab runs apart from HiveXUI.</h4><p>The investigation lab is a separate disposable installation with synthetic evidence. It forbids external identity and integrations, so it keeps its own console with local login and is not reached through HiveXUI. Containment there is a human-approved simulation.</p><a href="/guides/cindertrace.md#try-the-evolving-investigation-lab">Try the disposable investigation lab ${icon("arrow")}</a></div><div class="response-note" id="security"><h4>Response stays deliberate.</h4><p>Administrator approval binds the exact plan, expires after ten minutes, and is used once. Optional Magnus executes host actions; response controls require its configured bridge.</p><a href="https://github.com/ChefTaco/cindertrace/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy and data handling ${icon("external")}</a></div>`,
   },
   chattermost: {
     path: "CHATTERMOST",
@@ -445,9 +449,9 @@ const gallery: Record<GalleryId, { path: string; captures: Capture[]; title: str
   },
   hivexui: {
     path: "SEARCH EVERY SCREEN",
-    captures: [{ label: "Command palette", file: "palette", alt: "HiveXUI command palette open over the console, listing screens across products" }],
+    captures: [{ label: "Command palette", file: "palette", alt: "HiveXUI command palette listing screens across products" }],
     title: "One shell. Your own credentials.",
-    copy: "Press Ctrl or Cmd + K to reach any screen you can use. Sections appear only for installed products. The console is dark only for now.",
+    copy: "Press Ctrl or Cmd + K to reach any screen you can use. Sections appear only for installed products. HiveXUI is dark only for now.",
     points: ["No backend, database access or signing keys", "Access tokens stay in memory", "Each call goes to the owning product's API"],
     extra: '<p class="interface-limit">HiveXUI\'s README tracks the workflows still under acceptance. Synthetic screenshots do not establish backend authorization or workflow parity.</p>',
   },
@@ -461,7 +465,7 @@ const app = document.querySelector<HTMLDivElement>("#app");
 if (!app) throw new Error("Missing app root");
 
 const installCommand = "git clone https://github.com/ChefTaco/hive.git && cd hive && ./hive.sh --release latest";
-const guidePath = (id: ProjectId) => id === "ardent" ? "/guides/magnus.md#ardent-with-bundled-emberfold" : `/guides/${id}.md`;
+const guidePath = (id: ProjectId) => `/guides/${id}.md`;
 const atlasNode = (id: ProjectId, label: string) => `<button type="button" class="atlas-node project-${id}${id === "hive" ? " is-active" : ""}" data-project="${id}" aria-pressed="${id === "hive"}">${icon(id)}<span><strong>${projects[id].name}</strong><small>${label}</small></span></button>`;
 const emberfoldTerminal = `<div class="screen-terminal"><div class="terminal-top"><span>EMBERFOLD / CLI</span><span>SYNTHETIC INPUT</span></div><p><span>$</span> emberfold prepare --input emberfold.json --dry-run</p><pre tabindex="0" aria-label="Excerpt from actual Emberfold dry run output">{
   "tokens": {
@@ -480,13 +484,13 @@ function productSection(id: ProjectId) {
   const area = id === "ardent" ? {
     ...gallery.magnus, title: "An agent that can keep going.",
     copy: "Durable tasks, typed tools, scheduled jobs and a journal of every run. Ardent works on its own or under Magnus management, with Emberfold context fitting built in.",
-    points: ["Run tasks, tools and scheduled jobs", "Connect optional memory and chat", "Install separately on your agent hosts"],
-    captures: [gallery.magnus.captures[2]], extra: '<p>Ardent is headless. The image shows Magnus mission control in HiveXUI, where its host is managed. Hive 2.0.6 does not include a native Ardent artifact.</p>',
+    points: ["Run tasks, tools and scheduled jobs", "Connect optional memory and chat", "Install from npm or through Magnus"],
+    captures: [gallery.magnus.captures[2]], extra: `<p>Ardent is headless. The image shows Magnus mission control in HiveXUI, where its host is managed. Hive ${HIVE_SUITE_VERSION} does not include an Ardent container: the Magnus host agent stages the pinned Ardent package, and Magnus installs and updates it.</p><p><a href="/guides/ardent-studio.md">Ardent Project Studio</a>, an optional suite product, gives a team of Ardent agents a shared project, a conversation room and deliverable review in HiveXUI's Studio section.</p>`,
   } : id === "emberfold" ? {
     title: "Bring the right context forward.",
     copy: "Fit context to the next model turn with a portable library, CLI, optional HTTP service or Hermes plugin. Ardent uses the library directly and keeps its own authoritative history.",
     points: ["Fit a context window’s token budget", "Preserve protected source spans", "Use it inside or outside the suite"],
-    captures: [], extra: '<p>Emberfold is a context engine with no console screen. This is an excerpt from a real CLI dry run using synthetic input.</p>',
+    captures: [], extra: '<p>Emberfold is a context engine with no HiveXUI screen. This is an excerpt from a real CLI dry run using synthetic input.</p>',
   } : gallery[id];
   const first = area.captures[0];
   return `<article class="product-section project-${id}" id="interface-${id}" tabindex="-1" aria-labelledby="product-title-${id}">
@@ -506,48 +510,48 @@ app.innerHTML = `
     <section class="hero shell" id="top" aria-labelledby="hero-title">
       <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-prompt" aria-hidden="true">&gt;_</span> YOUR AGENTS. YOUR INFRASTRUCTURE.</div>
         <h1 id="hero-title">Full-stack<br/><em>agent management.</em></h1>
-        <p class="hero-lede">Deploy the stack. Manage your fleet. Give your agents identity, model access, memory and skills — with security and conversation in the same console.</p>
+        <p class="hero-lede">Deploy the stack. Manage your fleet. Give your agents identity, model access, memory and skills — with security and conversation in the same browser UI.</p>
         <div class="hero-actions"><a class="button button-primary" href="#install">Install the full stack ${icon("down")}</a><a class="text-link" href="#atlas">See how it connects ${icon("arrow")}</a></div>
         <p class="hero-proof">Open source · Apache-2.0 · Self hosted</p>
       </div>
-      <figure class="hero-console"><div class="hero-console-label"><span class="status-dot" aria-hidden="true"></span> ONE CONSOLE. THE WHOLE PICTURE.</div><div class="capture-window"><div class="window-bar"><span class="window-dots" aria-hidden="true">● ● ●</span><span>HiveXUI / Magnus</span>${icon("hivexui")}</div><img src="/captures/fleet-overview.webp" alt="HiveXUI fleet console with synthetic hosts, health gauges and recent commands" width="2880" height="1800" fetchpriority="high" /></div><figcaption>Fleet, identity, models, memory, skills, security and chat.<span>Real HiveXUI capture · synthetic data</span></figcaption></figure>
+      <figure class="hero-console"><div class="hero-console-label"><span class="status-dot" aria-hidden="true"></span> ONE BROWSER UI. THE WHOLE PICTURE.</div><div class="capture-window"><div class="window-bar"><span class="window-dots" aria-hidden="true">● ● ●</span><span>HiveXUI / Magnus</span>${icon("hivexui")}</div><img src="/captures/fleet-overview.webp" alt="HiveXUI fleet overview with synthetic hosts, health gauges and recent commands" width="2880" height="1800" fetchpriority="high" /></div><figcaption>Fleet, identity, models, memory, skills, security and chat.<span>Real HiveXUI capture · synthetic data</span></figcaption></figure>
     </section>
     <div class="shell feature-strip" aria-label="Product features">
       <div>${icon("magnus")}<span><strong>Operate your fleet</strong><small>Hosts, jobs and agent rollouts</small></span></div><div>${icon("emberpath")}<span><strong>Connect your models</strong><small>Provider routing, quotas and traces</small></span></div><div>${icon("hivemem")}<span><strong>Give agents continuity</strong><small>Memory, skills and context</small></span></div><div>${icon("cindertrace")}<span><strong>Stay in control</strong><small>Identity, investigations and chat</small></span></div>
     </div>
     <section class="quick-start shell" id="install" aria-labelledby="install-title">
       <div class="quick-start-heading"><div><span class="section-kicker">START WITH HIVE</span><h2 id="install-title">One installer. A connected stack.</h2></div><div class="platforms" aria-label="Installer platforms"><span class="platform-current">Linux</span><span>macOS <small>coming</small></span><span>Windows <small>coming</small></span></div></div>
-      <p>On a prepared Linux host, run this line to open setup. Choose the <code>full</code> profile, review the plan, and confirm to install. Replace <code>latest</code> with an exact version to choose it.</p>
+      <p>On a fresh Ubuntu or Debian host, run this line to open guided setup. It offers to install Docker Engine and the other prerequisites with your consent. Choose the <code>full</code> profile, review the plan, and confirm to install. Replace <code>latest</code> with an exact version to choose it, such as <code>${HIVE_SUITE_VERSION}</code>.</p>
       <div class="install-command"><span class="command-prompt" aria-hidden="true">$</span><pre tabindex="0" aria-label="Hive guided install command"><code>${installCommand}</code></pre><button type="button" data-copy-install aria-label="Copy Hive install command">${icon("copy")}<span>Copy</span></button></div>
-      <div class="install-meta"><span><a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Latest Hive release</a> · Signed release · Ubuntu / Debian · amd64 / arm64</span><a class="text-link" href="#walkthroughs">Fresh host? Start here ${icon("arrow")}</a></div>
-      <div class="tailscale-recommendation"><span class="recommendation-icon">${icon("oathweave")}</span><p><strong>Set up <a href="https://tailscale.com/download" target="_blank" rel="noopener noreferrer">Tailscale</a> first.</strong> Our recommended path to a private console and HTTPS certificate. Enable MagicDNS and HTTPS Certificates, then run Hive’s certificate helper before setup.</p><button class="text-link" type="button" data-open-tailscale>Setup guide ${icon("arrow")}</button></div>
-      <p class="install-prerequisites">Before you run: Git, Docker Engine with Compose, Hive’s prerequisite tools, and a console DNS name with a TLS certificate. <a href="/guides/hive.md#prerequisites">All prerequisites</a> · <a href="/guides/hive.md#install">Use your own certificate</a>. Model inference stays external.</p>
+      <div class="install-meta"><span><a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Latest Hive release</a> · Guides reviewed for <a href="${HIVE_SUITE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">${HIVE_SUITE_VERSION}</a> · Signed release · Ubuntu / Debian · amd64 / arm64</span><a class="text-link" href="#walkthroughs">Fresh host? Start here ${icon("arrow")}</a></div>
+      <div class="tailscale-recommendation"><span class="recommendation-icon">${icon("oathweave")}</span><p><strong>Set up <a href="https://tailscale.com/download" target="_blank" rel="noopener noreferrer">Tailscale</a> first.</strong> Our recommended path to private access and an HTTPS certificate. Enable MagicDNS and HTTPS Certificates; guided setup can then request the certificate, or run Hive’s certificate helper before setup.</p><button class="text-link" type="button" data-open-tailscale>Setup guide ${icon("arrow")}</button></div>
+      <p class="install-prerequisites">Before you run: Git, sudo, and a DNS name with a TLS certificate for the browser address. Guided setup can install Docker Engine with Compose and Hive’s other prerequisite tools. <a href="/guides/hive.md#prerequisites">All prerequisites</a> · <a href="/guides/hive.md#install">Use your own certificate</a>. Model inference stays external.</p>
     </section>
     <section class="atlas-section" id="atlas" aria-labelledby="atlas-title"><div class="shell">
       <div class="section-head"><div><span class="section-kicker">THE ARCHITECTURE</span><h2 id="atlas-title">Independent tools.<br/><span>One connected system.</span></h2></div><p>Hive installs the suite. HiveXUI brings it together. Select a product to explore what it does and where it connects.</p></div>
       <div class="atlas-layout"><div class="atlas-map" role="group" aria-label="Interactive product architecture">
         <div class="architecture-layer deploy-layer"><span class="layer-label">DEPLOY & RECOVER</span>${atlasNode("hive", "Signed releases · backups · upgrades")}<p>Installs the services, their private datastores, HTTPS ingress and the Hive Registry.</p></div>
         <div class="architecture-flow" aria-hidden="true">↓ <span>ONE HTTPS ENTRY POINT</span></div>
-        <div class="architecture-layer console-layer"><span class="layer-label">YOUR CONSOLE & IDENTITY</span><div class="node-pair">${atlasNode("hivexui", "One browser console")}${atlasNode("oathweave", "Sign-in & scoped access")}</div></div>
+        <div class="architecture-layer console-layer"><span class="layer-label">YOUR BROWSER UI & IDENTITY</span><div class="node-pair">${atlasNode("hivexui", "One browser UI")}${atlasNode("oathweave", "Sign-in & scoped access")}</div></div>
         <div class="architecture-flow" aria-hidden="true">↓ <span>EACH PRODUCT’S OWN API</span></div>
         <div class="architecture-layer services-layer"><span class="layer-label">SUITE SERVICES</span><div class="service-nodes">${atlasNode("magnus", "Fleet & host operations")}${atlasNode("emberpath", "Model routing")}${atlasNode("hivemem", "Durable memory")}${atlasNode("hiveskills", "Skill distribution")}${atlasNode("cindertrace", "Security investigations")}${atlasNode("chattermost", "People & agent chat")}</div></div>
         <div class="architecture-flow"><span>MAGNUS CAN MANAGE ARDENT ON FLEET HOSTS</span> ↓</div>
-        <div class="architecture-layer runtime-layer"><span class="layer-label">AGENT RUNTIME · CONFIGURED SEPARATELY</span><div class="runtime-nodes">${atlasNode("ardent", "Durable tasks & tools")}<span class="library-arrow" aria-label="bundles">→<small>bundles library</small></span>${atlasNode("emberfold", "Context fitting")}</div><p>The full profile also installs the optional Emberfold HTTP service.</p></div>
+        <div class="architecture-layer runtime-layer"><span class="layer-label">AGENT RUNTIME · CONFIGURED SEPARATELY</span><div class="runtime-nodes">${atlasNode("ardent", "Durable tasks & tools")}<span class="library-arrow" aria-label="bundles">→<small>bundles library</small></span>${atlasNode("emberfold", "Context fitting")}</div><p>The full profile also installs the optional Emberfold HTTP service. Ardent Project Studio, an optional suite product, brings teams of Ardent agents into HiveXUI.</p></div>
         <div class="external-inference"><span>${icon("emberpath")} EXTERNAL INFERENCE</span><p>Emberpath routes to your hosted APIs, Ollama or llama.cpp. Ardent can also use a provider directly. Models, storage and runtimes stay outside Hive.</p></div>
       </div><div class="atlas-detail" id="atlas-detail" aria-live="polite" aria-atomic="true"></div></div>
     </div></section>
     <section class="products-section shell" id="projects" aria-labelledby="projects-title"><span id="interfaces" class="anchor-alias" aria-hidden="true"></span>
-      <div class="section-head"><div><span class="section-kicker">MEET THE PRODUCTS</span><h2 id="projects-title">The tools behind<br/><span>your agents.</span></h2></div><p>Each has a clear job. Together, they cover the stack. The screens below are areas of one HiveXUI console, captured with synthetic data.</p></div>
+      <div class="section-head"><div><span class="section-kicker">MEET THE PRODUCTS</span><h2 id="projects-title">The tools behind<br/><span>your agents.</span></h2></div><p>Each has a clear job. Together, they cover the stack. The screens below are areas of HiveXUI, one browser UI, captured with synthetic data.</p></div>
       <nav class="product-jump-links" aria-label="Explore products">${projectOrder.map(id => `<a href="#interface-${id}">${projects[id].name}</a>`).join("")}</nav>
       ${projectOrder.map(productSection).join("")}
     </section>
     <section class="install-section" id="walkthroughs" aria-labelledby="walkthroughs-title"><div class="shell"><div class="section-head"><div><span class="section-kicker">INSTALLATION GUIDES</span><h2 id="walkthroughs-title">From first host<br/><span>to your own stack.</span></h2></div><p>Start with Hive for the full suite, or follow a standalone product guide. These walkthroughs explain the commands without running them.</p></div>
       <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh host. For an existing installation, follow its upgrade guide.</p><button class="text-link" type="button" data-open-tailscale>Tailscale setup guide ${icon("arrow")}</button></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
     </div></section>
-    <section class="agents-section shell" id="agents" aria-labelledby="agents-title"><div class="section-head"><div><span class="section-kicker">FOR PEOPLE & AGENTS</span><h2 id="agents-title">Docs you can work with.</h2></div><p>Plain Markdown guides with prerequisites, commands and reviewed source revisions.</p></div><div class="agent-index-links"><a class="text-link" href="/llms.txt">Read llms.txt ${icon("arrow")}</a><a class="text-link" href="/index.md">Site overview in Markdown ${icon("arrow")}</a></div><ul class="agent-guides">${projectOrder.filter(id => id !== "ardent").map(id => `<li><a href="/guides/${id}.md"><span class="agent-guide-title">${projects[id].name}${id === "magnus" ? " + Ardent" : ""} ${icon("arrow")}</span><span>${projects[id].role}</span></a></li>`).join("")}</ul></section>
+    <section class="agents-section shell" id="agents" aria-labelledby="agents-title"><div class="section-head"><div><span class="section-kicker">FOR PEOPLE & AGENTS</span><h2 id="agents-title">Docs you can work with.</h2></div><p>Plain Markdown guides with prerequisites, commands and reviewed source revisions.</p></div><div class="agent-index-links"><a class="text-link" href="/llms.txt">Read llms.txt ${icon("arrow")}</a><a class="text-link" href="/index.md">Site overview in Markdown ${icon("arrow")}</a></div><ul class="agent-guides">${projectOrder.map(id => `<li><a href="/guides/${id}.md"><span class="agent-guide-title">${projects[id].name} ${icon("arrow")}</span><span>${projects[id].role}</span></a></li>`).join("")}<li><a href="/guides/ardent-studio.md"><span class="agent-guide-title">Ardent Project Studio ${icon("arrow")}</span><span>Team projects · HiveXUI /studio</span></a></li></ul></section>
   </main>
   <footer class="site-footer" id="links"><div class="shell"><div class="footer-top"><div><a class="brand" href="#top"><span>Hive<span class="brand-colon">:</span>Magnus</span></a><p>Full-stack agent management.<br/>Open source. On your infrastructure.</p></div><div class="ecosystem-links"><a href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer"><small>EXPLORE THE SOURCE</small><strong>GitHub / ChefTaco ${icon("external")}</strong></a><a href="https://www.npmjs.com/~hivemagnus" target="_blank" rel="noopener noreferrer"><small>PACKAGES & SDKS</small><strong>npm / hivemagnus ${icon("external")}</strong></a></div></div><div class="footer-projects">${projectOrder.map(id => `<a href="${projects[id].href}">${projects[id].name}</a>`).join("")}<a href="https://github.com/ChefTaco/HiveMagnus">Site source</a><a href="/.well-known/security.txt">Security</a></div><p class="footer-legal">Apache-2.0. Product capabilities and release status are documented in each repository. ChatterMost is independently developed and Mattermost-compatible; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.</p></div></footer>
-  <dialog id="tailscale-dialog" aria-labelledby="tailscale-title" aria-describedby="tailscale-intro"><div class="modal-heading"><span class="section-kicker">BEFORE YOU INSTALL</span><button class="modal-close" type="button" aria-label="Close Tailscale setup guide" data-close-tailscale>×</button></div><h2 id="tailscale-title">Get your host ready<br/>with Tailscale.</h2><p id="tailscale-intro">A recommended, optional way to reach your Hive console privately and get its HTTPS certificate. Hive does not install or sign you into Tailscale.</p><ol class="tailscale-steps"><li><h3>Install and sign in</h3><p>Install Tailscale on your Linux host and the computer you’ll use to open the console. Sign both into the same tailnet.</p><a class="text-link" href="https://tailscale.com/download" target="_blank" rel="noopener noreferrer">Download Tailscale ${icon("external")}</a></li><li><h3>Enable MagicDNS and HTTPS</h3><p>In your Tailscale admin console’s DNS settings, turn on MagicDNS and HTTPS Certificates.</p><a class="text-link" href="https://tailscale.com/docs/how-to/set-up-https-certificates" target="_blank" rel="noopener noreferrer">Follow Tailscale’s HTTPS guide ${icon("external")}</a></li><li><h3>Request the console certificate</h3><p>After cloning the Hive release and installing its prerequisites, run this from the checkout. The helper discovers this host’s Tailscale name and calls <code>tailscale cert</code>.</p><div class="modal-command"><pre tabindex="0"><code>sudo ./scripts/console-certificate.sh tailscale</code></pre><button type="button" data-copy-text="sudo ./scripts/console-certificate.sh tailscale" aria-label="Copy Tailscale certificate command">${icon("copy")}</button></div><p>It prints the console origin and writes <code>/etc/hive/tls/console.crt</code> and <code>/etc/hive/tls/console.key</code>. Enter that origin and those paths when Hive setup asks. Certificate names appear in public Certificate Transparency logs.</p></li><li><h3>Schedule renewal after installing</h3><p>Run this with the protected installation file setup created. Replace <code>FILE</code> with that path. It schedules weekly renewal and refreshes Hive’s ingress certificate; rerun it from the new checkout after upgrades.</p><div class="modal-command"><pre tabindex="0"><code>sudo ./scripts/console-certificate.sh schedule --config FILE</code></pre><button type="button" data-copy-text="sudo ./scripts/console-certificate.sh schedule --config FILE" aria-label="Copy certificate renewal command">${icon("copy")}</button></div></li></ol><div class="modal-footer"><p>Using your own DNS and certificate? <a href="/guides/hive.md#install">Follow the Hive installation guide</a>.</p><button class="button button-primary" type="button" data-close-tailscale>Back to Hive setup ${icon("arrow")}</button></div></dialog>
+  <dialog id="tailscale-dialog" aria-labelledby="tailscale-title" aria-describedby="tailscale-intro"><div class="modal-heading"><span class="section-kicker">BEFORE YOU INSTALL</span><button class="modal-close" type="button" aria-label="Close Tailscale setup guide" data-close-tailscale>×</button></div><h2 id="tailscale-title">Get your host ready<br/>with Tailscale.</h2><p id="tailscale-intro">A recommended, optional way to reach HiveXUI privately and get its HTTPS certificate. Hive does not install or sign you into Tailscale.</p><ol class="tailscale-steps"><li><h3>Install and sign in</h3><p>Install Tailscale on your Linux host and the computer you’ll use to open HiveXUI. Sign both into the same tailnet.</p><a class="text-link" href="https://tailscale.com/download" target="_blank" rel="noopener noreferrer">Download Tailscale ${icon("external")}</a></li><li><h3>Enable MagicDNS and HTTPS</h3><p>In your Tailscale admin console’s DNS settings, turn on MagicDNS and HTTPS Certificates.</p><a class="text-link" href="https://tailscale.com/docs/how-to/set-up-https-certificates" target="_blank" rel="noopener noreferrer">Follow Tailscale’s HTTPS guide ${icon("external")}</a></li><li><h3>Request the certificate</h3><p>After cloning the Hive release and installing its prerequisites, run this from the checkout. The helper discovers this host’s Tailscale name and calls <code>tailscale cert</code>.</p><div class="modal-command"><pre tabindex="0"><code>sudo ./scripts/console-certificate.sh tailscale</code></pre><button type="button" data-copy-text="sudo ./scripts/console-certificate.sh tailscale" aria-label="Copy Tailscale certificate command">${icon("copy")}</button></div><p>It prints the HTTPS origin and writes <code>/etc/hive/tls/console.crt</code> and <code>/etc/hive/tls/console.key</code>. Enter that origin and those paths when Hive setup asks. Certificate names appear in public Certificate Transparency logs.</p></li><li><h3>Schedule renewal after installing</h3><p>Run this with the protected installation file setup created. Replace <code>FILE</code> with that path. It schedules weekly renewal and refreshes Hive’s ingress certificate; rerun it from the new checkout after upgrades.</p><div class="modal-command"><pre tabindex="0"><code>sudo ./scripts/console-certificate.sh schedule --config FILE</code></pre><button type="button" data-copy-text="sudo ./scripts/console-certificate.sh schedule --config FILE" aria-label="Copy certificate renewal command">${icon("copy")}</button></div></li></ol><div class="modal-footer"><p>Using your own DNS and certificate? <a href="/guides/hive.md#install">Follow the Hive installation guide</a>.</p><button class="button button-primary" type="button" data-close-tailscale>Back to Hive setup ${icon("arrow")}</button></div></dialog>
   <div class="sr-only" id="announce" role="status" aria-live="polite"></div>
 `;
 
@@ -615,7 +619,7 @@ tailscaleDialog.addEventListener("close", () => {
   modalTrigger?.focus({ preventScroll: true });
 });
 tailscaleDialog.querySelectorAll<HTMLAnchorElement>('a[href^="/"]').forEach(link => link.addEventListener("click", () => tailscaleDialog.close()));
-// Preserve legacy console and security deep links; every product is now visible in the page.
+// Preserve legacy interface and security deep links; every product is now visible in the page.
 function followProductHash() {
   if (location.hash === "#security") document.querySelector("#interface-cindertrace")!.scrollIntoView();
 }

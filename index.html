@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f3f6fa" />
     <meta
       name="description"
-      content="Full-stack agent management on your own infrastructure. Install the Hive suite on Linux, explore the architecture, and manage fleet, identity, models, memory, skills, security and chat in one console."
+      content="Full-stack agent management on your own infrastructure. Install the Hive suite on Linux, explore the architecture, and manage fleet, identity, models, memory, skills, security and chat in one browser UI."
     />
     <meta
       property="og:title"
@@ -14,14 +14,14 @@
     />
     <meta
       property="og:description"
-      content="Deploy your agent stack with Hive. Explore eleven open source products, one console, a signed Linux installer and guided Tailscale setup."
+      content="Deploy your agent stack with Hive. Explore eleven open source products, one browser UI, a signed Linux installer and guided Tailscale setup."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://hivemagnus.com/" />
     <meta property="og:image" content="https://hivemagnus.com/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Hive:Magnus — independent products, one console, your infrastructure" />
+    <meta property="og:image:alt" content="Hive:Magnus — independent products, one browser UI, your infrastructure" />
     <meta property="og:site_name" content="Hive:Magnus" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href="https://hivemagnus.com/" />
@@ -51,7 +51,7 @@
       "@type": "SoftwareSourceCode",
       "@id": "https://hivemagnus.com/#source-magnus",
       "name": "Magnus",
-      "description": "Linux fleet inventory, operations, jobs, skills, and agent management, with HiveXUI as its console in a Hive installation.",
+      "description": "Linux fleet inventory, operations, jobs, skills, and agent management, with its browser pages in HiveXUI in a Hive installation.",
       "codeRepository": "https://github.com/ChefTaco/magnus",
       "url": "https://github.com/ChefTaco/magnus",
       "programmingLanguage": "TypeScript",
@@ -118,7 +118,22 @@
       "license": "https://github.com/ChefTaco/Ardent/blob/main/LICENSE",
       "subjectOf": {
         "@type": "CreativeWork",
-        "url": "https://hivemagnus.com/guides/magnus.md",
+        "url": "https://hivemagnus.com/guides/ardent.md",
+        "encodingFormat": "text/markdown"
+      }
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://hivemagnus.com/#source-ardentstudio",
+      "name": "Ardent Project Studio",
+      "description": "Team projects for Ardent agents: team assignment, the conversation room and deliverable review, as the Studio section of HiveXUI. An optional Hive suite product that reaches agents through Magnus.",
+      "codeRepository": "https://github.com/ChefTaco/ArdentStudio",
+      "url": "https://github.com/ChefTaco/ArdentStudio",
+      "programmingLanguage": "TypeScript",
+      "license": "https://github.com/ChefTaco/ArdentStudio/blob/main/LICENSE",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "url": "https://hivemagnus.com/guides/ardent-studio.md",
         "encodingFormat": "text/markdown"
       }
     },
@@ -186,7 +201,7 @@
       "@type": "SoftwareSourceCode",
       "@id": "https://hivemagnus.com/#source-hivexui",
       "name": "HiveXUI",
-      "description": "The single browser console for a Hive installation: a static TypeScript application using each product's own API, with sections only for installed products.",
+      "description": "The single browser UI for a Hive installation: a static TypeScript application using each product's own API, with sections only for installed products.",
       "codeRepository": "https://github.com/ChefTaco/HiveXUI",
       "url": "https://github.com/ChefTaco/HiveXUI",
       "programmingLanguage": "TypeScript",
@@ -212,19 +227,20 @@
           to explore the architecture, product previews and guided setup,
           or use the <a href="/guides/hive.md">Hive Linux installation guide</a>.
           <a href="https://tailscale.com/download">Tailscale</a> is our recommended
-          optional path to private console access; follow the
+          optional path to private access to HiveXUI; follow the
           <a href="https://tailscale.com/docs/how-to/set-up-https-certificates">HTTPS setup guide</a>
           before running Hive’s certificate helper. Explore the project repositories:
         </p>
         <ul>
           <li><a href="https://github.com/ChefTaco/hive">Hive — signed suite installation and recovery</a></li>
-          <li><a href="https://github.com/ChefTaco/HiveXUI">HiveXUI — the single browser console</a></li>
+          <li><a href="https://github.com/ChefTaco/HiveXUI">HiveXUI — the single browser UI</a></li>
           <li><a href="https://github.com/ChefTaco/Oathweave">Oathweave — identity and access</a></li>
           <li><a href="https://github.com/ChefTaco/Emberpath">Emberpath — model routing</a></li>
           <li><a href="https://github.com/ChefTaco/HiveMem">HiveMem — agent memory</a></li>
           <li><a href="https://github.com/ChefTaco/HiveSkills">HiveSkills — skills registry</a></li>
           <li><a href="https://github.com/ChefTaco/magnus">Magnus — fleet operations</a></li>
           <li><a href="https://github.com/ChefTaco/Ardent">Ardent — durable agent runtime</a></li>
+          <li><a href="https://github.com/ChefTaco/ArdentStudio">Ardent Project Studio — team projects for Ardent agents</a></li>
           <li><a href="https://github.com/ChefTaco/cindertrace">Cindertrace — security investigations, cases, and evidence</a></li>
           <li><a href="https://github.com/ChefTaco/ChatterMost">ChatterMost — self-hosted conversation</a></li>
           <li><a href="https://github.com/ChefTaco/emberfold">Emberfold — context continuity</a></li>
@@ -239,7 +255,9 @@
           <li><a href="/guides/emberpath.md">Emberpath Markdown guide</a></li>
           <li><a href="/guides/hivemem.md">HiveMem Markdown guide</a></li>
           <li><a href="/guides/hiveskills.md">HiveSkills Markdown guide</a></li>
-          <li><a href="/guides/magnus.md">Magnus and Ardent Markdown guide</a></li>
+          <li><a href="/guides/magnus.md">Magnus Markdown guide</a></li>
+          <li><a href="/guides/ardent.md">Ardent Markdown guide</a></li>
+          <li><a href="/guides/ardent-studio.md">Ardent Project Studio Markdown guide</a></li>
           <li><a href="/guides/cindertrace.md">Cindertrace Markdown guide</a></li>
           <li><a href="/guides/chattermost.md">ChatterMost Markdown guide</a></li>
           <li><a href="/guides/emberfold.md">Emberfold Markdown guide</a></li>

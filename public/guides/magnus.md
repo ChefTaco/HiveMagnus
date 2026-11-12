@@ -1,26 +1,32 @@
-# Magnus and Ardent: agent guide
+# Magnus: agent guide
 
-> Magnus operates Linux fleets. Ardent, a separate product with [its own repository](https://github.com/ChefTaco/Ardent), runs durable agent tasks, standalone or under Magnus management, with bundled Emberfold context fitting.
+> Magnus operates Linux fleets and the agents that run on them: inventory and health, commands, cron jobs, files, logs, skills, rollouts, incidents and an append-only audit log.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Magnus repository](https://github.com/ChefTaco/magnus) · [Ardent repository](https://github.com/ChefTaco/Ardent) · [Current Magnus instructions](https://github.com/ChefTaco/magnus#quick-start-standalone) · [Current Ardent instructions](https://github.com/ChefTaco/Ardent#install)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/magnus) · [Release 2.4.2](https://github.com/ChefTaco/magnus/releases/tag/v2.4.2) · [Current standalone instructions](https://github.com/ChefTaco/magnus#quick-start-standalone) · [Ardent guide](https://hivemagnus.com/guides/ardent.md)
 
 ## Choose an entry point
 
-Use Magnus for fleet inventory, health, jobs, skills, rollouts, and audit. Use Ardent alone if you need a durable headless agent without a fleet server. Oathweave sign-in, HiveMem memory, and Emberpath model routing are optional integrations. ChatterMost is an optional Mattermost-compatible conversation endpoint.
+Use Magnus for fleet inventory, health, jobs, skills, rollouts and audit. A small agent on each host reports to a central API server. Magnus can also manage the AI agents on those hosts: Hermes Agent, the Codex CLI and [Ardent](https://hivemagnus.com/guides/ardent.md), a separate product with its own repository. Oathweave sign-in, HiveMem memory, HiveSkills distribution and Emberpath model routing are optional integrations.
 
-There are two ways to run Magnus. Through [Hive](https://hivemagnus.com/guides/hive.md) 2.0.6, the full profile adds Magnus 2.1.2 with [HiveXUI](https://hivemagnus.com/guides/hivexui.md) as its console: the fleet module at `/fleet`, reaching the API through an allowlist of browser routes with a short-lived Oathweave token. Agents and services keep using the Magnus endpoint directly. The standalone installer below is for Magnus without Hive, and installs the Next.js console that Magnus's README documents.
+There are two ways to run Magnus. Through [Hive](https://hivemagnus.com/guides/hive.md) 3.1.1, the full profile adds Magnus 2.4.2 and its browser pages are the Magnus section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md) at `/fleet`, reaching the API through an allowlist of browser routes with a short-lived Oathweave token. Agents and services keep using the Magnus endpoint directly. The standalone installer below is for Magnus without Hive, and installs the Next.js UI that Magnus's README documents for standalone installs.
 
-Cindertrace is the separate security product for correlated cases, evidence, investigations, and approvals. Magnus can export observations and provide fleet context and approved host execution; embedded security runtime is retired in Magnus 2.0. See the [Cindertrace guide](https://hivemagnus.com/guides/cindertrace.md) and the repository migration guidance before upgrading an existing local-security installation.
+Cindertrace is the separate security product for correlated cases, evidence, investigations and approvals. Magnus can export observations and provide fleet context and approved host execution; the embedded security runtime was retired in Magnus 2.0. See the [Cindertrace guide](https://hivemagnus.com/guides/cindertrace.md) and the repository migration guidance before upgrading an existing local-security installation.
+
+## In a Hive installation
+
+Hive 3.1.1 pins the Magnus server and fleet gateway 2.4.2 by image digest and the host agent `@hivemagnus/magnus-agent` 2.4.2 by npm integrity. With a port for host agents, `hive.sh magnus-agent install` installs the agent on a fleet host and stages the Ardent 3.1.1 package the agent's lock pins; `hive.sh magnus-agent enroll` then reviews and enables full node capabilities on an installer-owned single host: commands, managed cron and a selected restricted web terminal. Guided setup offers both after installation. See the [Hive guide](https://hivemagnus.com/guides/hive.md#fleet-hosts-and-security-events).
+
+In HiveXUI, **Magnus > Ardent > Installations** installs and updates the staged Ardent package, and **New Agent** creates, configures and starts an Ardent profile with its own HiveMem identity. [Ardent Project Studio](https://hivemagnus.com/guides/ardent-studio.md) uses the same Magnus Ardent bridge through its own Oathweave service identity. An external Magnus, managed and upgraded separately, can serve an installation's Magnus pages and Studio instead of the `magnus` component.
 
 ## Install Magnus on its own
 
-Prerequisites: Linux with systemd, npm, Node.js 24.22.3+ in the 24 series or 26.13.1+ in the 26 series, and Docker Compose or existing PostgreSQL and Redis. The docs recommend PostgreSQL 17 (15+ works) and Redis 7.
+Prerequisites: Linux with systemd, npm, Node.js 24.22.3+ in the 24 series or 26.13.1+ in the 26 series, and Docker Compose or existing PostgreSQL and Redis. The docs recommend PostgreSQL 17 (15+ works) and Redis 7, and TLS certificates for the server, the standalone UI and each agent.
 
 ```bash
 npx @hivemagnus/magnus init
 ```
 
-Expected result: the installer creates `~/.magnus`, installs the server and console, generates credentials and a self-signed certificate, prepares PostgreSQL/Redis through Compose (or uses supplied URLs), and starts systemd user services. Use the printed console URL and login. Save the generated password privately; the self-signed certificate is for evaluation.
+Expected result: the installer creates `~/.magnus`, installs the server and the standalone UI, generates credentials and a self-signed certificate, prepares PostgreSQL/Redis through Compose (or uses `--database-url` and `--redis-url`), and starts systemd user services. Use the printed URL and login. Save the generated password privately; the self-signed certificate is for evaluation.
 
 Inspect options before choosing an installation mode:
 
@@ -28,59 +34,25 @@ Inspect options before choosing an installation mode:
 npx @hivemagnus/magnus init --help
 ```
 
-For user services to survive logout and start at boot, the setup may require `loginctl enable-linger $USER`. Follow the installer guide for that host. Add managed nodes through the console and the documented node-agent setup; each node requires its own configuration and secret. Installing the console alone does not enroll other hosts.
+`--system --service-user magnus` installs system units under `/opt/magnus` instead. For user services to survive logout and start at boot, the setup may require `loginctl enable-linger $USER`. Add managed nodes through the standalone UI and the documented node-agent setup; each node requires its own configuration and secret. Installing the server alone does not enroll other hosts.
 
 ## Web terminal
 
-The browser terminal runs through a separate [fleet gateway](https://github.com/ChefTaco/magnus/tree/main/services/fleet-gateway) that holds the restricted SSH key, so neither the browser nor the Magnus API does. It is off by default: the console offers a terminal only when a gateway is deployed and configured on the server, and the person holds an `ADMIN` link and the `magnus:terminal` permission. Opening one also needs identity verified within the last five minutes, otherwise `STEP_UP_REQUIRED`, and an operator-approved host key for that node; unknown keys are refused and nothing is learned on first use. The audit log records metadata only. The gateway ships as the container image `ghcr.io/cheftaco/magnus-fleet-gateway`; follow its README to deploy it behind an ingress and approve host keys.
+The browser terminal runs through a separate [fleet gateway](https://github.com/ChefTaco/magnus/tree/v2.4.2/services/fleet-gateway) that holds the restricted SSH key, so neither the browser nor the Magnus API does. It is off by default: HiveXUI offers a terminal only when a gateway is deployed and configured on the server, and the person holds an `ADMIN` link and the `magnus:terminal` permission. Opening one also needs identity verified within the last five minutes, otherwise `STEP_UP_REQUIRED`, and an operator-approved host key for that node; unknown keys are refused and nothing is learned on first use. The audit log records metadata only. The gateway ships as the container image `ghcr.io/cheftaco/magnus-fleet-gateway`; Hive offers it in every release but never selects it in a profile.
 
 ## Ardent with bundled Emberfold
 
-Ardent needs the same supported Node.js versions and an OpenAI-compatible chat model server or Codex App Server. `better-sqlite3` is a native dependency.
-
-```bash
-npm i -g @hivemagnus/ardent
-ardent init --non-interactive
-ardent doctor
-```
-
-Expected result: `init` creates `~/.ardent/profiles/assistant` with configuration, persona, and a random management token in its `.env`. The runtime keeps private SQLite state in the profile. `doctor` lists unresolved configuration; a first run without a model is not yet ready for chat.
-
-For a fresh profile using your own OpenAI-compatible server, replace the sample URL and model name:
-
-```bash
-cat >> ~/.ardent/profiles/assistant/.env <<'EOF'
-ARDENT_LLAMA_BASE_URL=http://127.0.0.1:8080/
-ARDENT_LLAMA_MODEL=your-model-name
-EOF
-ardent doctor
-ardent chat
-```
-
-Expected result: after model configuration is valid, `chat` opens an interactive session. Keep provider credentials in the profile's private `.env`. For an existing profile, edit its current settings instead of appending duplicate entries. Follow the full Ardent guide for Codex App Server configuration.
-
-To start the management API, configured channels, and jobs instead of interactive chat:
-
-```bash
-ardent gateway run
-```
-
-The management API defaults to loopback `127.0.0.1:9910` with bearer authentication; its contract is served at `/openapi.json`. Enable and configure A2A or conversation channels separately. Starting the gateway does not make them public automatically.
-
-Ardent imports its pinned Emberfold library directly. No separate Emberfold account or HTTP server is needed. Ardent retains authoritative SQLite history, journal events, and checkpoint publication. For Emberfold outside Ardent, see the [Emberfold guide](https://hivemagnus.com/guides/emberfold.md).
+Ardent now has [its own guide](https://hivemagnus.com/guides/ardent.md): standalone installation with `npm i -g @hivemagnus/ardent`, model configuration, the gateway, the 3.x storage change and management through Magnus. Ardent imports its pinned Emberfold library directly; no separate Emberfold account or HTTP server is needed.
 
 ## Full instructions
 
-- [Magnus installer](https://github.com/ChefTaco/magnus/tree/main/packages/magnus)
-- [Node agent setup](https://github.com/ChefTaco/magnus/tree/main/packages/agent)
-- [Ardent configuration and integrations](https://github.com/ChefTaco/Ardent)
-- [Ardent OpenAPI contract](https://github.com/ChefTaco/Ardent/blob/main/openapi/ardent.json)
-- [Ardent repository instructions](https://github.com/ChefTaco/Ardent/blob/main/AGENTS.md)
-- [Repository instructions](https://github.com/ChefTaco/magnus/blob/main/AGENTS.md)
+- [Magnus installer](https://github.com/ChefTaco/magnus/tree/v2.4.2/packages/magnus)
+- [Node agent setup](https://github.com/ChefTaco/magnus/tree/v2.4.2/packages/agent)
+- [Ardent agents, New Agent and the service bridge](https://github.com/ChefTaco/magnus/blob/v2.4.2/docs/ARDENT.md)
+- [Browser route inventory](https://github.com/ChefTaco/magnus/blob/v2.4.2/docs/console-api.md)
+- [Cindertrace migration](https://github.com/ChefTaco/magnus/blob/v2.4.2/docs/CINDERTRACE_MIGRATION.md)
+- [Repository instructions](https://github.com/ChefTaco/magnus/blob/v2.4.2/AGENTS.md)
 
 ## Source review
 
-Reviewed 2026-11-05 against tag `v2.1.1`, commit `084a3292f4b459fe74c91af7e06b37d2aeb2774e`: [root README](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/README.md), [installer README](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/packages/magnus/README.md), [Ardent README](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/packages/ardent/README.md), [fleet gateway README](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/services/fleet-gateway/README.md), [console route inventory](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/docs/console-api.md) and [Cindertrace migration](https://github.com/ChefTaco/magnus/blob/084a3292f4b459fe74c91af7e06b37d2aeb2774e/docs/CINDERTRACE_MIGRATION.md). Commands follow those docs. They are unpinned: npm resolves `@hivemagnus/magnus` and `@hivemagnus/ardent` to `latest`, which was `2.1.1` at that review. Follow current instructions for upgrades. License: Apache-2.0.
-
-
-Security release review, 2026-11-07: [Magnus 2.1.2](https://github.com/ChefTaco/magnus/releases/tag/v2.1.2), commit `b5b6945c1bf9d93869933ec5e79a8b74822e435d`, updates the bundled dashboard to Next.js 16.4.5 and the HTTP adapter to 2.1.6. Its host-agent package carries a complete dependency shrinkwrap; Hive 2.0.6 verifies and installs it with locked dependencies. The install commands above remain unchanged in the release README and installer README. Ardent is separately published from its own repository; its current package is 2.1.2. This does not enroll hosts, activate Ardent profiles or migrate existing data automatically.
+Reviewed 2026-11-12 against tag `v2.4.2`, commit `c14cdacaad1d2f01922be84755f1f85ed5d373c5`, the version Hive `v3.1.1` pins: [root README](https://github.com/ChefTaco/magnus/blob/v2.4.2/README.md), [installer README](https://github.com/ChefTaco/magnus/blob/v2.4.2/packages/magnus/README.md), [fleet gateway README](https://github.com/ChefTaco/magnus/blob/v2.4.2/services/fleet-gateway/README.md), [Ardent management](https://github.com/ChefTaco/magnus/blob/v2.4.2/docs/ARDENT.md) and the host agent's `npm-shrinkwrap.json`, which pins Ardent `3.1.1`. Suite behavior follows Hive `v3.1.1` [full profile](https://github.com/ChefTaco/hive/blob/v3.1.1/deployment/FULL.md). The standalone commands are unpinned: npm resolves `@hivemagnus/magnus` to its current `latest`, which may be newer than the suite pin. Follow current instructions for upgrades. License: Apache-2.0.
