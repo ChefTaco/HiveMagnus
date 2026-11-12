@@ -4,17 +4,17 @@ Public home for the Hive:Magnus ecosystem at [hivemagnus.com](https://hivemagnus
 
 ## Develop
 
-Use Node.js 24.22.3, then run `npm ci` and `npm run dev`. `npm run build` typechecks and emits static files in `dist/`.
+Use Node.js 24.22.3 and exactly TypeScript 6.0.3 with strict typing, `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes`, then run `npm ci` and `npm run dev`. `npm run build` typechecks and emits static files in `dist/`.
 
 The interactive walkthroughs are browser-only explanations. Commands are sourced from the linked repository installation guides and must be rechecked when releases change. UI captures use synthetic data on a disposable installation; never publish a live operator screen, credential, or private endpoint.
 
-The homepage leads with full-stack agent management, a copyable one-line launch command using `--release latest` for the signed Hive release, Linux availability (macOS and Windows are coming), an interactive architecture view, and eleven individual product sections. The launcher resolves the release when run; users can substitute an exact version. It opens guided setup on a prepared host: choose `full`, review the plan, then confirm. A nearby prerequisite link and walkthrough cover fresh Linux hosts. Inference runtimes and model storage stay external.
+The homepage leads with full-stack agent management, a copyable one-line launch command using `--release latest` for the signed Hive release, Linux availability (macOS and Windows are coming), an interactive architecture view, and twelve individual product sections. The launcher resolves the release when run; users can substitute an exact version. It opens guided setup on a prepared host: choose `full`, review the plan, then confirm. A nearby prerequisite link and walkthrough cover fresh Linux hosts. Inference runtimes and model storage stay external.
 
 Tailscale is the recommended optional path to private access to HiveXUI and a certificate. The recommendation links to Tailscale, and its setup modal covers installation and sign-in, MagicDNS and HTTPS Certificates, Hive's explicit certificate helper, and separately scheduled renewal. Hive setup asks for existing certificate files; it does not automatically install Tailscale or request a certificate. Bring-your-own certificates remain supported.
 
-With the local preview open in Playwright CLI (`npx @playwright/cli`), run `playwright-cli run-code --filename scripts/check-browser.js`. It checks page hierarchy, all eleven architecture selections and product sections, capture switching and image loading, walkthroughs, clipboard, modal focus and dismissal, deep links, agent docs, accessibility and overflow at desktop, tablet and phone widths. Save review screenshots under the ignored `output/playwright/` directory.
+With the local preview open in Playwright CLI (`npx @playwright/cli`), run `playwright-cli run-code --filename scripts/check-browser.js`. It checks page hierarchy, all twelve architecture selections and product sections, capture switching and image loading, walkthroughs, clipboard, modal focus and dismissal, deep links, agent docs, accessibility and overflow at desktop, tablet and phone widths. Save review screenshots under the ignored `output/playwright/` directory.
 
-The product sections show nine areas of HiveXUI, the single browser UI. Magnus and Cindertrace have switchable captures. Ardent is headless and is illustrated by a clearly labeled Magnus mission-control capture; Emberfold shows its verified CLI excerpt. All products remain visible while scrolling, and `#interface-PROJECT`, `#interfaces` and legacy `#security` links remain supported. The footer links the GitHub account and npm publisher profile.
+The product sections show ten areas of HiveXUI, the single browser UI. Magnus and Cindertrace have switchable captures. Ardent is headless and is illustrated by a clearly labeled Magnus mission-control capture; Emberfold shows its verified CLI excerpt. All products remain visible while scrolling, and `#interface-PROJECT`, `#interfaces` and legacy `#security` links remain supported. The footer links the GitHub account and npm publisher profile.
 
 Regenerate captures with `scripts/capture-hivexui.mjs` against a disposable seeded installation; see [media provenance](docs/media.md).
 

@@ -9,13 +9,14 @@
     <text x="62" y="76" font-size="27" font-weight="700">Hive<tspan fill="#ff006e">:</tspan>Magnus</text>
     <text x="62" y="222" font-size="60" font-weight="700" letter-spacing="-2">Run your stack.</text>
     <text x="62" y="294" font-size="60" font-weight="700" letter-spacing="-2" fill="#00e5ff">On your terms.</text>
-    <text x="64" y="350" font-size="23" fill="#b6b8cf">One console for self-hosted agents.</text>
+    <text x="64" y="350" font-size="23" fill="#b6b8cf">One browser UI for your agent stack.</text>
   </g>
   <g font-family="'IBM Plex Mono',Menlo,monospace" font-size="15" fill="#9496b6">
     <text x="64" y="424">HIVE · HIVEXUI · OATHWEAVE · EMBERPATH</text>
-    <text x="64" y="448">HIVEMEM · HIVESKILLS · MAGNUS · CINDERTRACE</text>
-    <text x="64" y="472">CHATTERMOST · EMBERFOLD</text>
-    <text x="64" y="572" fill="#00e5ff">APACHE-2.0 · TEN INDEPENDENT PROJECTS</text>
+    <text x="64" y="448">HIVEMEM · HIVESKILLS · MAGNUS · ARDENT</text>
+    <text x="64" y="472">EMBERMEND · CINDERTRACE · CHATTERMOST</text>
+    <text x="64" y="496">EMBERFOLD</text>
+    <text x="64" y="572" fill="#00e5ff">APACHE-2.0 · TWELVE OPEN SOURCE PROJECTS</text>
   </g>
   <rect x="598" y="116" width="644" height="404" rx="7" fill="#06060d" stroke="#00e5ff" stroke-opacity=".5"/>
   <image href="captures/fleet-overview.webp" x="600" y="118" width="640" height="400" preserveAspectRatio="xMinYMin slice" clip-path="url(#frame)"/>

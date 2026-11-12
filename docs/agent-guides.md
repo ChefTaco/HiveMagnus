@@ -195,3 +195,41 @@ Embermend's README describes a development preview with no tags, and it is not i
 
 Site copy no longer calls HiveXUI a console. Script and file names such as `console-certificate.sh` keep their real names, and Cindertrace's and Magnus's own standalone UIs keep their documented names. No installation command was run against an operational environment. No public product captures were replaced.
 
+
+## Embermend and signed Hive 3.2.2, 2026-11-12
+
+The portfolio adds Embermend as a Magnus-dependent optional suite product, with a
+HiveXUI section, installation guide, recommendation workflow and explicit
+assessment/automation limits. Source reviews use these immutable releases:
+
+| Project | Release | Reviewed source |
+| --- | --- | --- |
+| Embermend | `v0.1.0` | `f92a580e92e687cf105dec77a4b9d503b65e7215` |
+| Magnus | `v2.5.0` | `18acbca1b966b7141d2472659d1f3d966ea6e575` |
+| Oathweave | `v2.2.0` | `3b6d7df399b72f16630b6af16ca3d49040eae2ac` |
+| HiveXUI | `v0.3.0` | `baffab13e0e34f6998f5cafc9a0b20088e25a0ef` |
+| Hive | `v3.2.2` | `e99f6be17b3f6858d9f29da4d2b40716e12d11e2` |
+
+The Embermend review covers its README, product specification, inference,
+provider-authorization and recovery guides, OpenAPI/browser contract, release
+compatibility metadata and acceptance ledger. The accepted reference journeys
+include actual managed scanning with the approved model, separate source/image/
+runtime outcomes, native fault recovery and isolated combined-store restoration.
+Production starts with one explicitly scoped inventory canary and disabled
+mutation policies. Unsupported profile checks and unknown exposure remain visible.
+
+The Hive guide follows the signed manifest, current launcher, release guide,
+initialization/upgrade controller and the storage-registration regression. Its
+product table preserves the security-patched 3.1.2 runtime combination and updates
+Magnus, Oathweave and HiveXUI for optional Embermend. The 3.2.2 recovery explicitly
+verifies the already initialized PostgreSQL major, runtime receipt and checksums;
+it does not treat arbitrary unversioned data as a new store. Earlier dated
+reviews above remain historical. The latest-release command stays unchanged.
+
+The new capture uses the actual HiveXUI build with synthetic browser responses;
+its provenance and reproduction callback are recorded in `docs/media.md`.
+TypeScript is exactly 6.0.3 with all three strictness options, the JSON-LD source
+graph and CSP hash agree, and the browser gate covers all twelve product sections,
+six walkthroughs, thirteen guides and five viewport widths.
+
+The operational documentation review uses Embermend commit `31390ff520d13ed0faf598b4151dba424e095aea`, separately from the immutable 0.1.0 runtime source. It records all 24 reference acceptance journeys, three post-upgrade production assessments with explicit partial Ubuntu coverage, exact final product/native restore identities, unchanged identity security fields and disabled production mutation policies. The signed suite review uses Hive `v3.2.2` at `e99f6be17b3f6858d9f29da4d2b40716e12d11e2`; both PostgreSQL majors passed native amd64/arm64 checks and the full release image policy.

@@ -13,6 +13,10 @@ Policy: https://github.com/ChefTaco/magnus/security/policy
 Contact: https://github.com/ChefTaco/Ardent/security/advisories/new
 Policy: https://github.com/ChefTaco/Ardent/security/policy
 
+# Embermend
+Contact: https://github.com/ChefTaco/Embermend/security/advisories/new
+Policy: https://github.com/ChefTaco/Embermend/security/policy
+
 # Cindertrace
 Contact: https://github.com/ChefTaco/cindertrace/security/advisories/new
 Policy: https://github.com/ChefTaco/cindertrace/security/policy
