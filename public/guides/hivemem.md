@@ -10,7 +10,7 @@ HiveMem gives agents, IDE tools and runtimes one server-side system for remember
 
 ## In a Hive installation
 
-HiveMem and its private Qdrant are part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.1.1 installs HiveMem 1.4.1 as a digest-pinned image. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md): memory search, sessions, webhooks, graph evidence, conflicts, consolidation and queue operations, limited by workspace. Issuer and subject mappings remain explicit product configuration.
+HiveMem and its private Qdrant are part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.3.0 installs HiveMem 1.5.0 as a digest-pinned image. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md): memory search, sessions, webhooks, graph evidence, conflicts, consolidation and queue operations, limited by workspace. Issuer and subject mappings remain explicit product configuration.
 
 ## Run it on its own
 
@@ -38,3 +38,5 @@ Expected result: `check` reports `Result: ready to start`, and once the containe
 ## Source review
 
 Reviewed 2026-11-06 against `main` commit `7f382cc05192f07ab1761d0e93754f404449d0c0`, documentation added after tag `v1.3.1`: [README](https://github.com/ChefTaco/HiveMem/blob/7f382cc05192f07ab1761d0e93754f404449d0c0/README.md), [server README](https://github.com/ChefTaco/HiveMem/blob/7f382cc05192f07ab1761d0e93754f404449d0c0/ts-core/README.md) and [architecture](https://github.com/ChefTaco/HiveMem/blob/7f382cc05192f07ab1761d0e93754f404449d0c0/APP_ARCHITECTURE.md). The commands follow the README's container example and were run with throwaway containers against the image the [1.3.1 release](https://github.com/ChefTaco/HiveMem/releases/tag/v1.3.1) publishes, which Hive 2.0.0 and 2.0.1 installed. Original attribution and migration history are preserved. License: Apache-2.0.
+
+Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releases/tag/v3.3.0) pins HiveMem 1.5.0, tag [`v1.5.0`](https://github.com/ChefTaco/HiveMem/releases/tag/v1.5.0), commit `13281b0a0019484d2b639320207612c06ec8b26f`. Per its [changelog](https://github.com/ChefTaco/HiveMem/blob/v1.5.0/CHANGELOG.md), it verifies Oathweave browser and service-account tokens with the suite's shared verifiers while keeping HiveMem's rules, and refuses at startup a service link issuer that is neither a lowercase native identifier nor an HTTPS URL. It adds `GET /health/live` and `GET /health/ready`, carries `x-request-id` on every response and in mutation audit receipts, and lets memory browse, search and stats filter by `agent_id`. Existing `/v1/health*` paths and unfiltered responses are unchanged. The standalone container example above keeps its original 1.3.1 review.

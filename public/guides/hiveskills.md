@@ -10,7 +10,7 @@ The registry distributes authenticated manifests and immutable archives. It is u
 
 ## In a Hive installation
 
-HiveSkills is part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.1.1 installs HiveSkills 1.3.3 as a digest-pinned image. Its catalogue, archive and assignment screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md). Native host mappings are prepared separately and are never activated by installation alone.
+HiveSkills is part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.3.0 installs HiveSkills 1.4.0 as a digest-pinned image. Its catalogue, archive and assignment screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md). Native host mappings are prepared separately and are never activated by installation alone.
 
 ## Run it on its own
 
@@ -40,3 +40,5 @@ Expected result: `check` validates TLS, configuration and storage without creati
 ## Source review
 
 Reviewed 2026-11-06 against `main` commit `aa4fa782509912a95584738d12b3e4b343b19dc9`, documentation added after tag `v1.3.1`: [README](https://github.com/ChefTaco/HiveSkills/blob/aa4fa782509912a95584738d12b3e4b343b19dc9/README.md). The commands follow its container example and were run with throwaway containers against the image the [1.3.1 release](https://github.com/ChefTaco/HiveSkills/releases/tag/v1.3.1) publishes, which is the image Hive installs. Original attribution and migration history are preserved. License: Apache-2.0.
+
+Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releases/tag/v3.3.0) pins HiveSkills 1.4.0, tag [`v1.4.0`](https://github.com/ChefTaco/HiveSkills/releases/tag/v1.4.0), commit `45dc95ed0322f7573759b5a08f35e4feb366f5ac`. Per its [changelog](https://github.com/ChefTaco/HiveSkills/blob/v1.4.0/CHANGELOG.md), it verifies Oathweave access tokens with the suite's shared verifier while keeping accepted principals, audience, permissions, account links and error responses unchanged, adds `GET /health/ready`, and echoes `x-request-id` on every response. The standalone container example above keeps its original 1.3.1 review.

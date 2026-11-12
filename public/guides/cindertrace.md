@@ -6,16 +6,16 @@
 
 ## Choose an entry point
 
-Use Cindertrace to investigate endpoint, network, identity, and application observations. In a Hive installation it is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md), signed in through Oathweave with resource tokens, and [Hive](https://hivemagnus.com/guides/hive.md) 3.1.1 installs Cindertrace 0.2.2 with its private PostgreSQL in the `full` profile. Fresh Hive setup starts its ingestion, dispatch and notification integrations disabled until you review them. It also runs on its own with its retained console, local administrator login, PostgreSQL, and Redis. Hive and Magnus are optional. Collectors send signed observations directly to Cindertrace; sources and listeners must be explicitly configured.
+Use Cindertrace to investigate endpoint, network, identity, and application observations. In a Hive installation it is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md), signed in through Oathweave with resource tokens, and [Hive](https://hivemagnus.com/guides/hive.md) 3.3.0 installs Cindertrace 0.3.0 with its private PostgreSQL in the `full` profile. Fresh Hive setup starts its ingestion, dispatch and notification integrations disabled until you review them. It also runs on its own with its retained console, local administrator login, PostgreSQL, and Redis. Hive and Magnus are optional. Collectors send signed observations directly to Cindertrace; sources and listeners must be explicitly configured.
 
 Cindertrace owns security cases, evidence, correlation, investigations, assurance, policies, retention, audit, and approvals. Magnus owns fleet management and host execution. Existing `/security-fusion` pages and `/api/v1/security-fusion/*` API paths remain compatible.
 
 ## Install a fresh Compose stack on its own
 
-Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.3 or later on the 24.x line, or 26.13.1 or later on the 26.x line. Use a fresh checkout and installation directory. The current release is [`v0.2.2`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.2.2).
+Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.3 or later on the 24.x line, or 26.13.1 or later on the 26.x line. Use a fresh checkout and installation directory. The current release is [`v0.3.0`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.3.0).
 
 ```bash
-git clone --branch v0.2.2 https://github.com/ChefTaco/cindertrace.git
+git clone --branch v0.3.0 https://github.com/ChefTaco/cindertrace.git
 cd cindertrace
 npm ci
 npm run init
@@ -39,7 +39,7 @@ Do not publish `.env`, credentials, certificates, state, incident records, or li
 The optional lab is a disposable three-stage investigation for people and external agents, using synthetic evidence. It runs without Hive, Magnus, external sources, or a model provider. Lab startup forbids external identity and integration settings, including Oathweave, so the lab keeps its own console with local administrator login and is not reached through HiveXUI. Use a **fresh separate checkout**; never initialize it over an operational installation. The lab ships in the release above:
 
 ```bash
-git clone --branch v0.2.2 https://github.com/ChefTaco/cindertrace.git cindertrace-lab
+git clone --branch v0.3.0 https://github.com/ChefTaco/cindertrace.git cindertrace-lab
 cd cindertrace-lab
 npm ci
 npm run init -- --lab
@@ -101,3 +101,5 @@ Rollback keeps current state and requires reviewed application compatibility. Af
 Reviewed 2026-11-05 against tag `v0.2.1`, commit `36d3a00e0e9588cf87128226083fc804d64d9a49`: [README](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/README.md), [lab workflow and API](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/docs/INVESTIGATION-LAB.md), [installation](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/docs/INSTALLATION.md), [integrations](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/docs/INTEGRATIONS.md), [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/docs/UPGRADING.md), `docs/OATHWEAVE.md`, `docs/OATHWEAVE_CONSOLE.md` and the package Node engines. The tag contains the lab implementation reviewed earlier at `0368abb6779c0c715e1dc00f7f346b2253f5f040` and the HiveXUI placement reviewed at `dfca27f77ae2d34625069a641c906e2f77f28f86`; the lab, installation and upgrade docs are unchanged since then. Both the normal installation and the lab now check out the release tag. The lab adds schema profile `cindertrace-v2`, which declares `rollbackCompatible=false`: before upgrading an existing `v0.1.0` installation, prepare a verified restore and review the target schema, as the upgrade runbook says. License: Apache-2.0.
 
 Release update, 2026-11-12: [Hive 3.1.1](https://github.com/ChefTaco/hive/releases/tag/v3.1.1) pins Cindertrace 0.2.2, so the installation and lab examples now check out tag [`v0.2.2`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.2.2), commit `addf3062039e273ab9f7336ec71e60fd7c50414d`. Compared with `v0.2.1`, its [README](https://github.com/ChefTaco/cindertrace/blob/v0.2.2/README.md) and [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/v0.2.2/docs/UPGRADING.md) only add that releases from 0.2.0 publish the container image and no native archive; the installation, integration and lab docs are unchanged. In the suite, upgrading from Hive 2.x migrates its PostgreSQL store with `--allow-migrations`; see the [Hive guide](https://hivemagnus.com/guides/hive.md#upgrade).
+
+Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releases/tag/v3.3.0) pins Cindertrace 0.3.0, so the installation and lab examples now check out tag [`v0.3.0`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.3.0), commit `c20228cfd6f6978c4b0d07a3e0179d3b1ff218bd`. Compared with `v0.2.2`, its [README](https://github.com/ChefTaco/cindertrace/blob/v0.3.0/README.md) and [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/v0.3.0/docs/UPGRADING.md) raise the Node.js requirement to the patched 24.22.3 and 26.13.1 lines already listed above, and the [installation guide](https://github.com/ChefTaco/cindertrace/blob/v0.3.0/docs/INSTALLATION.md) adds the suite-standard `/health/live` and `/health/ready` checks and an `x-request-id` on every response; the installation commands and lab docs are unchanged. 0.3.0 verifies Oathweave resource tokens with the suite's shared verifier while keeping Cindertrace's rules, and now refuses identity links that name a `service:` or `system` account.

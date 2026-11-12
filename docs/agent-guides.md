@@ -233,3 +233,22 @@ graph and CSP hash agree, and the browser gate covers all twelve product section
 six walkthroughs, thirteen guides and five viewport widths.
 
 The operational documentation review uses Embermend commit `31390ff520d13ed0faf598b4151dba424e095aea`, separately from the immutable 0.1.0 runtime source. It records all 24 reference acceptance journeys, three post-upgrade production assessments with explicit partial Ubuntu coverage, exact final product/native restore identities, unchanged identity security fields and disabled production mutation policies. The signed suite review uses Hive `v3.2.2` at `e99f6be17b3f6858d9f29da4d2b40716e12d11e2`; both PostgreSQL majors passed native amd64/arm64 checks and the full release image policy.
+
+## Signed Hive 3.3.0 product update, 2026-11-12
+
+The current suite review moves from Hive 3.2.2 to the published release 3.3.0, tag `v3.3.0`, commit `f2d4db2af7e9827fc85ef4cc6c527e003d6740d5`. `HIVE_SUITE_VERSION` in `src/main.ts`, the Hive guide, the overview and the agent index now name 3.3.0. The three release assets are byte-identical to the tagged manifest, signature and publisher key; the detached Ed25519 signature verifies with the unchanged key, DER SHA-256 `c0d0665a70969f37c8f1cffbdcf8e54df13626f8dbd4b5759a7c44843d86d1b2`. The manifest keeps the 3.2.2 `controllerSHA256` (`86d48819063894b8266e07c48609d1c50fba42e85b4ee91d7f4d4dfb205b64a9`), and every Hive file the guide links exists at the tag. The tag's README, quick start and Embermend deployment note differ from 3.2.2 only in version numbers.
+
+| Project | Release | Commit | Reviewed sources |
+| --- | --- | --- | --- |
+| Hive | `v3.3.0` | `f2d4db2af7e9827fc85ef4cc6c527e003d6740d5` | `README.md`, `deployment/QUICKSTART.md`, `deployment/EMBERMEND.md` and `CHANGELOG.md` diffs from `v3.2.2`, `releases/3.3.0.inputs.json`, `releases/3.3.0.json`, release assets |
+| HiveSkills | `v1.4.0` | `45dc95ed0322f7573759b5a08f35e4feb366f5ac` | `CHANGELOG.md` |
+| ChatterMost | `v0.5.1` | `848d317aa9df6a8e94b318997d859aa8d68cacd2` | `README.md`, `AGENTS.md`, `docs/containers.md` diff from `v0.4.4`, commits since `v0.4.5`, release assets |
+| Cindertrace | `v0.3.0` | `c20228cfd6f6978c4b0d07a3e0179d3b1ff218bd` | `CHANGELOG.md`, `README.md`, `docs/INSTALLATION.md` and `docs/UPGRADING.md` diffs from `v0.2.2`, `package.json` engines |
+| Ardent Project Studio | `v0.3.0` | `490c60d8fe381c27434518c455e4f479ac3187cd` | `CHANGELOG.md`, `README.md`, `AGENTS.md` and `docs/OATHWEAVE.md` diffs from `v0.2.0` |
+| Emberpath | `v2.1.0` | `08dc5f683203c80fb0b3d11d06495024e1fce417` | `CHANGELOG.md` |
+| HiveMem | `v1.5.0` | `13281b0a0019484d2b639320207612c06ec8b26f` | `CHANGELOG.md` |
+| HiveXUI | `v0.4.0` | `96dd09e5b6b6989d73a738a0c0c26bdb2c4be50d` | `CHANGELOG.md` `[0.2.8]` to `[0.4.0]`, `README.md` diff from `v0.2.7` |
+
+`releases/3.3.0.json` pins HiveSkills 1.4.0, ChatterMost and its migrator 0.5.1, Cindertrace 0.3.0, Ardent Project Studio 0.3.0, Emberpath 2.1.0, HiveMem 1.5.0 and HiveXUI 0.4.0. Oathweave 2.2.0, Magnus server, gateway and host agent 2.5.0, Emberfold 0.2.3, Embermend 0.1.0, the Hive Registry 1.1.0, the ingress 2.0.5 and the PostgreSQL 17.11 and 18.6, Redis 8.2.10 and Qdrant 1.18.3 images are unchanged. Each GitHub tag above resolves to the listed commit and has a published, non-prerelease release.
+
+The Hive guide's product table and release summary follow the manifest and changelog. ChatterMost and Cindertrace installation examples, and the ChatterMost and Cindertrace walkthroughs, move to the pinned tags; their command blocks are otherwise unchanged at those tags. The ChatterMost 0.5.1 archive matches its `SHA256SUMS` line and GitHub asset digest and contains `chattermost-0.5.1/`. The Ardent Project Studio guide links to `v0.3.0` and drops the superseded Node.js note. HiveSkills, Emberpath, HiveMem and HiveXUI update their Hive-installed versions and add dated release notes; standalone container examples keep their original source reviews. The Embermend guide notes that 3.3.0 keeps its reviewed Magnus and Oathweave versions. The Oathweave, Magnus, Ardent and Emberfold guides are not changed in this update. No installation command was run against an operational environment, and no public product captures were replaced.
