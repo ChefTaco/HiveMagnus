@@ -7,13 +7,13 @@ import "@fontsource/space-grotesk/latin-700.css";
 import "@fontsource/ibm-plex-mono/latin-400.css";
 import "./style.css";
 
-type ProjectId = "hive" | "emberpath" | "oathweave" | "hivemem" | "hiveskills" | "hivexui" | "magnus" | "cindertrace" | "chattermost" | "emberfold" | "ardent";
+type ProjectId = "hive" | "emberpath" | "oathweave" | "hivemem" | "hiveskills" | "hivexui" | "magnus" | "cindertrace" | "chattermost" | "emberfold" | "ardent" | "embermend";
 type GalleryId = Exclude<ProjectId, "emberfold" | "ardent">;
-type DemoId = "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
+type DemoId = "embermend" | "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
 // The launcher resolves the published release at install time; source reviews stay versioned.
 const HIVE_RELEASE_URL = "https://github.com/ChefTaco/hive/releases/latest";
 // The signed suite release the product details are reviewed against. Bump this one value per release.
-const HIVE_SUITE_VERSION = "3.1.1";
+const HIVE_SUITE_VERSION = "3.2.2";
 const HIVE_SUITE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_SUITE_VERSION}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
@@ -22,7 +22,7 @@ type Demo = {
   title: string;
   intro: string;
   requires: string[];
-  steps: Step[];
+  steps: [Step, ...Step[]];
   guide: string;
   guideLabel: string;
 };
@@ -50,6 +50,7 @@ const projects: Record<
       { to: "HiveXUI", how: "static browser UI behind the HTTPS ingress Hive assembles" },
       { to: "Hive Registry", how: "what this installation offers and runs: written by hive.sh, read through /api/registry" },
       { to: "Magnus / Cindertrace / ChatterMost", how: "added by the full or custom profile" },
+      { to: "Embermend", how: "optional remediation; requires compatible Magnus" },
       { to: "Ardent Project Studio", how: "optional product; setup suggests it with the full profile" },
       { to: "External inference", how: "verified endpoints and protected references; no model or runtime provisioning" },
     ],
@@ -103,7 +104,15 @@ const projects: Record<
       { to: "Fleet gateway", how: "holds the restricted SSH key for the optional web terminal" },
       { to: "Oathweave / Emberpath / HiveMem", how: "optional sign-in, model routing and shared memory" },
       { to: "Cindertrace", how: "optional observations, fleet context, and approved host response" },
+      { to: "Embermend", how: "required execution boundary for independently authorized remediation" },
     ],
+  },
+  embermend: {
+    name: "Embermend", role: "Hardening · remediation · verification",
+    summary: "Turn security findings into reviewed, verified changes.",
+    detail: "Continuous hardening and vulnerability remediation for Magnus-managed hosts and applications. Embermend records findings, evidence, recommendations, decisions and verification; Magnus owns enrollment, bounded execution and receipts. Source fixes, published images, deployed fixes and operational health stay separate. Available as an optional product in Hive 3.2.2 with compatible Magnus. Production automation starts disabled.",
+    href: "https://github.com/ChefTaco/Embermend",
+    connections: [{ to: "Magnus", how: "required capability admission, isolated workers, execution ownership and receipts" }, { to: "HiveXUI / Oathweave", how: "recommendations and decisions using scoped product access" }, { to: "Ardent", how: "typed investigation and planning tools; no self-approval" }, { to: "External inference", how: "approved Codex or Claude local CLI, llama.cpp, or OpenAI-compatible model endpoint" }, { to: "Cindertrace / ChatterMost / HiveMem / HiveSkills", how: "optional context and notifications" }],
   },
   cindertrace: {
     name: "Cindertrace",
@@ -154,6 +163,18 @@ const projects: Record<
 };
 
 const demos: Record<DemoId, Demo> = {
+  embermend: {
+    label: "Embermend", kicker: "Security remediation", title: "Assess first. Authorize each change.",
+    intro: "Add Embermend through the signed Hive installer, connect a compatible Magnus and start with bounded inventory. Each proposed mutation needs a published explanation and a matching decision or standing policy.",
+    requires: ["Hive 3.2.2 or a later compatible signed release", "Magnus 2.5.0 with its explicitly scoped Embermend bridge", "An operator linked by issuer and subject with scoped Embermend access", "Approved inference and a rootless Magnus worker for code scanning"],
+    steps: [
+      { title: "Select the optional product", text: "Run the guided installer on a fresh installation and choose Embermend. Hive requires compatible Magnus, or a configured compatible external Magnus. For an existing installation, follow the upgrade guide and retain a verified backup and restore rehearsal.", code: "./hive.sh --release latest", note: "Embermend is off by default. Keep the exact signed release and immutable image references in the accepted configuration." },
+      { title: "Start with scoped assessment", text: "Grant inventory and assessment only to the intended targets. Install reviewed versioned profiles and use the coordinator to assess. Unknown deployment exposure, unsupported checks and incomplete coverage remain visible.", note: "Magnus advertises actual capabilities; an unavailable action is a blocker. There is no direct SSH or arbitrary-shell fallback." },
+      { title: "Review in HiveXUI", text: "Open Embermend to inspect the recommendation, exact revision, service impact and evidence. Approval, host changes, source writing, merge, artifact publication, deployment and recovery are separate permissions." },
+      { title: "Verify the outcome", text: "Follow the retained operation through source, build and runtime verification. A successful command or healthy service alone does not close a security finding. Leave production mutation policy disabled until explicitly authorized." },
+    ],
+    guide: "/guides/embermend.md", guideLabel: "Read the Embermend guide",
+  },
   hive: {
     label: "Hive",
     kicker: "Suite installer",
@@ -358,6 +379,7 @@ const icon = (name: string) => {
     emberpath: '<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/>',
     hivemem: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
     hiveskills: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
+    embermend: '<path d="m12 3 8 3v6c0 4-3.7 7.5-8 9-4.3-1.5-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/>',
     emberfold: '<path d="M12 3c.6 3.8 6 6.1 6 11.2A6 6 0 0 1 6 14.2c0-2.9 1.9-4.1 2.9-6.7 1.1.8 2 1.9 2.4 3.4.7-2.2.9-5.1.7-7.9z"/><path d="M12 21a2.8 2.8 0 0 1-2.8-2.8c0-1.6 1.7-2.4 2.8-4 1.1 1.6 2.8 2.4 2.8 4A2.8 2.8 0 0 1 12 21z"/>',
   };
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] ?? paths.hive}</svg>`;
@@ -371,15 +393,25 @@ const projectOrder: ProjectId[] = [
   "hivemem",
   "hiveskills",
   "magnus",
+  "embermend",
   "ardent",
   "cindertrace",
   "chattermost",
   "emberfold",
 ];
-const demoOrder: DemoId[] = ["hive", "magnus", "cindertrace", "chattermost", "ardent"];
+const demoOrder: [DemoId, ...DemoId[]] = ["hive", "magnus", "embermend", "cindertrace", "chattermost", "ardent"];
 // Real synthetic captures from HiveXUI, the single browser UI.
 type Capture = { label: string; file: string; alt: string };
-const gallery: Record<GalleryId, { path: string; captures: Capture[]; title: string; copy: string; points: string[]; extra?: string }> = {
+type Gallery = { path: string; captures: [Capture, ...Capture[]]; title: string; copy: string; points: string[]; extra?: string };
+const gallery = {
+  embermend: {
+    path: "EMBERMEND > RECOMMENDATIONS",
+    captures: [{ label: "Recommendations", file: "embermend-recommendations.png", alt: "HiveXUI Embermend showing a synthetic recommendation awaiting a decision, distinct source and runtime outcomes, and supporting evidence" }],
+    title: "Explain. Decide. Verify.",
+    copy: "Review a proposed change and its impact, then follow authorized work to independently verified outcomes. Evidence and historical uncertainty remain available when work pauses or needs recovery.",
+    points: ["Review the exact revision before dispatch", "Keep source, deployment and health evidence distinct", "Preserve unknown outcomes without replaying changes"],
+    extra: '<p class="interface-limit">The image is a synthetic documentation example. Production rollout begins with scoped assessment; mutation policies remain disabled until explicitly granted. Supported reference journeys and remaining coverage are documented in <a href="https://github.com/ChefTaco/Embermend/blob/main/docs/ACCEPTANCE.md">the acceptance ledger</a>.</p>',
+  },
   hive: {
     path: "HIVE > INSTALLATION",
     captures: [{ label: "Installation", file: "hive-overview", alt: "HiveXUI installation overview showing seven synthetic products passing their readiness checks" }],
@@ -455,8 +487,19 @@ const gallery: Record<GalleryId, { path: string; captures: Capture[]; title: str
     points: ["No backend, database access or signing keys", "Access tokens stay in memory", "Each call goes to the owning product's API"],
     extra: '<p class="interface-limit">HiveXUI\'s README tracks the workflows still under acceptance. Synthetic screenshots do not establish backend authorization or workflow parity.</p>',
   },
-};
-const captureSrc = (capture: Capture) => `/captures/${capture.file}.webp`;
+} satisfies Record<GalleryId, Gallery>;
+const captureSrc = (capture: Capture) => `/captures/${capture.file.endsWith(".png") ? capture.file : capture.file + ".webp"}`;
+function requiredElement<T extends Element>(selector: string, constructor: new () => T, root: ParentNode = document): T {
+  const element = root.querySelector(selector);
+  if (!(element instanceof constructor)) throw new Error(`Missing or invalid element: ${selector}`);
+  return element;
+}
+function isProjectId(value: string | undefined): value is ProjectId {
+  return value !== undefined && Object.hasOwn(projects, value);
+}
+function isDemoId(value: string | undefined): value is DemoId {
+  return value !== undefined && Object.hasOwn(demos, value);
+}
 let activeProject: ProjectId = "hive";
 let activeDemo: DemoId = "hive";
 let activeStep = 0;
@@ -481,7 +524,7 @@ const emberfoldTerminal = `<div class="screen-terminal"><div class="terminal-top
 
 function productSection(id: ProjectId) {
   const p = projects[id];
-  const area = id === "ardent" ? {
+  const area: { title: string; copy: string; points: string[]; captures: Capture[]; extra?: string } = id === "ardent" ? {
     ...gallery.magnus, title: "An agent that can keep going.",
     copy: "Durable tasks, typed tools, scheduled jobs and a journal of every run. Ardent works on its own or under Magnus management, with Emberfold context fitting built in.",
     points: ["Run tasks, tools and scheduled jobs", "Connect optional memory and chat", "Install from npm or through Magnus"],
@@ -534,7 +577,7 @@ app.innerHTML = `
         <div class="architecture-flow" aria-hidden="true">↓ <span>ONE HTTPS ENTRY POINT</span></div>
         <div class="architecture-layer console-layer"><span class="layer-label">YOUR BROWSER UI & IDENTITY</span><div class="node-pair">${atlasNode("hivexui", "One browser UI")}${atlasNode("oathweave", "Sign-in & scoped access")}</div></div>
         <div class="architecture-flow" aria-hidden="true">↓ <span>EACH PRODUCT’S OWN API</span></div>
-        <div class="architecture-layer services-layer"><span class="layer-label">SUITE SERVICES</span><div class="service-nodes">${atlasNode("magnus", "Fleet & host operations")}${atlasNode("emberpath", "Model routing")}${atlasNode("hivemem", "Durable memory")}${atlasNode("hiveskills", "Skill distribution")}${atlasNode("cindertrace", "Security investigations")}${atlasNode("chattermost", "People & agent chat")}</div></div>
+        <div class="architecture-layer services-layer"><span class="layer-label">SUITE SERVICES</span><div class="service-nodes">${atlasNode("magnus", "Fleet & host operations")}${atlasNode("emberpath", "Model routing")}${atlasNode("hivemem", "Durable memory")}${atlasNode("hiveskills", "Skill distribution")}${atlasNode("embermend", "Remediation & verification")}${atlasNode("cindertrace", "Security investigations")}${atlasNode("chattermost", "People & agent chat")}</div></div>
         <div class="architecture-flow"><span>MAGNUS CAN MANAGE ARDENT ON FLEET HOSTS</span> ↓</div>
         <div class="architecture-layer runtime-layer"><span class="layer-label">AGENT RUNTIME · CONFIGURED SEPARATELY</span><div class="runtime-nodes">${atlasNode("ardent", "Durable tasks & tools")}<span class="library-arrow" aria-label="bundles">→<small>bundles library</small></span>${atlasNode("emberfold", "Context fitting")}</div><p>The full profile also installs the optional Emberfold HTTP service. Ardent Project Studio, an optional suite product, brings teams of Ardent agents into HiveXUI.</p></div>
         <div class="external-inference"><span>${icon("emberpath")} EXTERNAL INFERENCE</span><p>Emberpath routes to your hosted APIs, Ollama or llama.cpp. Ardent can also use a provider directly. Models, storage and runtimes stay outside Hive.</p></div>
@@ -557,7 +600,7 @@ app.innerHTML = `
 
 function renderAtlas() {
   const p = projects[activeProject];
-  document.querySelector<HTMLDivElement>("#atlas-detail")!.innerHTML = `<span class="detail-meta">EXPLORE THE SYSTEM</span><div class="detail-body">${icon(activeProject)}<h3>${p.name}</h3><p>${p.detail}</p><h4>How it connects</h4><ul class="detail-links">${p.connections.map(c => `<li><strong>${c.to}</strong><span>${c.how}</span></li>`).join("")}</ul><a href="#interface-${activeProject}">Explore ${p.name} ${icon("arrow")}</a></div>`;
+  requiredElement("#atlas-detail", HTMLDivElement).innerHTML = `<span class="detail-meta">EXPLORE THE SYSTEM</span><div class="detail-body">${icon(activeProject)}<h3>${p.name}</h3><p>${p.detail}</p><h4>How it connects</h4><ul class="detail-links">${p.connections.map(c => `<li><strong>${c.to}</strong><span>${c.how}</span></li>`).join("")}</ul><a href="#interface-${activeProject}">Explore ${p.name} ${icon("arrow")}</a></div>`;
   document.querySelectorAll<HTMLButtonElement>(".atlas-node").forEach(button => {
     const active = button.dataset.project === activeProject;
     button.classList.toggle("is-active", active);
@@ -567,15 +610,16 @@ function renderAtlas() {
 
 projectOrder.forEach(id => {
   if (id === "emberfold" || id === "ardent") return;
-  const panel = document.querySelector<HTMLElement>(`#interface-${id}`)!;
+  const panel = requiredElement(`#interface-${id}`, HTMLElement);
   panel.querySelectorAll<HTMLButtonElement>("[data-capture]").forEach(button => {
     button.addEventListener("click", () => {
       const capture = gallery[id].captures[Number(button.dataset.capture)];
-      const img = panel.querySelector<HTMLImageElement>("img")!;
+      if (!capture) return;
+      const img = requiredElement("img", HTMLImageElement, panel);
       img.src = captureSrc(capture);
       img.alt = capture.alt;
       panel.querySelectorAll<HTMLAnchorElement>(".capture-link, .capture-full-link").forEach(link => { link.href = captureSrc(capture); });
-      panel.querySelector(".capture-name")!.textContent = capture.label;
+      requiredElement(".capture-name", HTMLElement, panel).textContent = capture.label;
       panel.querySelectorAll<HTMLButtonElement>("[data-capture]").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
     });
   });
@@ -584,18 +628,18 @@ projectOrder.forEach(id => {
 async function copyText(button: HTMLButtonElement, value: string, feedback: { copiedHtml?: string; announcement?: string; failureText?: string; resetHtml?: string } = {}) {
   try {
     await navigator.clipboard.writeText(value);
-    document.querySelector("#announce")!.textContent = feedback.announcement ?? "Command copied";
+    requiredElement("#announce", HTMLElement).textContent = feedback.announcement ?? "Command copied";
     const original = feedback.resetHtml ?? button.innerHTML;
     button.innerHTML = feedback.copiedHtml ?? `${icon("check")}<span>Copied</span>`;
     window.setTimeout(() => { button.innerHTML = original; }, 2400);
   } catch {
     if (feedback.failureText) button.textContent = feedback.failureText;
-    document.querySelector("#announce")!.textContent = "Copy failed. Select the command text to copy it.";
+    requiredElement("#announce", HTMLElement).textContent = "Copy failed. Select the command text to copy it.";
   }
 }
-document.querySelector<HTMLButtonElement>("[data-copy-install]")!.addEventListener("click", event => { void copyText(event.currentTarget as HTMLButtonElement, installCommand); });
+requiredElement("[data-copy-install]", HTMLButtonElement).addEventListener("click", event => { if (event.currentTarget instanceof HTMLButtonElement) void copyText(event.currentTarget, installCommand); });
 document.querySelectorAll<HTMLButtonElement>("[data-copy-text]").forEach(button => button.addEventListener("click", () => { void copyText(button, button.dataset.copyText!); }));
-const tailscaleDialog = document.querySelector<HTMLDialogElement>("#tailscale-dialog")!;
+const tailscaleDialog = requiredElement("#tailscale-dialog", HTMLDialogElement);
 let modalTrigger: HTMLElement | null = null;
 document.querySelectorAll<HTMLButtonElement>("[data-open-tailscale]").forEach(button => button.addEventListener("click", () => {
   modalTrigger = button;
@@ -611,6 +655,7 @@ tailscaleDialog.addEventListener("keydown", event => {
   if (event.key !== "Tab") return;
   const focusable = Array.from(tailscaleDialog.querySelectorAll<HTMLElement>('a[href], button, [tabindex="0"]')).filter(el => !el.hasAttribute("disabled"));
   const first = focusable[0], last = focusable[focusable.length - 1];
+  if (!first || !last) return;
   if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
   else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 });
@@ -621,14 +666,14 @@ tailscaleDialog.addEventListener("close", () => {
 tailscaleDialog.querySelectorAll<HTMLAnchorElement>('a[href^="/"]').forEach(link => link.addEventListener("click", () => tailscaleDialog.close()));
 // Preserve legacy interface and security deep links; every product is now visible in the page.
 function followProductHash() {
-  if (location.hash === "#security") document.querySelector("#interface-cindertrace")!.scrollIntoView();
+  if (location.hash === "#security") document.querySelector("#interface-cindertrace")?.scrollIntoView();
 }
 window.addEventListener("hashchange", followProductHash);
 
 function renderDemo() {
   const d = demos[activeDemo];
-  const s = d.steps[activeStep];
-  const panel = document.querySelector<HTMLDivElement>("#demo-panel")!;
+  const s = d.steps[activeStep] ?? d.steps[0];
+  const panel = requiredElement("#demo-panel", HTMLDivElement);
   panel.setAttribute("aria-labelledby", `tab-${activeDemo}`);
   panel.innerHTML = `<div class="demo-heading"><span class="mini-label">${d.kicker.toUpperCase()} / WALKTHROUGH</span><h3>${d.title}</h3><p>${d.intro}</p></div>
     <div class="requirements"><span>BEFORE YOU BEGIN</span><ul>${d.requires.map((item) => `<li>${item}</li>`).join("")}</ul></div>
@@ -640,8 +685,8 @@ function renderDemo() {
   panel
     .querySelector<HTMLButtonElement>(".copy-command")
     ?.addEventListener("click", (event) => {
-      if (!s.code) return;
-      void copyText(event.currentTarget as HTMLButtonElement, s.code, {
+      if (!s.code || !(event.currentTarget instanceof HTMLButtonElement)) return;
+      void copyText(event.currentTarget, s.code, {
         copiedHtml: `${icon("check")} Copied`,
         announcement: `${s.title} ${s.kind === "address" ? "address" : "command"} copied`,
         failureText: "Select text to copy",
@@ -668,7 +713,9 @@ function renderDemo() {
 
 document.querySelectorAll<HTMLButtonElement>(".atlas-node").forEach((button) =>
   button.addEventListener("click", () => {
-    activeProject = button.dataset.project as ProjectId;
+    const project = button.dataset.project;
+    if (!isProjectId(project)) return;
+    activeProject = project;
     renderAtlas();
   }),
 );
@@ -676,7 +723,9 @@ document
   .querySelectorAll<HTMLButtonElement>('.demo-tabs [role="tab"]')
   .forEach((button) => {
     button.addEventListener("click", () => {
-      activeDemo = button.dataset.demo as DemoId;
+      const demo = button.dataset.demo;
+      if (!isDemoId(demo)) return;
+      activeDemo = demo;
       activeStep = 0;
       renderDemo();
     });
@@ -693,7 +742,9 @@ document
       )
         return;
       event.preventDefault();
-      const current = demoOrder.indexOf(button.dataset.demo as DemoId);
+      const demo = button.dataset.demo;
+      if (!isDemoId(demo)) return;
+      const current = demoOrder.indexOf(demo);
       const next =
         event.key === "Home"
           ? 0
@@ -703,7 +754,7 @@ document
                 (["ArrowDown", "ArrowRight"].includes(event.key) ? 1 : -1) +
                 demoOrder.length) %
               demoOrder.length;
-      activeDemo = demoOrder[next];
+      activeDemo = demoOrder[next] ?? demoOrder[0];
       activeStep = 0;
       renderDemo();
       document.querySelector<HTMLButtonElement>(`#tab-${activeDemo}`)?.focus();

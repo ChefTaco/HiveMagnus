@@ -63,3 +63,26 @@ Ardent's section reuses `fleet-mission.webp`, explicitly labeled as Magnus missi
 No new operational captures, user data or generated product screens were introduced. The previous tabbed gallery layout is recorded in Git history.
 
 The social preview (`og.svg` and `og.png`) names all ten projects and shows `captures/fleet-overview.webp`, cropped, in a console-styled frame. The rest is original SVG artwork; the PNG is rendered in Chromium at 1200 × 630 and contains only public project names, website copy and that synthetic capture.
+
+## Embermend recommendations, 2026-11-12
+
+`public/captures/embermend-recommendations.png` shows the actual published HiveXUI
+0.3.0 build, source revision `baffab13e0e34f6998f5cafc9a0b20088e25a0ef`, in a
+disposable signed Hive suite. `scripts/capture-embermend.js` supplies synthetic
+recommendation, finding and scoped-access responses in the browser only; all
+mutation requests in that capture are refused. These mocked responses illustrate
+the interface and are not API authorization, acceptance or production-fleet proof.
+The initialized disposable operator signs in normally. No production identity,
+repository, evidence, host or provider data is used.
+
+The Playwright CLI callback captures Chromium at 1440 × 900 CSS pixels with
+`deviceScaleFactor: 2`. The unedited PNG is 2880 × 1800. Open the signed disposable
+fixture using that browser context, sign in with its generated fixture credential,
+then run the callback from a directory containing `output/captures/`. Review the
+image before copying it to `public/captures/`. The page shows an awaiting decision,
+no dispatched work, unknown runtime exposure and outstanding verification; it does
+not present an approved or completed production remediation.
+
+The 2026-11-12 social preview adds Embermend and Ardent to the twelve project
+names. Its SVG retains the existing synthetic fleet capture; Chromium renders
+the PNG at 1200 × 630. No production data or new operational image is introduced.

@@ -37,6 +37,7 @@ section[id], article[id], #interfaces { scroll-margin-top: 32px; }
 .project-ardent { --accent: #a44e3a; }
 .project-cindertrace { --accent: #a04b44; }
 .project-chattermost { --accent: #3f6d91; }
+.project-embermend { --accent: #a64c20; }
 .project-emberfold { --accent: #7358a6; }
 .eyebrow, .section-kicker, .mini-label, .hero-console-label, .window-bar, .capture-caption,
 .layer-label, .architecture-flow, .detail-meta, .external-inference > span, .terminal-top, .terminal-foot,

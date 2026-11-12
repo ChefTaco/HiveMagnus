@@ -11,7 +11,7 @@ async function checkBrowser(page) {
   await page.addInitScript({ path: "node_modules/axe-core/axe.min.js" });
   await page.goto(new URL("/", page.url()).href);
   await page.locator(".atlas-node").first().waitFor();
-  const names = ["Hive", "HiveXUI", "Oathweave", "Emberpath", "HiveMem", "HiveSkills", "Magnus", "Ardent", "Cindertrace", "ChatterMost", "Emberfold"];
+  const names = ["Hive", "HiveXUI", "Oathweave", "Emberpath", "HiveMem", "HiveSkills", "Magnus", "Embermend", "Ardent", "Cindertrace", "ChatterMost", "Emberfold"];
   const walkthroughs = page.locator(".demo-tabs");
   const sectionOrder = await page.locator("main > section").evaluateAll(sections => sections.map(section => section.id));
   assert(JSON.stringify(sectionOrder) === JSON.stringify(["top", "install", "atlas", "projects", "walkthroughs", "agents"]), "Overview, install, architecture, products, then guides");
@@ -100,7 +100,7 @@ async function checkBrowser(page) {
   await page.locator("#interface-hivemem").waitFor();
   assert(await page.locator("#interface-hivemem").evaluate(el => { const r = el.getBoundingClientRect(); return r.top >= -5 && r.top < innerHeight; }), "Direct product URL scrolls to its section");
   let steps = 0;
-  for (const name of ["Hive", "Magnus", "Cindertrace", "ChatterMost", "Ardent + Emberfold"]) {
+  for (const name of ["Hive", "Magnus", "Embermend", "Cindertrace", "ChatterMost", "Ardent + Emberfold"]) {
     await walkthroughs.getByRole("tab", { name, exact: true }).click();
     const firstCommand = await page.locator("#demo-panel pre code").textContent();
     await page.getByRole("button", { name: /^Copy command for/ }).click();
@@ -125,7 +125,7 @@ async function checkBrowser(page) {
   assert(await walkthroughs.getByRole("tab", { selected: true }).textContent().then(t => t.includes("Magnus")), "Walkthrough arrow key");
   const brokenAnchors = await page.locator('a[href^="#"]').evaluateAll(links => links.filter(link => !document.getElementById(link.hash.slice(1))).map(link => link.hash));
   assert(!brokenAnchors.length, `Missing anchors: ${brokenAnchors}`);
-  assert(await page.locator(".agent-guides a").count() === 12, "Twelve Markdown guides, including Ardent and Ardent Project Studio");
+  assert(await page.locator(".agent-guides a").count() === 13, "Thirteen Markdown guides, including Embermend and Ardent Project Studio");
   for (const link of await page.locator(".agent-guides a").all()) {
     const response = await page.request.get(new URL(await link.getAttribute("href"), page.url()).href);
     assert(response.ok() && (await response.text()).includes("## Source review"), "Guide response and provenance");
@@ -135,7 +135,7 @@ async function checkBrowser(page) {
     assert(response.ok() && (await response.text()).startsWith("# Hive:Magnus"), `${path} documentation`);
   }
   const metadata = JSON.parse(await page.locator("#project-metadata").textContent());
-  assert(metadata["@graph"].filter(item => item["@type"] === "SoftwareSourceCode").length === 12, "Twelve source metadata entries");
+  assert(metadata["@graph"].filter(item => item["@type"] === "SoftwareSourceCode").length === 13, "Thirteen source metadata entries");
   assert(await page.locator('link[rel="describedby"][href="/llms.txt"]').count(), "Agent discovery metadata");
   assert(await page.locator('.ecosystem-links a').evaluateAll(links => links.map(link => link.href)).then(hasEcosystemLinks), "GitHub and npm footer links");
   const deceptiveFooterLinks = await page.locator('.ecosystem-links a').evaluateAll(links => links.map(link => { const url = new URL(link.href); return `https://example.com/?redirect=${encodeURIComponent(url.href)}`; }));
@@ -170,5 +170,5 @@ async function checkBrowser(page) {
   await walkthroughs.getByRole("tab", { name: "Hive", exact: true }).click();
   await page.locator('.atlas-node[data-project="hive"]').click();
   await page.goto(new URL("/", page.url()).href);
-  return { productSections: names.length, atlasSelections: names.length, walkthroughs: 5, steps, clipboardChecks: 8, tailscaleModal: true, accessibilityAudits, accessibilityViolations: 0, agentGuides: 12, sourceCodeEntries: 12, viewportWidths: [1440, 1024, 768, 390, 320], pageErrors: errors.length, consoleErrors: consoleErrors.length };
+  return { productSections: names.length, atlasSelections: names.length, walkthroughs: 6, steps, clipboardChecks: 9, tailscaleModal: true, accessibilityAudits, accessibilityViolations: 0, agentGuides: 13, sourceCodeEntries: 13, viewportWidths: [1440, 1024, 768, 390, 320], pageErrors: errors.length, consoleErrors: consoleErrors.length };
 }

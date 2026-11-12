@@ -1,15 +1,15 @@
 # Hive:Magnus
 
-> Full-stack agent management on your own infrastructure: Hive for suite installation and recovery; HiveXUI for the single browser UI; Oathweave for identity; Emberpath for model routing; HiveMem for memory; HiveSkills for skills distribution; Magnus for Linux fleet operations; Ardent for durable agent tasks; Ardent Project Studio for team projects of Ardent agents; Cindertrace for security investigations, cases, and evidence; ChatterMost for conversation; Emberfold for context continuity.
+> Full-stack agent management on your own infrastructure: Hive for suite installation and recovery; HiveXUI for the single browser UI; Oathweave for identity; Emberpath for model routing; HiveMem for memory; HiveSkills for skills distribution; Magnus for Linux fleet operations; Embermend for reviewed remediation and verification; Ardent for durable agent tasks; Ardent Project Studio for team projects of Ardent agents; Cindertrace for security investigations, cases, and evidence; ChatterMost for conversation; Emberfold for context continuity.
 
-These projects can be used independently. Integrations are optional and require configuration. In a Hive installation, HiveXUI is the browser UI for every installed product, with sections only for those products. Ardent has its own repository, can be managed by Magnus, and bundles the Emberfold library; a separate Emberfold HTTP service is not required. Ardent Project Studio is an optional suite product that needs Magnus with an Ardent agent, HiveMem and Oathweave. Inference services and model storage remain external to Hive. This website publishes documentation and sample UI captures, not a hosted agent service or installation endpoint. The products use Apache-2.0. Hive installs only from a signed release. Its launcher accepts `--release latest` or an exact version and runs the matching tagged controller. The latest published suite release is at https://github.com/ChefTaco/hive/releases/latest; the guides review Hive 3.1.1 and the product versions it pins.
+The products keep their own repositories and stores. Embermend requires compatible Magnus; other integrations are optional and require configuration. In a Hive installation, HiveXUI is the browser UI for every installed product, with sections only for those products. Ardent has its own repository, can be managed by Magnus, and bundles the Emberfold library; a separate Emberfold HTTP service is not required. Ardent Project Studio is an optional suite product that needs Magnus with an Ardent agent, HiveMem and Oathweave. Inference services and model storage remain external to Hive. This website publishes documentation and sample UI captures, not a hosted agent service or installation endpoint. The products use Apache-2.0. Hive installs only from a signed release. Its launcher accepts `--release latest` or an exact version and runs the matching tagged controller. The latest published suite release is at https://github.com/ChefTaco/hive/releases/latest; the suite installation guide reviews Hive 3.2.2. Individual product guides identify their own reviewed versions.
 
 Guides include prerequisites, documented commands, expected results, and the public source revision reviewed. Follow the linked current repository documentation for upgrades and configuration changes. Before editing a repository, read its AGENTS.md.
 
 ## Start here
 
 - [Site overview](https://hivemagnus.com/index.md): Project selection, optional connections, and documentation links in Markdown.
-- [Hive guide](https://hivemagnus.com/guides/hive.md): Install the latest published suite or Hive 3.1.1 with hive.sh and guided local setup, initial sign-in, upgrades from 2.x with `--allow-migrations`, Magnus host agents and Cindertrace collectors, the mandatory Hive Registry, external inference, and existing installations.
+- [Hive guide](https://hivemagnus.com/guides/hive.md): Install the latest published suite or Hive 3.2.2 with hive.sh and guided local setup, initial sign-in, upgrades from 2.x with `--allow-migrations`, Magnus host agents and Cindertrace collectors, the mandatory Hive Registry, external inference, and existing installations.
 - [HiveXUI guide](https://hivemagnus.com/guides/hivexui.md): The single browser UI, what each section covers, and building it.
 - [Magnus guide](https://hivemagnus.com/guides/magnus.md): Run the fleet manager through Hive or on its own, host agents and full-node enrollment, and the optional web terminal gateway.
 - [Ardent guide](https://hivemagnus.com/guides/ardent.md): Install the headless agent runtime from npm with bundled Emberfold, connect a model, run the gateway, or let Magnus install and manage it on fleet hosts.
@@ -22,9 +22,7 @@ Guides include prerequisites, documented commands, expected results, and the pub
 - [HiveMem guide](https://hivemagnus.com/guides/hivemem.md): Memory storage, retrieval, sessions, graph evidence, consolidation and workspaces.
 - [HiveSkills guide](https://hivemagnus.com/guides/hiveskills.md): Skills registry, immutable archives, channels, assignments and distribution. Not the Hive Registry.
 
-## In development
-
-- Embermend: continuous hardening and vulnerability remediation for Magnus-managed infrastructure. It is a development preview with no release and is not part of the suite; there are no installation instructions.
+- [Embermend guide](https://hivemagnus.com/guides/embermend.md): Optional Magnus-dependent remediation in the signed suite, scoped assessment, recommendation decisions, independent verification and approved local or network inference. Production mutation policies start disabled.
 
 ## Repository instructions
 
@@ -40,3 +38,5 @@ Guides include prerequisites, documented commands, expected results, and the pub
 - [Cindertrace AGENTS.md](https://raw.githubusercontent.com/ChefTaco/cindertrace/main/AGENTS.md): Privacy gates, security boundaries, setup, and verification.
 - [ChatterMost AGENTS.md](https://raw.githubusercontent.com/ChefTaco/ChatterMost/main/AGENTS.md): Installation runbook and repository checks.
 - [Emberfold AGENTS.md](https://raw.githubusercontent.com/ChefTaco/emberfold/main/AGENTS.md): Repository setup, contracts, and verification.
+
+- [Embermend AGENTS.md](https://raw.githubusercontent.com/ChefTaco/Embermend/main/AGENTS.md): Strict TypeScript, managed execution boundaries and repository privacy gates.
