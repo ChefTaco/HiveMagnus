@@ -11,7 +11,7 @@
 - Optional authenticated HTTP wrapper: `@hivemagnus/emberfold-server`.
 - Hermes context-engine plugin: runs locally and reuses Hermes's configured compression model.
 
-Ardent already imports the pinned library. Installing an additional service is unnecessary for that integration; see the [Magnus and Ardent guide](https://hivemagnus.com/guides/magnus.md#ardent-with-bundled-emberfold).
+Ardent already imports the pinned library. Installing an additional service is unnecessary for that integration; see the [Ardent guide](https://hivemagnus.com/guides/ardent.md). In a [Hive](https://hivemagnus.com/guides/hive.md) installation, the `full` profile also runs the optional Emberfold HTTP service; Hive 3.1.1 pins it at 0.2.2.
 
 ## Prerequisites
 
@@ -33,7 +33,7 @@ cat > conversation.json <<'EOF'
   "budget": { "context_tokens": 16000, "output_reserve_tokens": 4000 }
 }
 EOF
-npx --package @hivemagnus/emberfold-cli@0.2.1 emberfold prepare --input conversation.json --dry-run
+npx --package @hivemagnus/emberfold-cli@0.2.2 emberfold prepare --input conversation.json --dry-run
 ```
 
 Expected result: JSON on stdout with `fits: true`, `compacted: false`, and zero protected spans verified for this input. Dry runs make no model calls and do not write output files. Diagnostics go to stderr. Exit codes are 0 success, 2 invalid input, 3 budget exhaustion, and 4 provider/tokenizer unavailable.
@@ -45,7 +45,7 @@ For real compression, supply a summarizer/provider configuration explicitly. The
 In an existing TypeScript project:
 
 ```bash
-npm install @hivemagnus/emberfold@0.2.1
+npm install @hivemagnus/emberfold@0.2.2
 ```
 
 The repository's minimal API example:
@@ -88,3 +88,5 @@ Setup has separate dependency and configuration/model-check consent steps. Insta
 ## Source review
 
 Reviewed 2026-11-05 against tag `v0.2.1`, commit `f97b7eec1083cbbab79361f6360b8b8412f50bc9`: [README](https://github.com/ChefTaco/emberfold/blob/f97b7eec1083cbbab79361f6360b8b8412f50bc9/README.md), [CLI package manifest](https://github.com/ChefTaco/emberfold/blob/f97b7eec1083cbbab79361f6360b8b8412f50bc9/packages/cli/package.json), and [Node requirements](https://github.com/ChefTaco/emberfold/blob/f97b7eec1083cbbab79361f6360b8b8412f50bc9/package.json). Core, CLI and server `0.2.1` are on npm as `latest`, and core and CLI are pinned intentionally. The CLI invocation uses the published package's `emberfold` executable with the documented `prepare --input ... --dry-run` arguments; run with `0.2.1`, the synthetic example above exits 0 with the expected result and output identical to `0.1.0`. Follow current docs for later versions. License: Apache-2.0.
+
+Release update, 2026-11-12: [Hive 3.1.1](https://github.com/ChefTaco/hive/releases/tag/v3.1.1) pins Emberfold 0.2.2, so the examples now use core and CLI `0.2.2` from tag [`v0.2.2`](https://github.com/ChefTaco/emberfold/releases/tag/v0.2.2), commit `ab7541028acbf381e1cb67d8f6bcc01b239014ca`. Its [README](https://github.com/ChefTaco/emberfold/blob/v0.2.2/README.md) changes only the compatibility check, which now targets the Ardent repository. Run with the published `0.2.2` CLI, the synthetic example above exits 0 with output identical to `0.2.1`.

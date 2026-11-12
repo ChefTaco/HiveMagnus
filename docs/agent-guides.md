@@ -1,6 +1,6 @@
 # Agent documentation maintenance
 
-`public/llms.txt` indexes the Markdown overview and ten project guides. The visual site links them in its For agents section and no-JavaScript fallback. The HTML head advertises `llms.txt` with `rel="describedby"` and the overview with `rel="alternate" type="text/markdown"`. Markdown responses also advertise the index through an HTTP Link header.
+`public/llms.txt` indexes the Markdown overview and twelve project guides. The visual site links them in its For agents section and no-JavaScript fallback. The HTML head advertises `llms.txt` with `rel="describedby"` and the overview with `rel="alternate" type="text/markdown"`. Markdown responses also advertise the index through an HTTP Link header.
 
 ## Public source review, 2026-11-03
 
@@ -169,3 +169,29 @@ The other product guides update their explicitly labeled Hive-installed versions
 The refreshed lifecycle guidance also covers the launcher’s offline fast path: when this checkout already matches the selected signed controller, it stays in use; a retained cache path is printed when a controller is downloaded. The site no longer assumes that every invocation downloads a checkout.
 
 Publication verification: the three downloaded Hive 2.0.6 release assets are byte-identical to the tagged manifest, signature and publisher key, and the detached signature verifies. Local site validation passed the build, all five viewport widths, ten accessibility audits, clipboard actions and walkthroughs, with zero page or console errors. Desktop and mobile captures were inspected.
+
+## Hive 3.1.1, Ardent and Ardent Project Studio, 2026-11-12
+
+The current product review moves from Hive 2.0.6 to the published suite release 3.1.1, tag `v3.1.1`, commit `d1ff02dd4fbe16e9552f891584e8221aa52d0d93`. The 3.1.2 manifest merged on Hive `main` is not tagged or published and is not presented. The launcher command stays `./hive.sh --release latest`; exact-version examples, the walkthrough and the homepage now use one `HIVE_SUITE_VERSION` constant in `src/main.ts`. Hive guide links now point at the `v3.1.1` tag instead of a commit SHA, and every linked file and anchor was checked to exist in that tree.
+
+| Project | Release | Commit | Reviewed sources |
+| --- | --- | --- | --- |
+| Hive | `v3.1.1` | `d1ff02dd4fbe16e9552f891584e8221aa52d0d93` | `README.md`, `deployment/README.md`, `deployment/QUICKSTART.md`, `deployment/FULL.md`, `UPGRADING.md`, `docs/ADVISORY_REMEDIATION.md`, `CHANGELOG.md` `[3.0.0]` to `[3.1.1]`, `releases/3.1.1.json`, `hive.sh --help`, release notes |
+| Magnus | `v2.4.2` | `c14cdacaad1d2f01922be84755f1f85ed5d373c5` | `README.md`, `docs/ARDENT.md`, `packages/agent/npm-shrinkwrap.json` |
+| HiveXUI | `v0.2.7` | `de613008a438a90d660e5a7161b3fe805095572b` | `README.md` |
+| Ardent | `v3.1.2` | `58c4b35034ea20a3400f04e9f131012cba4df471` | `README.md`, `CHANGELOG.md`, `package.json` |
+| Ardent Project Studio | `v0.2.0` | `7f1279f2726ad9665c1de24eb5168d98548bb8a1` | `README.md`, `CHANGELOG.md`; `v0.2.1` README diff |
+| Cindertrace | `v0.2.2` | `addf3062039e273ab9f7336ec71e60fd7c50414d` | `README.md`, `docs/UPGRADING.md` diff from `v0.2.1` |
+| ChatterMost | `v0.4.4` | `c777c786667e75ad7cf544b21d8c44bf2c3a3807` | `README.md`, `AGENTS.md`, `docs/containers.md` diff from `v0.4.1`, release assets |
+| Emberfold | `v0.2.2` | `ab7541028acbf381e1cb67d8f6bcc01b239014ca` | `README.md`, package manifests diff from `v0.2.1`, npm metadata |
+
+`releases/3.1.1.json` pins Oathweave 2.1.1, Emberpath 2.0.4, HiveMem 1.4.1, HiveSkills 1.3.3, HiveXUI 0.2.7, Magnus server, gateway and host agent 2.4.2, Cindertrace 0.2.2, ChatterMost 0.4.4, Emberfold 0.2.2, Ardent Project Studio 0.2.0, Hive Registry 1.1.0 and the ingress 2.0.5. The Magnus host agent's dependency lock pins Ardent 3.1.1. The Hive guide now covers guided local setup (from 2.4.0), full-node enrollment, the 2.x to 3.x PostgreSQL migration with `--allow-migrations` and the refusal of code-only rollback across it, and the Ardent package update after an upgrade.
+
+Ardent has its own guide, `public/guides/ardent.md`, reviewed at its latest tag `v3.1.2` (npm `latest`); the suite manages Ardent 3.1.1 through Magnus. The Magnus guide keeps its `#ardent-with-bundled-emberfold` anchor as a pointer. Ardent Project Studio, an optional suite product shown as HiveXUI's Studio section at `/studio`, has a new guide reviewed at `v0.2.0`, the version the suite pins. It is listed in the agent index, the overview, the For agents list, the no-JavaScript fallback and the metadata graph, which now has twelve `SoftwareSourceCode` entries; the CSP hash in `public/_headers` was updated. It has no product section or capture.
+
+ChatterMost, Cindertrace and Emberfold examples move to the versions the suite pins; their command blocks are otherwise unchanged at those tags. The ChatterMost 0.4.4 archive matches its `SHA256SUMS` line and GitHub asset digest. The Emberfold 0.2.2 CLI dry run exits 0 with output identical to the site excerpt. Oathweave, Emberpath, HiveMem and HiveSkills guides update their Hive-installed versions; their dated standalone container examples keep their original source reviews.
+
+Embermend's README describes a development preview with no tags, and it is not in the suite catalog. The agent index and overview mention it only as in development, with no guide or installation instructions.
+
+Site copy no longer calls HiveXUI a console. Script and file names such as `console-certificate.sh` keep their real names, and Cindertrace's and Magnus's own standalone UIs keep their documented names. No installation command was run against an operational environment. No public product captures were replaced.
+

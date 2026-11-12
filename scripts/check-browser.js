@@ -125,7 +125,7 @@ async function checkBrowser(page) {
   assert(await walkthroughs.getByRole("tab", { selected: true }).textContent().then(t => t.includes("Magnus")), "Walkthrough arrow key");
   const brokenAnchors = await page.locator('a[href^="#"]').evaluateAll(links => links.filter(link => !document.getElementById(link.hash.slice(1))).map(link => link.hash));
   assert(!brokenAnchors.length, `Missing anchors: ${brokenAnchors}`);
-  assert(await page.locator(".agent-guides a").count() === 10, "Ten Markdown guides, including shared Ardent guide");
+  assert(await page.locator(".agent-guides a").count() === 12, "Twelve Markdown guides, including Ardent and Ardent Project Studio");
   for (const link of await page.locator(".agent-guides a").all()) {
     const response = await page.request.get(new URL(await link.getAttribute("href"), page.url()).href);
     assert(response.ok() && (await response.text()).includes("## Source review"), "Guide response and provenance");
@@ -135,7 +135,7 @@ async function checkBrowser(page) {
     assert(response.ok() && (await response.text()).startsWith("# Hive:Magnus"), `${path} documentation`);
   }
   const metadata = JSON.parse(await page.locator("#project-metadata").textContent());
-  assert(metadata["@graph"].filter(item => item["@type"] === "SoftwareSourceCode").length === 11, "Eleven source metadata entries");
+  assert(metadata["@graph"].filter(item => item["@type"] === "SoftwareSourceCode").length === 12, "Twelve source metadata entries");
   assert(await page.locator('link[rel="describedby"][href="/llms.txt"]').count(), "Agent discovery metadata");
   assert(await page.locator('.ecosystem-links a').evaluateAll(links => links.map(link => link.href)).then(hasEcosystemLinks), "GitHub and npm footer links");
   const deceptiveFooterLinks = await page.locator('.ecosystem-links a').evaluateAll(links => links.map(link => { const url = new URL(link.href); return `https://example.com/?redirect=${encodeURIComponent(url.href)}`; }));
@@ -170,5 +170,5 @@ async function checkBrowser(page) {
   await walkthroughs.getByRole("tab", { name: "Hive", exact: true }).click();
   await page.locator('.atlas-node[data-project="hive"]').click();
   await page.goto(new URL("/", page.url()).href);
-  return { productSections: names.length, atlasSelections: names.length, walkthroughs: 5, steps, clipboardChecks: 8, tailscaleModal: true, accessibilityAudits, accessibilityViolations: 0, agentGuides: 10, sourceCodeEntries: 11, viewportWidths: [1440, 1024, 768, 390, 320], pageErrors: errors.length, consoleErrors: consoleErrors.length };
+  return { productSections: names.length, atlasSelections: names.length, walkthroughs: 5, steps, clipboardChecks: 8, tailscaleModal: true, accessibilityAudits, accessibilityViolations: 0, agentGuides: 12, sourceCodeEntries: 12, viewportWidths: [1440, 1024, 768, 390, 320], pageErrors: errors.length, consoleErrors: consoleErrors.length };
 }
