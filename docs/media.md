@@ -4,6 +4,8 @@ All HiveXUI captures show the real HiveXUI build. Data is synthetic and the inst
 
 ## HiveXUI gallery, 2026-11-05
 
+The legacy `/captures/hive-console.webp` URL permanently redirects (301) to `/captures/fleet-overview.webp` through `public/_redirects` so existing image links keep working.
+
 | Asset (`public/captures/`) | HiveXUI screen | Gallery area |
 | --- | --- | --- |
 | `hive-overview.webp` | Hive > Installation | Hive |
