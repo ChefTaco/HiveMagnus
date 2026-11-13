@@ -166,7 +166,7 @@ const demos: Record<DemoId, Demo> = {
   embermend: {
     label: "Embermend", kicker: "Security remediation", title: "Assess first. Authorize each change.",
     intro: "Add Embermend through the signed Hive installer, connect a compatible Magnus and start with bounded inventory. Each proposed mutation needs a published explanation and a matching decision or standing policy.",
-    requires: ["Hive 3.2.2 or a later compatible signed release", "Magnus 2.5.0 with its explicitly scoped Embermend bridge", "An operator linked by issuer and subject with scoped Embermend access", "Approved inference and a rootless Magnus worker for code scanning"],
+    requires: ["Hive 3.2.2 or a later compatible signed release", "Magnus 2.5.0 or newer with its explicitly scoped Embermend bridge", "An operator linked by issuer and subject with scoped Embermend access", "Approved inference and a rootless Magnus worker for code scanning"],
     steps: [
       { title: "Select the optional product", text: "Run the guided installer on a fresh installation and choose Embermend. Hive requires compatible Magnus, or a configured compatible external Magnus. For an existing installation, follow the upgrade guide and retain a verified backup and restore rehearsal.", code: "./hive.sh --release latest", note: "Embermend is off by default. Keep the exact signed release and immutable image references in the accepted configuration." },
       { title: "Start with scoped assessment", text: "Grant inventory and assessment only to the intended targets. Install reviewed versioned profiles and use the coordinator to assess. Unknown deployment exposure, unsupported checks and incomplete coverage remain visible.", note: "Magnus advertises actual capabilities; an unavailable action is a blocker. There is no direct SSH or arbitrary-shell fallback." },
@@ -216,14 +216,14 @@ const demos: Record<DemoId, Demo> = {
         title: "Review the plan",
         text: "Setup shows a plan and applies it only after you confirm. To repeat or automate it, keep the installation JSON and run the same reviewed configuration. Planning does not contact hosts, and retries check the exact inputs.",
         code: "./hive.sh plan --config installation.json\n./hive.sh install --config installation.json",
-        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten. Upgrading a 2.x installation with PostgreSQL stores needs <code>--allow-migrations</code>, and code-only rollback across it is refused; see the guide.",
+        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten. Some upgrades need <code>--allow-migrations</code>, such as from 2.x with PostgreSQL stores or from a release before 3.4.0; see the guide.",
       },
       {
         title: "Open HiveXUI",
         text: "Visit the HTTPS origin you configured and sign in through Oathweave. HiveXUI shows a section for each product in this installation, so a core install has no Magnus, Cindertrace or ChatterMost section.",
         code: "https://hive.example.com/",
         kind: "address",
-        note: "The install ends by naming the HTTPS origin and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. <code>./hive.sh status --config installation.json</code> and <code>./hive.sh registry list --config installation.json</code> report what is running.",
+        note: "The install ends by naming the HTTPS origin and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. <code>./hive.sh status --config installation.json</code> reports what is running and lists the setup steps still pending, which HiveXUI also shows to administrators.",
       },
     ],
     guide: "/guides/hive.md",
@@ -272,7 +272,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the reviewed release",
         text: "Clone the public repository at the current release into a new directory. Use a fresh environment for this walkthrough.",
-        code: "git clone --branch v0.3.0 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
+        code: "git clone --branch v0.6.1 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
         note: "Use the repository’s release notes when choosing a version. There is no npm installer for Cindertrace.",
       },
       {
@@ -308,7 +308,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the release",
         text: "Download the pinned release and its checksum file into a new temporary directory. Keep the following steps in the same terminal.",
-        code: 'VERSION=0.5.1\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
+        code: 'VERSION=0.5.2\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
       },
       {
         title: "Verify before setup",

@@ -252,3 +252,28 @@ The current suite review moves from Hive 3.2.2 to the published release 3.3.0, t
 `releases/3.3.0.json` pins HiveSkills 1.4.0, ChatterMost and its migrator 0.5.1, Cindertrace 0.3.0, Ardent Project Studio 0.3.0, Emberpath 2.1.0, HiveMem 1.5.0 and HiveXUI 0.4.0. Oathweave 2.2.0, Magnus server, gateway and host agent 2.5.0, Emberfold 0.2.3, Embermend 0.1.0, the Hive Registry 1.1.0, the ingress 2.0.5 and the PostgreSQL 17.11 and 18.6, Redis 8.2.10 and Qdrant 1.18.3 images are unchanged. Each GitHub tag above resolves to the listed commit and has a published, non-prerelease release.
 
 The Hive guide's product table and release summary follow the manifest and changelog. ChatterMost and Cindertrace installation examples, and the ChatterMost and Cindertrace walkthroughs, move to the pinned tags; their command blocks are otherwise unchanged at those tags. The ChatterMost 0.5.1 archive matches its `SHA256SUMS` line and GitHub asset digest and contains `chattermost-0.5.1/`. The Ardent Project Studio guide links to `v0.3.0` and drops the superseded Node.js note. HiveSkills, Emberpath, HiveMem and HiveXUI update their Hive-installed versions and add dated release notes; standalone container examples keep their original source reviews. The Embermend guide notes that 3.3.0 keeps its reviewed Magnus and Oathweave versions. The Oathweave, Magnus, Ardent and Emberfold guides are not changed in this update. No installation command was run against an operational environment, and no public product captures were replaced.
+
+## Signed Hive 3.7.0 review, 2026-11-13
+
+`HIVE_SUITE_VERSION` moved to 3.6.0, 3.6.1 and 3.7.0 without the guides following; they still described 3.3.0. This review brings the Hive guide, the product guides, the overview, the agent index and the walkthroughs to release 3.7.0, tag `v3.7.0`, commit `5d16e488d8fcc725d7cebd1a8d1cad952714e098`. Its `controllerSHA256` equals 3.6.1's.
+
+| Project | Pin in `releases/3.7.0.json` | Tag commit | Reviewed sources |
+| --- | --- | --- | --- |
+| Hive | 3.7.0 | `5d16e488d8fcc725d7cebd1a8d1cad952714e098` | `README.md`, `deployment/QUICKSTART.md`, `deployment/EMBERMEND.md`, `CHANGELOG.md` 3.4.0 to 3.7.0, `UPGRADING.md` and `deployment/FULL.md` headings, `releases/3.7.0.json`, `hive.sh --help` |
+| Oathweave | 2.2.0 | `3b6d7df399b72f16630b6af16ca3d49040eae2ac` | `apps/iam-core/README.md` container example |
+| Emberpath | 2.4.0 | `c87215750ab844ff526bdf61c35854dc2cec684e` | `README.md` install section, `CHANGELOG.md` |
+| HiveMem | 1.6.0 | `8948d16389194821e707fc31910e764e38443e8d` | `README.md` install section, `CHANGELOG.md` |
+| HiveSkills | 1.7.1 | `dc6c33974fb85b25baede90eff9b76fcada6aee7` | `README.md` install section, `CHANGELOG.md` |
+| HiveXUI | 0.7.0 | `39328ce4bef8cce11ebdefcbe9fb6511d91e5e63` | `README.md`, `CHANGELOG.md` 0.5.0 to 0.7.0 |
+| Magnus, gateway and host agent | 2.9.1 | `4d273ababddc641446ceece4be2aaccf6888be60` | `README.md`, `CHANGELOG.md` 2.4.3 to 2.9.1, host agent `npm-shrinkwrap.json` (Ardent 3.1.2) |
+| Cindertrace | 0.6.1 | `eeec7e894fb83d5dc5a7f8f653f30c4f96da66cd` | `CHANGELOG.md`, `README.md` (unchanged from `v0.3.0`) |
+| ChatterMost | 0.5.2 | `8141ea0af55c4f33efa92a9fdeb9f9a96d0c06a7` | `AGENTS.md` runbook block, `docs/containers.md` upgrade sources, release asset names |
+| Emberfold | 0.3.0 | `0ba9d933dd5c4da67537e73771cb20d9e9ab2ce2` | `README.md`, `CHANGELOG.md`, npm versions |
+| Ardent Project Studio | 0.4.0 | `f51d439c64c8cfb90633bcb580ff6c01420f2a33` | `README.md` quick start, `CHANGELOG.md` |
+| Embermend | 0.3.0 | `b9b522b7ac750cb3160a3abd9a0e15906e44adf2` | `CHANGELOG.md` |
+
+What changed in the published text: the Hive guide's version table, release summary, setup checklist, `post-upgrade` and the three cases that need `--allow-migrations`; the Ardent guide's package update step, which named `magnus-agent enroll` where the scope-preserving path is `post-upgrade` or `magnus-agent install`; standalone image tags in the Oathweave, Emberpath, HiveMem and HiveSkills examples, following each README at its tag; the Cindertrace, ChatterMost and Emberfold version pins in the guides and walkthroughs; HiveXUI's inbox, Setup page, Agent 360 and Embermend section; and the retirement of the web UIs Emberpath and HiveSkills used to bundle.
+
+Limits of this review: the only command run was the Emberfold `0.3.0` CLI dry run, which exits 0 with the documented result. No container example, archive download or installation was run, and the release signature was not verified again. The Magnus `v2.9.1` and Emberfold `v0.3.0` tags have no GitHub release page, so their guides link to the tagged source instead. Every GitHub link in the public Markdown and walkthroughs answered 200 on the review date; anchors were checked only for the Hive documents.
+
+Site checks: `npm run build` and the browser gate pass with twelve product sections, six walkthroughs, thirteen guides and five viewport widths. The sitemap now lists the Markdown overview and guides. The JSON-LD graph is unchanged, so its CSP hash still agrees.
