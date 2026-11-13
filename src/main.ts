@@ -559,11 +559,11 @@ app.innerHTML = `
       </div>
       <figure class="hero-console"><div class="hero-console-label"><span class="status-dot" aria-hidden="true"></span> ONE BROWSER UI. THE WHOLE PICTURE.</div><div class="capture-window"><div class="window-bar"><span class="window-dots" aria-hidden="true">● ● ●</span><span>HiveXUI / Magnus</span>${icon("hivexui")}</div><img src="/captures/fleet-overview.webp" alt="HiveXUI fleet overview with synthetic hosts, health gauges and recent commands" width="2880" height="1800" fetchpriority="high" /></div><figcaption>Fleet, identity, models, memory, skills, security and chat.<span>Real HiveXUI capture · synthetic data</span></figcaption></figure>
     </section>
-    <div class="shell feature-strip" aria-label="Product features">
+    <div class="shell feature-strip" role="group" aria-label="Product features">
       <div>${icon("magnus")}<span><strong>Operate your fleet</strong><small>Hosts, jobs and agent rollouts</small></span></div><div>${icon("emberpath")}<span><strong>Connect your models</strong><small>Provider routing, quotas and traces</small></span></div><div>${icon("hivemem")}<span><strong>Give agents continuity</strong><small>Memory, skills and context</small></span></div><div>${icon("cindertrace")}<span><strong>Stay in control</strong><small>Identity, investigations and chat</small></span></div>
     </div>
     <section class="quick-start shell" id="install" aria-labelledby="install-title">
-      <div class="quick-start-heading"><div><span class="section-kicker">START WITH HIVE</span><h2 id="install-title">One installer. A connected stack.</h2></div><div class="platforms" aria-label="Installer platforms"><span class="platform-current">Linux</span><span>macOS <small>coming</small></span><span>Windows <small>coming</small></span></div></div>
+      <div class="quick-start-heading"><div><span class="section-kicker">START WITH HIVE</span><h2 id="install-title">One installer. A connected stack.</h2></div><div class="platforms" role="group" aria-label="Installer platforms"><span class="platform-current">Linux</span><span>macOS <small>coming</small></span><span>Windows <small>coming</small></span></div></div>
       <p>On a fresh Ubuntu or Debian host, run this line to open guided setup. It offers to install Docker Engine and the other prerequisites with your consent. Choose the <code>full</code> profile, review the plan, and confirm to install. Replace <code>latest</code> with an exact version to choose it, such as <code>${HIVE_SUITE_VERSION}</code>.</p>
       <div class="install-command"><span class="command-prompt" aria-hidden="true">$</span><pre tabindex="0" aria-label="Hive guided install command"><code>${installCommand}</code></pre><button type="button" data-copy-install aria-label="Copy Hive install command">${icon("copy")}<span>Copy</span></button></div>
       <div class="install-meta"><span><a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Latest Hive release</a> · Guides reviewed for <a href="${HIVE_SUITE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">${HIVE_SUITE_VERSION}</a> · Signed release · Ubuntu / Debian · amd64 / arm64</span><a class="text-link" href="#walkthroughs">Fresh host? Start here ${icon("arrow")}</a></div>
@@ -579,7 +579,7 @@ app.innerHTML = `
         <div class="architecture-flow" aria-hidden="true">↓ <span>EACH PRODUCT’S OWN API</span></div>
         <div class="architecture-layer services-layer"><span class="layer-label">SUITE SERVICES</span><div class="service-nodes">${atlasNode("magnus", "Fleet & host operations")}${atlasNode("emberpath", "Model routing")}${atlasNode("hivemem", "Durable memory")}${atlasNode("hiveskills", "Skill distribution")}${atlasNode("embermend", "Remediation & verification")}${atlasNode("cindertrace", "Security investigations")}${atlasNode("chattermost", "People & agent chat")}</div></div>
         <div class="architecture-flow"><span>MAGNUS CAN MANAGE ARDENT ON FLEET HOSTS</span> ↓</div>
-        <div class="architecture-layer runtime-layer"><span class="layer-label">AGENT RUNTIME · CONFIGURED SEPARATELY</span><div class="runtime-nodes">${atlasNode("ardent", "Durable tasks & tools")}<span class="library-arrow" aria-label="bundles">→<small>bundles library</small></span>${atlasNode("emberfold", "Context fitting")}</div><p>The full profile also installs the optional Emberfold HTTP service. Ardent Project Studio, an optional suite product, brings teams of Ardent agents into HiveXUI.</p></div>
+        <div class="architecture-layer runtime-layer"><span class="layer-label">AGENT RUNTIME · CONFIGURED SEPARATELY</span><div class="runtime-nodes">${atlasNode("ardent", "Durable tasks & tools")}<span class="library-arrow"><span aria-hidden="true">→</span><small>bundles library</small></span>${atlasNode("emberfold", "Context fitting")}</div><p>The full profile also installs the optional Emberfold HTTP service. Ardent Project Studio, an optional suite product, brings teams of Ardent agents into HiveXUI.</p></div>
         <div class="external-inference"><span>${icon("emberpath")} EXTERNAL INFERENCE</span><p>Emberpath routes to your hosted APIs, Ollama or llama.cpp. Ardent can also use a provider directly. Models, storage and runtimes stay outside Hive.</p></div>
       </div><div class="atlas-detail" id="atlas-detail" aria-live="polite" aria-atomic="true"></div></div>
     </div></section>
@@ -625,13 +625,18 @@ projectOrder.forEach(id => {
   });
 });
 
+const copyResets = new WeakMap<HTMLButtonElement, { original: string; timer: number }>();
 async function copyText(button: HTMLButtonElement, value: string, feedback: { copiedHtml?: string; announcement?: string; failureText?: string; resetHtml?: string } = {}) {
   try {
     await navigator.clipboard.writeText(value);
     requiredElement("#announce", HTMLElement).textContent = feedback.announcement ?? "Command copied";
-    const original = feedback.resetHtml ?? button.innerHTML;
+    // A second click while "Copied" shows must keep the first label, not capture "Copied" as the one to restore.
+    const pending = copyResets.get(button);
+    if (pending) window.clearTimeout(pending.timer);
+    const original = pending?.original ?? feedback.resetHtml ?? button.innerHTML;
     button.innerHTML = feedback.copiedHtml ?? `${icon("check")}<span>Copied</span>`;
-    window.setTimeout(() => { button.innerHTML = original; }, 2400);
+    const timer = window.setTimeout(() => { button.innerHTML = original; copyResets.delete(button); }, 2400);
+    copyResets.set(button, { original, timer });
   } catch {
     if (feedback.failureText) button.textContent = feedback.failureText;
     requiredElement("#announce", HTMLElement).textContent = "Copy failed. Select the command text to copy it.";
