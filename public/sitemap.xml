@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://hivemagnus.com/</loc></url>
+  <url><loc>https://hivemagnus.com/index.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/ardent-studio.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/ardent.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/chattermost.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/cindertrace.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/emberfold.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/embermend.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/emberpath.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/hive.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/hivemem.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/hiveskills.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/hivexui.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/magnus.md</loc></url>
+  <url><loc>https://hivemagnus.com/guides/oathweave.md</loc></url>
 </urlset>

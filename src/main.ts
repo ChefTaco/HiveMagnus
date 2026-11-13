@@ -166,7 +166,7 @@ const demos: Record<DemoId, Demo> = {
   embermend: {
     label: "Embermend", kicker: "Security remediation", title: "Assess first. Authorize each change.",
     intro: "Add Embermend through the signed Hive installer, connect a compatible Magnus and start with bounded inventory. Each proposed mutation needs a published explanation and a matching decision or standing policy.",
-    requires: ["Hive 3.2.2 or a later compatible signed release", "Magnus 2.5.0 with its explicitly scoped Embermend bridge", "An operator linked by issuer and subject with scoped Embermend access", "Approved inference and a rootless Magnus worker for code scanning"],
+    requires: ["Hive 3.2.2 or a later compatible signed release", "Magnus 2.5.0 or newer with its explicitly scoped Embermend bridge", "An operator linked by issuer and subject with scoped Embermend access", "Approved inference and a rootless Magnus worker for code scanning"],
     steps: [
       { title: "Select the optional product", text: "Run the guided installer on a fresh installation and choose Embermend. Hive requires compatible Magnus, or a configured compatible external Magnus. For an existing installation, follow the upgrade guide and retain a verified backup and restore rehearsal.", code: "./hive.sh --release latest", note: "Embermend is off by default. Keep the exact signed release and immutable image references in the accepted configuration." },
       { title: "Start with scoped assessment", text: "Grant inventory and assessment only to the intended targets. Install reviewed versioned profiles and use the coordinator to assess. Unknown deployment exposure, unsupported checks and incomplete coverage remain visible.", note: "Magnus advertises actual capabilities; an unavailable action is a blocker. There is no direct SSH or arbitrary-shell fallback." },
@@ -216,14 +216,14 @@ const demos: Record<DemoId, Demo> = {
         title: "Review the plan",
         text: "Setup shows a plan and applies it only after you confirm. To repeat or automate it, keep the installation JSON and run the same reviewed configuration. Planning does not contact hosts, and retries check the exact inputs.",
         code: "./hive.sh plan --config installation.json\n./hive.sh install --config installation.json",
-        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten. Upgrading a 2.x installation with PostgreSQL stores needs <code>--allow-migrations</code>, and code-only rollback across it is refused; see the guide.",
+        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten. Some upgrades need <code>--allow-migrations</code>, such as from 2.x with PostgreSQL stores or from a release before 3.4.0; see the guide.",
       },
       {
         title: "Open HiveXUI",
         text: "Visit the HTTPS origin you configured and sign in through Oathweave. HiveXUI shows a section for each product in this installation, so a core install has no Magnus, Cindertrace or ChatterMost section.",
         code: "https://hive.example.com/",
         kind: "address",
-        note: "The install ends by naming the HTTPS origin and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. <code>./hive.sh status --config installation.json</code> and <code>./hive.sh registry list --config installation.json</code> report what is running.",
+        note: "The install ends by naming the HTTPS origin and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. <code>./hive.sh status --config installation.json</code> reports what is running and lists the setup steps still pending, which HiveXUI also shows to administrators.",
       },
     ],
     guide: "/guides/hive.md",
@@ -272,7 +272,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the reviewed release",
         text: "Clone the public repository at the current release into a new directory. Use a fresh environment for this walkthrough.",
-        code: "git clone --branch v0.3.0 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
+        code: "git clone --branch v0.6.1 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
         note: "Use the repository’s release notes when choosing a version. There is no npm installer for Cindertrace.",
       },
       {
@@ -308,7 +308,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the release",
         text: "Download the pinned release and its checksum file into a new temporary directory. Keep the following steps in the same terminal.",
-        code: 'VERSION=0.5.1\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
+        code: 'VERSION=0.5.2\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
       },
       {
         title: "Verify before setup",
@@ -559,11 +559,11 @@ app.innerHTML = `
       </div>
       <figure class="hero-console"><div class="hero-console-label"><span class="status-dot" aria-hidden="true"></span> ONE BROWSER UI. THE WHOLE PICTURE.</div><div class="capture-window"><div class="window-bar"><span class="window-dots" aria-hidden="true">● ● ●</span><span>HiveXUI / Magnus</span>${icon("hivexui")}</div><img src="/captures/fleet-overview.webp" alt="HiveXUI fleet overview with synthetic hosts, health gauges and recent commands" width="2880" height="1800" fetchpriority="high" /></div><figcaption>Fleet, identity, models, memory, skills, security and chat.<span>Real HiveXUI capture · synthetic data</span></figcaption></figure>
     </section>
-    <div class="shell feature-strip" aria-label="Product features">
+    <div class="shell feature-strip" role="group" aria-label="Product features">
       <div>${icon("magnus")}<span><strong>Operate your fleet</strong><small>Hosts, jobs and agent rollouts</small></span></div><div>${icon("emberpath")}<span><strong>Connect your models</strong><small>Provider routing, quotas and traces</small></span></div><div>${icon("hivemem")}<span><strong>Give agents continuity</strong><small>Memory, skills and context</small></span></div><div>${icon("cindertrace")}<span><strong>Stay in control</strong><small>Identity, investigations and chat</small></span></div>
     </div>
     <section class="quick-start shell" id="install" aria-labelledby="install-title">
-      <div class="quick-start-heading"><div><span class="section-kicker">START WITH HIVE</span><h2 id="install-title">One installer. A connected stack.</h2></div><div class="platforms" aria-label="Installer platforms"><span class="platform-current">Linux</span><span>macOS <small>coming</small></span><span>Windows <small>coming</small></span></div></div>
+      <div class="quick-start-heading"><div><span class="section-kicker">START WITH HIVE</span><h2 id="install-title">One installer. A connected stack.</h2></div><div class="platforms" role="group" aria-label="Installer platforms"><span class="platform-current">Linux</span><span>macOS <small>coming</small></span><span>Windows <small>coming</small></span></div></div>
       <p>On a fresh Ubuntu or Debian host, run this line to open guided setup. It offers to install Docker Engine and the other prerequisites with your consent. Choose the <code>full</code> profile, review the plan, and confirm to install. Replace <code>latest</code> with an exact version to choose it, such as <code>${HIVE_SUITE_VERSION}</code>.</p>
       <div class="install-command"><span class="command-prompt" aria-hidden="true">$</span><pre tabindex="0" aria-label="Hive guided install command"><code>${installCommand}</code></pre><button type="button" data-copy-install aria-label="Copy Hive install command">${icon("copy")}<span>Copy</span></button></div>
       <div class="install-meta"><span><a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">Latest Hive release</a> · Guides reviewed for <a href="${HIVE_SUITE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">${HIVE_SUITE_VERSION}</a> · Signed release · Ubuntu / Debian · amd64 / arm64</span><a class="text-link" href="#walkthroughs">Fresh host? Start here ${icon("arrow")}</a></div>
@@ -579,7 +579,7 @@ app.innerHTML = `
         <div class="architecture-flow" aria-hidden="true">↓ <span>EACH PRODUCT’S OWN API</span></div>
         <div class="architecture-layer services-layer"><span class="layer-label">SUITE SERVICES</span><div class="service-nodes">${atlasNode("magnus", "Fleet & host operations")}${atlasNode("emberpath", "Model routing")}${atlasNode("hivemem", "Durable memory")}${atlasNode("hiveskills", "Skill distribution")}${atlasNode("embermend", "Remediation & verification")}${atlasNode("cindertrace", "Security investigations")}${atlasNode("chattermost", "People & agent chat")}</div></div>
         <div class="architecture-flow"><span>MAGNUS CAN MANAGE ARDENT ON FLEET HOSTS</span> ↓</div>
-        <div class="architecture-layer runtime-layer"><span class="layer-label">AGENT RUNTIME · CONFIGURED SEPARATELY</span><div class="runtime-nodes">${atlasNode("ardent", "Durable tasks & tools")}<span class="library-arrow" aria-label="bundles">→<small>bundles library</small></span>${atlasNode("emberfold", "Context fitting")}</div><p>The full profile also installs the optional Emberfold HTTP service. Ardent Project Studio, an optional suite product, brings teams of Ardent agents into HiveXUI.</p></div>
+        <div class="architecture-layer runtime-layer"><span class="layer-label">AGENT RUNTIME · CONFIGURED SEPARATELY</span><div class="runtime-nodes">${atlasNode("ardent", "Durable tasks & tools")}<span class="library-arrow"><span aria-hidden="true">→</span><small>bundles library</small></span>${atlasNode("emberfold", "Context fitting")}</div><p>The full profile also installs the optional Emberfold HTTP service. Ardent Project Studio, an optional suite product, brings teams of Ardent agents into HiveXUI.</p></div>
         <div class="external-inference"><span>${icon("emberpath")} EXTERNAL INFERENCE</span><p>Emberpath routes to your hosted APIs, Ollama or llama.cpp. Ardent can also use a provider directly. Models, storage and runtimes stay outside Hive.</p></div>
       </div><div class="atlas-detail" id="atlas-detail" aria-live="polite" aria-atomic="true"></div></div>
     </div></section>
@@ -625,13 +625,18 @@ projectOrder.forEach(id => {
   });
 });
 
+const copyResets = new WeakMap<HTMLButtonElement, { original: string; timer: number }>();
 async function copyText(button: HTMLButtonElement, value: string, feedback: { copiedHtml?: string; announcement?: string; failureText?: string; resetHtml?: string } = {}) {
   try {
     await navigator.clipboard.writeText(value);
     requiredElement("#announce", HTMLElement).textContent = feedback.announcement ?? "Command copied";
-    const original = feedback.resetHtml ?? button.innerHTML;
+    // A second click while "Copied" shows must keep the first label, not capture "Copied" as the one to restore.
+    const pending = copyResets.get(button);
+    if (pending) window.clearTimeout(pending.timer);
+    const original = pending?.original ?? feedback.resetHtml ?? button.innerHTML;
     button.innerHTML = feedback.copiedHtml ?? `${icon("check")}<span>Copied</span>`;
-    window.setTimeout(() => { button.innerHTML = original; }, 2400);
+    const timer = window.setTimeout(() => { button.innerHTML = original; copyResets.delete(button); }, 2400);
+    copyResets.set(button, { original, timer });
   } catch {
     if (feedback.failureText) button.textContent = feedback.failureText;
     requiredElement("#announce", HTMLElement).textContent = "Copy failed. Select the command text to copy it.";

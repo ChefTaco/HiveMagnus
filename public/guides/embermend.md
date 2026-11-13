@@ -4,7 +4,7 @@ Embermend tracks continuous hardening and vulnerability remediation for Magnus-m
 
 ## Install
 
-Use a compatible signed Hive release, starting with 3.2.2, and select the optional Embermend product. It is off by default. Select compatible Magnus 2.5.0 or newer, or explicitly configure an existing Magnus with the versioned Embermend bridge.
+Use a compatible signed Hive release, starting with 3.2.2, and select the optional Embermend product. It is off by default. Hive 3.7.0 pins Embermend 0.3.0 with Magnus 2.9.1. Select compatible Magnus 2.5.0 or newer, or explicitly configure an existing Magnus with the versioned Embermend bridge.
 
 ```sh
 git clone https://github.com/ChefTaco/hive.git && cd hive
@@ -13,7 +13,7 @@ git clone https://github.com/ChefTaco/hive.git && cd hive
 
 The launcher verifies the signed manifest and matching controller. Replace `latest` with an exact compatible release when reproducing an installation. Follow the [Hive guide](/guides/hive.md) for prerequisites, TLS, protected configuration and recovery. Inference services and model storage remain external.
 
-For an existing installation, update its reviewed configuration, retain a verified backup and restore rehearsal, and use the owning installer's upgrade path with explicit migration approval. The 3.2.2 signed release also verifies and repairs the omitted database-format registration that can affect a new Embermend selection in 3.2.0. It refuses unknown database majors, runtime receipts or failed checksums.
+For an existing installation, update its reviewed configuration, retain a verified backup and restore rehearsal, and use the owning installer's upgrade path with explicit migration approval. The 3.2.2 signed release also verifies and repairs the omitted database-format registration that can affect a new Embermend selection in 3.2.0. It refuses unknown database majors, runtime receipts or failed checksums. Embermend 0.3.0 adds a database migration, so upgrading an installation that already includes Embermend from a release before 3.6.0 needs `--allow-migrations`; see the [Hive guide](/guides/hive.md#upgrade).
 
 ## Start with assessment
 
@@ -56,5 +56,13 @@ Magnus `v2.5.0`, Oathweave `v2.2.0` and HiveXUI `v0.3.0`.
 Signed Hive `v3.3.0` keeps Embermend 0.1.0, Magnus 2.5.0 and Oathweave 2.2.0
 unchanged and pins HiveXUI 0.4.0.
 The public example uses no operational configuration or credentials.
+
+Release update, 2026-11-13: signed Hive `v3.7.0` pins Embermend 0.3.0, tag
+[`v0.3.0`](https://github.com/ChefTaco/Embermend/releases/tag/v0.3.0), commit
+`b9b522b7ac750cb3160a3abd9a0e15906e44adf2`, with Magnus 2.9.1, Oathweave 2.2.0
+and HiveXUI 0.7.0. Per its changelog, 0.2.0 adds the event feed for the HiveXUI
+inbox and 0.3.0 adds the suite audit export, its database migration and an
+opt-in `emberpath` inference preset. The acceptance record below was not
+reviewed again for this update.
 
 Operational acceptance was reviewed at documentation commit `31390ff520d13ed0faf598b4151dba424e095aea`: [AC-01–AC-24 ledger](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/ACCEPTANCE.md), [production scope and restore proof](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/acceptance/2026-11-12-production-assessment.json), and [permissions and operations](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/OPERATIONS.md). All three profiles completed after the signed upgrade; the Ubuntu baseline retains three unassessed checks. Initial production access is scoped assessment with mutation policies disabled.

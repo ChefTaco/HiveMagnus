@@ -107,7 +107,7 @@ section[id], article[id], #interfaces { scroll-margin-top: 32px; }
 .tailscale-recommendation strong { color: var(--ink); }
 .tailscale-recommendation > button { flex-shrink: 0; margin-left: auto; }
 .quick-start > .install-prerequisites { margin: 16px 0 0; font-size: 12px; }
-code { font-family: "IBM Plex Mono", monospace; font-size: .92em; }
+code { font-family: "IBM Plex Mono", monospace; font-size: .92em; overflow-wrap: anywhere; }
 .section-head { display: flex; align-items: end; justify-content: space-between; gap: 50px; margin-bottom: 36px; }
 .section-head h2 { font-size: clamp(34px, 3.6vw, 50px); font-weight: 600; line-height: 1.12; margin-bottom: 0; }
 .section-head h2 span { color: #647c97; }
@@ -202,8 +202,6 @@ summary { cursor: pointer; line-height: 1.6; }
 .demo-tabs button { display: flex; align-items: center; gap: 12px; background: transparent; border: 1px solid #a9c2ba; color: var(--muted); padding: 17px 16px; font-size: 14px; font-weight: 700; text-align: left; }
 .demo-tabs button[aria-selected="true"], .demo-tabs button:hover { background: var(--ink); border-color: var(--ink); color: var(--surface); }
 .demo-tabs button svg { margin-left: auto; width: 15px; height: 15px; }
-.tab-counter { color: #8e5525; font-size: 12px; font-weight: 400; }
-.demo-tabs button[aria-selected="true"] .tab-counter, .demo-tabs button:hover .tab-counter { color: #f3bc86; }
 .demo-disclaimer { color: var(--muted); font-size: 13px; margin: 16px 0 0; padding: 0 4px; }
 .demo-panel { background: var(--surface); border: 1px solid #a9c2ba; padding: 35px 40px; min-width: 0; }
 .demo-heading h3 { font-size: 35px; line-height: 1.1; margin: 9px 0 12px; }
@@ -225,7 +223,6 @@ summary { cursor: pointer; line-height: 1.6; }
 .code-top button { display: flex; align-items: center; gap: 5px; border: 0; background: transparent; color: #f3cfaa; font-size: 12px; padding: 3px; }
 .code-top button svg { width: 13px; height: 13px; }
 pre { margin: 0; padding: 18px; max-height: 230px; overflow: auto; font: 13px/1.65 "IBM Plex Mono", monospace; white-space: pre; }
-code { font: inherit; }
 .step-content > p.step-note { max-width: none; background: #e7f1ed; border-left: 3px solid #b66a27; padding: 12px 14px; font-size: 13px; margin: 18px 0 0; }
 .step-note code { font: 12px "IBM Plex Mono",monospace; overflow-wrap: anywhere; }
 .step-note strong { color: var(--ink); margin-right: 5px; }
@@ -238,7 +235,6 @@ code { font: inherit; }
 .demo-tabs button { border-radius: 4px; }
 .demo-tabs button svg { margin-left: auto; }
 .demo-panel { border-radius: 5px; }
-pre { margin: 0; padding: 18px; max-height: 230px; overflow: auto; font: 13px/1.65 "IBM Plex Mono", monospace; white-space: pre; }
 pre code { font: inherit; }
 .demo-sidebar > .text-link { font-size: 13px; margin-top: 12px; }
 .agents-section { padding-block: 76px; }

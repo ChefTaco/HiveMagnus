@@ -10,7 +10,7 @@ Clients talk to one endpoint. Emberpath picks an upstream provider, fails over w
 
 ## In a Hive installation
 
-Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive.md) 3.3.0 installs Emberpath 2.1.0 as a digest-pinned image, verifies external endpoints and registers verified providers. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), reached through a separate administration listener; the native model API keeps its own listener and API keys.
+Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive.md) 3.7.0 installs Emberpath 2.4.0 as a digest-pinned image, verifies external endpoints and registers verified providers. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), reached through a separate administration listener; the native model API keeps its own listener and API keys.
 
 ## Run it on its own
 
@@ -32,16 +32,18 @@ TLS_KEY_PATH=/config/tls/server.key
 NODE_EXTRA_CA_CERTS=/config/tls/server.crt
 EOF
 docker run --rm --network oathweave -v emberpath-data:/data -v "$PWD/tls:/config/tls:ro" \
-  --env-file emberpath.env ghcr.io/cheftaco/emberpath:2.0.1 check
+  --env-file emberpath.env ghcr.io/cheftaco/emberpath:2.4.0 check
 docker run -d --name emberpath --network oathweave \
   -p 127.0.0.1:4020:4020 -p 127.0.0.1:9443:9443 -v emberpath-data:/data \
-  -v "$PWD/tls:/config/tls:ro" --env-file emberpath.env ghcr.io/cheftaco/emberpath:2.0.1
+  -v "$PWD/tls:/config/tls:ro" --env-file emberpath.env ghcr.io/cheftaco/emberpath:2.4.0
 ```
 
-Expected result: `check` validates configuration, TLS and Oathweave reachability and starts nothing. Once the container is healthy, `curl --cacert tls/server.crt https://localhost:4020/health` answers, with the OpenAI-compatible API at `https://localhost:4020/v1` and the administration API at `https://localhost:9443/api`. Emberpath has no built-in console: it is managed through its administration API, or through HiveXUI in the suite. See the README for keys, public URLs and HiveMem.
+Expected result: `check` validates configuration, TLS and Oathweave reachability and starts nothing. Once the container is healthy, `curl --cacert tls/server.crt https://localhost:4020/health` answers, with the OpenAI-compatible API at `https://localhost:4020/v1` and the administration API at `https://localhost:9443/api`. Emberpath has no web UI of its own: it is managed through its administration API, or through HiveXUI in the suite. Non-API paths on the administration listener serve a short page pointing to HiveXUI, or redirect there when `HIVEXUI_URL` is set. See the README for keys, public URLs and HiveMem.
 
 ## Source review
 
 Reviewed 2026-11-06 against `main` commit `d5fbb8855a70223972f6e2981fb97f9b2b36ba9b`, documentation added after tag `v2.0.1`: [README](https://github.com/ChefTaco/Emberpath/blob/d5fbb8855a70223972f6e2981fb97f9b2b36ba9b/README.md). The commands follow its container example and were run with throwaway containers, together with the Oathweave example, against the image the [2.0.1 release](https://github.com/ChefTaco/Emberpath/releases/tag/v2.0.1) publishes, which Hive 2.0.0 and 2.0.1 installed; the release attaches no other files. Original attribution and migration history are preserved. License: Apache-2.0.
 
 Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releases/tag/v3.3.0) pins Emberpath 2.1.0, tag [`v2.1.0`](https://github.com/ChefTaco/Emberpath/releases/tag/v2.1.0), commit `08dc5f683203c80fb0b3d11d06495024e1fce417`. Per its [changelog](https://github.com/ChefTaco/Emberpath/blob/v2.1.0/CHANGELOG.md), it verifies Oathweave admin tokens with the suite's shared verifier while keeping Emberpath's rules and the existing account link format, returns the suite-standard body from `/health/live` and `/health/ready` on both listeners, and tags every request with a request ID. The administration listener accepts a safe inbound request ID; the inference listener always generates its own. The standalone container example above keeps its original 2.0.1 review.
+
+Release update, 2026-11-13: [Hive 3.7.0](https://github.com/ChefTaco/hive/releases/tag/v3.7.0) pins Emberpath 2.4.0, tag [`v2.4.0`](https://github.com/ChefTaco/Emberpath/releases/tag/v2.4.0), commit `c87215750ab844ff526bdf61c35854dc2cec684e`. The container example now uses the `2.4.0` image, as the [README](https://github.com/ChefTaco/Emberpath/blob/v2.4.0/README.md) at that tag does; its environment file and commands are otherwise identical to the reviewed 2.0.1 example, and it was not re-run with the new image. Per the [changelog](https://github.com/ChefTaco/Emberpath/blob/v2.4.0/CHANGELOG.md), 2.2.0 changes the data format (a suite upgrade from before Hive 3.4.0 needs `--allow-migrations`), 2.3.0 retires the bundled web UI, and 2.4.0 adds the Decisions API at `POST /v1/decisions`, which stays off until an operator enables a provider for it.
