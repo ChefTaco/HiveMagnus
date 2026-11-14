@@ -4,7 +4,7 @@ Embermend tracks continuous hardening and vulnerability remediation for Magnus-m
 
 ## Install
 
-Use a compatible signed Hive release, starting with 3.2.2, and select the optional Embermend product. It is off by default. Hive 3.7.0 pins Embermend 0.3.0 with Magnus 2.9.1. Select compatible Magnus 2.5.0 or newer, or explicitly configure an existing Magnus with the versioned Embermend bridge.
+Use a compatible signed Hive release, starting with 3.2.2, and select the optional Embermend product. It is off by default. Hive 3.8.0 pins Embermend 0.3.1 with Magnus 2.10.0. Select compatible Magnus 2.5.0 or newer, or explicitly configure an existing Magnus with the versioned Embermend bridge.
 
 ```sh
 git clone https://github.com/ChefTaco/hive.git && cd hive
@@ -66,3 +66,11 @@ opt-in `emberpath` inference preset. The acceptance record below was not
 reviewed again for this update.
 
 Operational acceptance was reviewed at documentation commit `31390ff520d13ed0faf598b4151dba424e095aea`: [AC-01–AC-24 ledger](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/ACCEPTANCE.md), [production scope and restore proof](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/acceptance/2026-11-12-production-assessment.json), and [permissions and operations](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/OPERATIONS.md). All three profiles completed after the signed upgrade; the Ubuntu baseline retains three unassessed checks. Initial production access is scoped assessment with mutation policies disabled.
+
+Release update, 2026-11-14: signed Hive `v3.8.0` pins Embermend 0.3.1, tag
+[`v0.3.1`](https://github.com/ChefTaco/Embermend/releases/tag/v0.3.1), commit
+`be7e60b09a1f1db6a234c904d1a4875dba3e2259`, with Magnus 2.10.0, Oathweave 2.3.0
+and HiveXUI 0.8.0. Per its changelog, 0.3.1 keeps a policy authorization's ID
+in the suite audit export and skips a source file that is not UTF-8 in a
+repository scan instead of failing the scan. It adds no migration. The
+acceptance record below was not reviewed again for this update.

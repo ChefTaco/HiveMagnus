@@ -10,7 +10,7 @@ The registry distributes authenticated manifests and immutable archives. It is u
 
 ## In a Hive installation
 
-HiveSkills is part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.7.0 installs HiveSkills 1.7.1 as a digest-pinned image. Its catalogue, archive and assignment screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), which is its only UI: HiveSkills retired its own web UI in 1.6.0. Native host mappings are prepared separately and are never activated by installation alone.
+HiveSkills is part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.8.0 installs HiveSkills 1.8.0 as a digest-pinned image. Its catalogue, archive and assignment screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), which is its only UI: HiveSkills retired its own web UI in 1.6.0. Native host mappings are prepared separately and are never activated by installation alone.
 
 ## Run it on its own
 
@@ -30,9 +30,9 @@ HIVE_SKILLS_TLS_KEY_FILE=/config/tls/server.key
 NODE_EXTRA_CA_CERTS=/config/tls/server.crt
 EOF
 docker run --rm -v hiveskills-data:/data -v "$PWD/tls:/config/tls:ro" \
-  --env-file skills.env ghcr.io/cheftaco/hiveskills:1.7.1 check
+  --env-file skills.env ghcr.io/cheftaco/hiveskills:1.8.0 check
 docker run -d --name hiveskills -p 127.0.0.1:4030:4030 -v hiveskills-data:/data \
-  -v "$PWD/tls:/config/tls:ro" --env-file skills.env ghcr.io/cheftaco/hiveskills:1.7.1
+  -v "$PWD/tls:/config/tls:ro" --env-file skills.env ghcr.io/cheftaco/hiveskills:1.8.0
 ```
 
 Expected result: `check` validates TLS, configuration and storage without creating state and reports `Result: ready to start`. Once the container is healthy, `curl --cacert tls/server.crt https://localhost:4030/healthz` reports readiness, and a fresh install starts with an empty catalog; `docker exec hiveskills node dist/cli.js seed` adds the bundled HiveMem skill. The image does not include PAM, so the OS-authenticated operator sign-in is not available in a container; the catalog, manifest and archive APIs work without it, and the suite signs administrators in through Oathweave. There is no web UI: `GET /` serves a static page pointing to HiveXUI, or redirects there when `HIVEXUI_URL` is set.
@@ -44,3 +44,5 @@ Reviewed 2026-11-06 against `main` commit `aa4fa782509912a95584738d12b3e4b343b19
 Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releases/tag/v3.3.0) pins HiveSkills 1.4.0, tag [`v1.4.0`](https://github.com/ChefTaco/HiveSkills/releases/tag/v1.4.0), commit `45dc95ed0322f7573759b5a08f35e4feb366f5ac`. Per its [changelog](https://github.com/ChefTaco/HiveSkills/blob/v1.4.0/CHANGELOG.md), it verifies Oathweave access tokens with the suite's shared verifier while keeping accepted principals, audience, permissions, account links and error responses unchanged, adds `GET /health/ready`, and echoes `x-request-id` on every response. The standalone container example above keeps its original 1.3.1 review.
 
 Release update, 2026-11-13: [Hive 3.7.0](https://github.com/ChefTaco/hive/releases/tag/v3.7.0) pins HiveSkills 1.7.1, tag [`v1.7.1`](https://github.com/ChefTaco/HiveSkills/releases/tag/v1.7.1), commit `dc6c33974fb85b25baede90eff9b76fcada6aee7`. The container example now uses the `1.7.1` image, as the [README](https://github.com/ChefTaco/HiveSkills/blob/v1.7.1/README.md) at that tag does; its environment file and commands are otherwise identical to the reviewed 1.3.1 example, and it was not re-run with the new image. Per the [changelog](https://github.com/ChefTaco/HiveSkills/blob/v1.7.1/CHANGELOG.md), 1.5.0 links deployment targets to Magnus nodes and agents and changes the data format (a suite upgrade from before Hive 3.4.0 needs `--allow-migrations`), 1.6.0 retires the standalone web UI and adds the event feed for the HiveXUI inbox, 1.7.0 adds the suite audit export, and 1.7.1 is a security update.
+
+Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releases/tag/v3.8.0) pins HiveSkills 1.8.0, tag [`v1.8.0`](https://github.com/ChefTaco/HiveSkills/releases/tag/v1.8.0), commit `d2424dd74729454692f59a68ebd9720f6dd251bf`. The container example now uses the `1.8.0` image, as the [README](https://github.com/ChefTaco/HiveSkills/blob/v1.8.0/README.md) at that tag does; it was not re-run with the new image. Per the [changelog](https://github.com/ChefTaco/HiveSkills/blob/v1.8.0/CHANGELOG.md), 1.8.0 fixes sign-out auditing, the sign-in throttle and invalid JSON bodies, and ignores a trailing slash in `HIVE_SKILLS_PUBLIC_URL`.

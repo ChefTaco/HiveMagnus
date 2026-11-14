@@ -6,16 +6,16 @@
 
 ## Choose an entry point
 
-Use Cindertrace to investigate endpoint, network, identity, and application observations. In a Hive installation it is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md), signed in through Oathweave with resource tokens, and [Hive](https://hivemagnus.com/guides/hive.md) 3.7.0 installs Cindertrace 0.6.1 with its private PostgreSQL in the `full` profile. Fresh Hive setup starts its ingestion, dispatch and notification integrations disabled until you review them. It also runs on its own with its retained console, local administrator login, PostgreSQL, and Redis. Hive and Magnus are optional. Collectors send signed observations directly to Cindertrace; sources and listeners must be explicitly configured.
+Use Cindertrace to investigate endpoint, network, identity, and application observations. In a Hive installation it is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md), signed in through Oathweave with resource tokens, and [Hive](https://hivemagnus.com/guides/hive.md) 3.8.0 installs Cindertrace 0.7.0 with its private PostgreSQL in the `full` profile. Fresh Hive setup starts its ingestion, dispatch and notification integrations disabled until you review them. It also runs on its own with its retained console, local administrator login, PostgreSQL, and Redis. Hive and Magnus are optional. Collectors send signed observations directly to Cindertrace; sources and listeners must be explicitly configured.
 
 Cindertrace owns security cases, evidence, correlation, investigations, assurance, policies, retention, audit, and approvals. Magnus owns fleet management and host execution. Existing `/security-fusion` pages and `/api/v1/security-fusion/*` API paths remain compatible.
 
 ## Install a fresh Compose stack on its own
 
-Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.3 or later on the 24.x line, or 26.13.1 or later on the 26.x line. Use a fresh checkout and installation directory. The release reviewed here is [`v0.6.1`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.6.1).
+Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.3 or later on the 24.x line, or 26.13.1 or later on the 26.x line. Use a fresh checkout and installation directory. The release reviewed here is [`v0.7.0`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.7.0).
 
 ```bash
-git clone --branch v0.6.1 https://github.com/ChefTaco/cindertrace.git
+git clone --branch v0.7.0 https://github.com/ChefTaco/cindertrace.git
 cd cindertrace
 npm ci
 npm run init
@@ -39,7 +39,7 @@ Do not publish `.env`, credentials, certificates, state, incident records, or li
 The optional lab is a disposable three-stage investigation for people and external agents, using synthetic evidence. It runs without Hive, Magnus, external sources, or a model provider. Lab startup forbids external identity and integration settings, including Oathweave, so the lab keeps its own console with local administrator login and is not reached through HiveXUI. Use a **fresh separate checkout**; never initialize it over an operational installation. The lab ships in the release above:
 
 ```bash
-git clone --branch v0.6.1 https://github.com/ChefTaco/cindertrace.git cindertrace-lab
+git clone --branch v0.7.0 https://github.com/ChefTaco/cindertrace.git cindertrace-lab
 cd cindertrace-lab
 npm ci
 npm run init -- --lab
@@ -70,7 +70,7 @@ Response requires explicit confirmation of an exact immutable plan, expires afte
 
 - **Oathweave and Emberpath:** sign-in and scoped identity audit and routing security metadata. Security export uses scoped OAuth client credentials; the retired static-token fallback is not supported.
 - **Magnus:** inventory, durable observations, summaries and links, and explicitly approved restart, isolation, or release through its response bridge. Fleet operations remain independent of Cindertrace availability.
-- **Suite products:** from 0.5.0 Cindertrace serves an event feed for the HiveXUI inbox, and from 0.6.0 its collector can pull the audit exports of HiveMem, HiveSkills, Ardent Project Studio and Embermend. Hive 3.7.0 leaves that suite audit collection off.
+- **Suite products:** from 0.5.0 Cindertrace serves an event feed for the HiveXUI inbox, and from 0.6.0 its collector can pull the audit exports of HiveMem, HiveSkills, Ardent Project Studio and Embermend. Hive 3.8.0 still leaves that suite audit collection off.
 - **Sources:** Wazuh, UniFi, NetFlow/IPFIX, Tailscale, Loki, and ChatterMost/Mattermost adapters. Only configured inputs and listeners run. ChatterMost/Mattermost audit export excludes message bodies.
 - **Agents:** the server-side Cindertrace adapter supports scoped reads and investigation drafts. Keep its credentials server-side.
 
@@ -106,3 +106,5 @@ Release update, 2026-11-12: [Hive 3.1.1](https://github.com/ChefTaco/hive/releas
 Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releases/tag/v3.3.0) pins Cindertrace 0.3.0, so the installation and lab examples now check out tag [`v0.3.0`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.3.0), commit `c20228cfd6f6978c4b0d07a3e0179d3b1ff218bd`. Compared with `v0.2.2`, its [README](https://github.com/ChefTaco/cindertrace/blob/v0.3.0/README.md) and [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/v0.3.0/docs/UPGRADING.md) raise the Node.js requirement to the patched 24.22.3 and 26.13.1 lines already listed above, and the [installation guide](https://github.com/ChefTaco/cindertrace/blob/v0.3.0/docs/INSTALLATION.md) adds the suite-standard `/health/live` and `/health/ready` checks and an `x-request-id` on every response; the installation commands and lab docs are unchanged. 0.3.0 verifies Oathweave resource tokens with the suite's shared verifier while keeping Cindertrace's rules, and now refuses identity links that name a `service:` or `system` account.
 
 Release update, 2026-11-13: [Hive 3.7.0](https://github.com/ChefTaco/hive/releases/tag/v3.7.0) pins Cindertrace 0.6.1, so the installation and lab examples now check out tag [`v0.6.1`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.6.1), commit `eeec7e894fb83d5dc5a7f8f653f30c4f96da66cd`. Its [README](https://github.com/ChefTaco/cindertrace/blob/v0.6.1/README.md) is unchanged from `v0.3.0`, so the commands are the same; it still names an older tag in its own clone example. Per the [changelog](https://github.com/ChefTaco/cindertrace/blob/v0.6.1/CHANGELOG.md), 0.4.0 adds the `agent` entity type and a case filter by entity, 0.5.0 the event feed, 0.6.0 the audit collector sources, and 0.6.1 rejects a single event with an out-of-range time instead of failing its whole batch; none needs a database migration. The examples were not run for this update.
+
+Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releases/tag/v3.8.0) pins Cindertrace 0.7.0, so the installation and lab examples now check out tag [`v0.7.0`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.7.0), commit `c0a8867a7aeedd36eb6f241e72b76058db87e61f`. Its [README](https://github.com/ChefTaco/cindertrace/blob/v0.7.0/README.md) and Node.js engines are unchanged from `v0.6.1`, so the commands are the same. Per the [changelog](https://github.com/ChefTaco/cindertrace/blob/v0.7.0/CHANGELOG.md), 0.7.0 stops the collector retrying a refused batch forever, deletes a case's assurance packets with it, validates case updates and redacts sensitive keys in any letter case; it needs no database migration. The examples were not run for this update.
