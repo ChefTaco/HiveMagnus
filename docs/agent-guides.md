@@ -277,3 +277,31 @@ What changed in the published text: the Hive guide's version table, release summ
 Limits of this review: the only command run was the Emberfold `0.3.0` CLI dry run, which exits 0 with the documented result. No container example, archive download or installation was run, and the release signature was not verified again. The Magnus `v2.9.1` and Emberfold `v0.3.0` tags have no GitHub release page, so their guides link to the tagged source instead. Every GitHub link in the public Markdown and walkthroughs answered 200 on the review date; anchors were checked only for the Hive documents.
 
 Site checks: `npm run build` and the browser gate pass with twelve product sections, six walkthroughs, thirteen guides and five viewport widths. The sitemap now lists the Markdown overview and guides. The JSON-LD graph is unchanged, so its CSP hash still agrees.
+
+## Signed Hive 3.8.0 review, 2026-11-14
+
+This review brings the Hive guide, the product guides, the overview, the agent index and the walkthroughs to release 3.8.0, tag `v3.8.0`, commit `2fe6f690556ff75d47b76301eb6cc8e5c25a4a91`. 3.8.0 has a new controller (`controllerSHA256` `3e9635029c5c689e046ed5cb47df019a7e50ea81f19170656a6add340ce8e28c`). The manifest signature was verified against `trust/publisher.pub`, whose DER SHA-256 matches the fingerprint in the release notes.
+
+| Project | Pin in `releases/3.8.0.json` | Tag commit | Reviewed sources |
+| --- | --- | --- | --- |
+| Hive | 3.8.0 | `2fe6f690556ff75d47b76301eb6cc8e5c25a4a91` | `CHANGELOG.md` 3.8.0, release notes, `UPGRADING.md` 3.8.0 section, `deployment/QUICKSTART.md` upgrade section, `deployment/FULL.md` Magnus host agents and node keys, `scripts/suite/audit-collection.sh` release list, `releases/3.8.0.json`, `hive.sh --help` |
+| Oathweave | 2.3.0 | `d2ac3c08c8a55200160321f51bd807515bb0d249` | `CHANGELOG.md`, `apps/iam-core/README.md` container example and client addresses |
+| Emberpath | 2.5.0 | `b9c7568c4af0d2a687774b2ade2cf5eb3046677a` | `README.md` install and editing a provider, `CHANGELOG.md` |
+| HiveMem | 1.7.0 | `53b0c636cf81400926030601a89376a0b69e411d` | `README.md` install section, `CHANGELOG.md` |
+| HiveSkills | 1.8.0 | `d2424dd74729454692f59a68ebd9720f6dd251bf` | `README.md` install section, `CHANGELOG.md` |
+| HiveXUI | 0.8.0 | `afb902509e5c221bc6e542e5ff4431400f97a4b8` | `README.md` (unchanged from 0.7.0), `CHANGELOG.md`, navigation labels |
+| Magnus, gateway and host agent | 2.10.0 | `32417a3742172858c6fdb8c44009ebbe737b13ec` | `CHANGELOG.md` 2.10.0 to 2.10.2, `docs/NODE_CREDENTIALS.md`, `packages/agent/README.md`, host agent `npm-shrinkwrap.json` (Ardent 3.1.3) |
+| Ardent | 3.1.3 (staged) | `4ea00d3a5bc0ea8c601fb611a6770651e7313de0` | `CHANGELOG.md`, `README.md` (unchanged from 3.1.2) |
+| Cindertrace | 0.7.0 | `c0a8867a7aeedd36eb6f241e72b76058db87e61f` | `CHANGELOG.md`, `README.md` and Node engines (unchanged) |
+| ChatterMost | 0.6.1 | `ff218472096906fbf9770f3061d995f0c9c39953` | `AGENTS.md` runbook block, `docs/containers.md` upgrade sources, release asset names |
+| Emberfold | 0.4.0 | `ae93b77801e880c3ca9c0158ac99ea2fd22bffdf` | `README.md`, `CHANGELOG.md`, npm versions |
+| Ardent Project Studio | 0.4.1 | `216cc101c07c896ada6efc69416141683e143107` | `README.md` quick start, `CHANGELOG.md` |
+| Embermend | 0.3.1 | `be7e60b09a1f1db6a234c904d1a4875dba3e2259` | `CHANGELOG.md` |
+
+What changed in the published text: `HIVE_SUITE_VERSION`, the Hive guide's version table, release summary, a new "What 3.8.0 changes for users" list, and the `--allow-migrations` case for installations that run Magnus; standalone image tags in the Oathweave, Emberpath, HiveMem and HiveSkills examples, following each README at its tag; the Cindertrace, ChatterMost and Emberfold pins in the guides and walkthroughs; short sections on Oathweave's code-exchange rule (confidential clients send their secret, public clients use PKCE) and client addresses, Emberpath's provider credential and redirect rules, HiveMem's workspace tightening and Magnus's per-node keys, with where HiveXUI 0.8.0 shows them. The Magnus `v2.10.0` and Emberfold `v0.4.0` tags have GitHub release pages, so their guides now link them instead of the tagged source.
+
+Magnus 2.10.2, the latest patch on npm, fixes managed requests to enrolled nodes whose 2.10.0 or 2.10.1 agent has a node key; the suite pins 2.10.0. The Magnus guide says so, citing Magnus's changelog.
+
+Limits of this review: the only command run was the Emberfold `0.4.0` CLI dry run, which exits 0 with the documented result on Node.js 24.22.3. No container example, archive download or installation was run.
+
+Site checks: `npm run build` and the browser gate pass with twelve product sections, six walkthroughs, thirteen guides, five viewport widths and no accessibility violations. Every non-example link in the public Markdown, the agent index and the walkthroughs answered 200 on the review date, apart from npmjs.com pages, which refuse automated requests (the packages were checked in the registry instead). Fragments into the reviewed product documents and between guides match a heading.

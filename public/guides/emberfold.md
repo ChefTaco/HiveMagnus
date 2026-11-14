@@ -11,7 +11,7 @@
 - Optional authenticated HTTP wrapper: `@hivemagnus/emberfold-server`.
 - Hermes context-engine plugin: runs locally and reuses Hermes's configured compression model.
 
-Ardent already imports the pinned library. Installing an additional service is unnecessary for that integration; see the [Ardent guide](https://hivemagnus.com/guides/ardent.md). In a [Hive](https://hivemagnus.com/guides/hive.md) installation, the `full` profile also runs the optional Emberfold HTTP service; Hive 3.7.0 pins it at 0.3.0.
+Ardent already imports the pinned library. Installing an additional service is unnecessary for that integration; see the [Ardent guide](https://hivemagnus.com/guides/ardent.md). In a [Hive](https://hivemagnus.com/guides/hive.md) installation, the `full` profile also runs the optional Emberfold HTTP service; Hive 3.8.0 pins it at 0.4.0.
 
 ## Prerequisites
 
@@ -33,10 +33,10 @@ cat > conversation.json <<'EOF'
   "budget": { "context_tokens": 16000, "output_reserve_tokens": 4000 }
 }
 EOF
-npx --package @hivemagnus/emberfold-cli@0.3.0 emberfold prepare --input conversation.json --dry-run
+npx --package @hivemagnus/emberfold-cli@0.4.0 emberfold prepare --input conversation.json --dry-run
 ```
 
-Expected result: JSON on stdout with `fits: true`, `compacted: false`, and zero protected spans verified for this input. Dry runs make no model calls and do not write output files. Diagnostics go to stderr. Exit codes are 0 success, 2 invalid input, 3 budget exhaustion, and 4 provider/tokenizer unavailable.
+Expected result: JSON on stdout with `fits: true`, `compacted: false`, and zero protected spans verified for this input. Dry runs make no model calls and do not write output files. Diagnostics go to stderr. Exit codes are 0 success, 2 invalid input, 3 budget exhaustion, and 4 provider/tokenizer unavailable or deadline exceeded.
 
 For real compression, supply a summarizer/provider configuration explicitly. There is no implicit cloud fallback. The library caller retains authoritative source history and controls publication; historical summaries remain unverified data.
 
@@ -45,7 +45,7 @@ For real compression, supply a summarizer/provider configuration explicitly. The
 In an existing TypeScript project:
 
 ```bash
-npm install @hivemagnus/emberfold@0.3.0
+npm install @hivemagnus/emberfold@0.4.0
 ```
 
 The repository's minimal API example:
@@ -92,3 +92,5 @@ Reviewed 2026-11-05 against tag `v0.2.1`, commit `f97b7eec1083cbbab79361f6360b8b
 Release update, 2026-11-12: [Hive 3.1.1](https://github.com/ChefTaco/hive/releases/tag/v3.1.1) pins Emberfold 0.2.2, so the examples now use core and CLI `0.2.2` from tag [`v0.2.2`](https://github.com/ChefTaco/emberfold/releases/tag/v0.2.2), commit `ab7541028acbf381e1cb67d8f6bcc01b239014ca`. Its [README](https://github.com/ChefTaco/emberfold/blob/v0.2.2/README.md) changes only the compatibility check, which now targets the Ardent repository. Run with the published `0.2.2` CLI, the synthetic example above exits 0 with output identical to `0.2.1`.
 
 Release update, 2026-11-13: [Hive 3.7.0](https://github.com/ChefTaco/hive/releases/tag/v3.7.0) pins Emberfold 0.3.0, so the examples now use core and CLI `0.3.0` from tag [`v0.3.0`](https://github.com/ChefTaco/emberfold/tree/v0.3.0), commit `0ba9d933dd5c4da67537e73771cb20d9e9ab2ce2`; the tag has no GitHub release page, and npm publishes core, CLI and server `0.3.0` as `latest`. Per its [changelog](https://github.com/ChefTaco/emberfold/blob/v0.3.0/CHANGELOG.md), 0.2.3 requires the patched Node.js lines listed above and 0.3.0 adds an opt-in `emberpath` provider type for the service and CLI. Run with the published `0.3.0` CLI, the synthetic example above exits 0 with `fits: true`, `compacted: false` and zero protected spans verified.
+
+Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releases/tag/v3.8.0) pins Emberfold 0.4.0, so the examples now use core and CLI `0.4.0` from tag [`v0.4.0`](https://github.com/ChefTaco/emberfold/releases/tag/v0.4.0), commit `ae93b77801e880c3ca9c0158ac99ea2fd22bffdf`; npm publishes core, CLI and server `0.4.0` as `latest`. Its [README](https://github.com/ChefTaco/emberfold/blob/v0.4.0/README.md) changes only the meaning of exit code 4, which now also covers an expired deadline. Per the [changelog](https://github.com/ChefTaco/emberfold/blob/v0.4.0/CHANGELOG.md), provider, tokenizer and summary failures now carry stable codes. Run with the published `0.4.0` CLI on Node.js 24.22.3, the synthetic example above exits 0 with `fits: true`, `compacted: false` and zero protected spans verified.

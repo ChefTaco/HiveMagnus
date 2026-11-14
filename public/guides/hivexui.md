@@ -2,7 +2,7 @@
 
 > The single browser UI for a Hive installation: fleet, identity, models, memory, skills, security, chat and team projects in one shell, with sections only for installed products.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/HiveXUI) · [Release 0.7.0](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.7.0) · [Theme](https://github.com/ChefTaco/HiveXUI/blob/v0.7.0/docs/THEME.md)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/HiveXUI) · [Release 0.8.0](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.8.0) · [Theme](https://github.com/ChefTaco/HiveXUI/blob/v0.8.0/docs/THEME.md)
 
 ## Responsibility
 
@@ -32,7 +32,9 @@ The HiveXUI README keeps native frontends and clients available until each modul
 
 ## In a Hive installation
 
-[Hive](https://hivemagnus.com/guides/hive.md) 3.7.0 installs HiveXUI 0.7.0, a digest-pinned image, next to the ingress, in every profile, and writes its public runtime file. There is nothing else to configure. HiveXUI is the only UI of the suite: Emberpath and HiveSkills no longer bundle a web UI of their own. Every product's errors show a consistent message with the product's code and request ID, and destructive actions are confirmed in one shared dialog.
+[Hive](https://hivemagnus.com/guides/hive.md) 3.8.0 installs HiveXUI 0.8.0, a digest-pinned image, next to the ingress, in every profile, and writes its public runtime file. There is nothing else to configure. HiveXUI is the only UI of the suite: Emberpath and HiveSkills no longer bundle a web UI of their own. Every product's errors show a consistent message with the product's code and request ID, and destructive actions are confirmed in one shared dialog.
+
+From 0.8.0, with Magnus 2.10, **Magnus > Fleet > Nodes** shows each host agent's node key: a Node key column in the list, a Node credentials panel (administrators and operators) with the mode, the automatic binding window and what still blocks enforcing keys, and a Node credential card on node detail. Administrators see key fingerprints there, approve or reject a binding Magnus refused for its address, and revoke or reset a key behind the shared confirmation; issuing an enrollment token and rotating a key stay command-line and API steps. Against a Magnus without per-node credentials all of this stays hidden. On **Emberpath > Providers**, changing a provider's base URL to another server asks for its secret again before saving, matching Emberpath 2.5.0.
 
 ## Build it
 
@@ -51,3 +53,5 @@ Reviewed 2026-11-12 against tag `v0.2.7`, commit `de613008a438a90d660e5a7161b3fe
 Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releases/tag/v3.3.0) pins HiveXUI 0.4.0, tag [`v0.4.0`](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.4.0), commit `96dd09e5b6b6989d73a738a0c0c26bdb2c4be50d`. Compared with 0.2.7, its [README](https://github.com/ChefTaco/HiveXUI/blob/v0.4.0/README.md) keeps the same sections and build commands and now notes that every page of the earlier Magnus dashboard has an equivalent, apart from the deliberate omissions listed in the Magnus module. Per its [changelog](https://github.com/ChefTaco/HiveXUI/blob/v0.4.0/CHANGELOG.md), 0.3.0 added the Embermend section, and 0.4.0 sends an `x-request-id` with every API request, presents every section through the shared UI kit, names audit and incident pages by product, derives navigation and deep links from one route table without changing any address, adds automated WCAG 2.1 A/AA checks and updates the Magnus agent upgrade drawer.
 
 Release update, 2026-11-13: [Hive 3.7.0](https://github.com/ChefTaco/hive/releases/tag/v3.7.0) pins HiveXUI 0.7.0, tag [`v0.7.0`](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.7.0), commit `39328ce4bef8cce11ebdefcbe9fb6511d91e5e63`. Its [README](https://github.com/ChefTaco/HiveXUI/blob/v0.7.0/README.md) keeps the same build commands and runtime file. Per its [changelog](https://github.com/ChefTaco/HiveXUI/blob/v0.7.0/CHANGELOG.md), 0.5.0 added Agent 360, 0.6.0 replaced the Magnus-only notification bell with the suite inbox, and 0.7.0 added record search in the command palette and the Setup page. The build commands were not re-run for this update.
+
+Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releases/tag/v3.8.0) pins HiveXUI 0.8.0, tag [`v0.8.0`](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.8.0), commit `afb902509e5c221bc6e542e5ff4431400f97a4b8`. Its [README](https://github.com/ChefTaco/HiveXUI/blob/v0.8.0/README.md) is unchanged from 0.7.0. The node key and provider screens above follow its [changelog](https://github.com/ChefTaco/HiveXUI/blob/v0.8.0/CHANGELOG.md). The build commands were not re-run for this update.
