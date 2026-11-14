@@ -2,27 +2,34 @@
 
 > Magnus operates Linux fleets and the agents that run on them: inventory and health, commands, cron jobs, files, logs, skills, rollouts, incidents and an append-only audit log.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/magnus) · [Release 2.10.0](https://github.com/ChefTaco/magnus/releases/tag/v2.10.0) · [Changelog](https://github.com/ChefTaco/magnus/blob/v2.10.0/CHANGELOG.md) · [Current standalone instructions](https://github.com/ChefTaco/magnus#quick-start-standalone) · [Ardent guide](https://hivemagnus.com/guides/ardent.md)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/magnus) · [Release 3.0.1](https://github.com/ChefTaco/magnus/releases/tag/v3.0.1) · [Changelog](https://github.com/ChefTaco/magnus/blob/v3.0.1/CHANGELOG.md) · [Per-node credentials](https://github.com/ChefTaco/magnus/blob/v3.0.1/docs/NODE_CREDENTIALS.md) · [Current standalone instructions](https://github.com/ChefTaco/magnus#quick-start-standalone) · [Ardent guide](https://hivemagnus.com/guides/ardent.md)
 
 ## Choose an entry point
 
 Use Magnus for fleet inventory, health, jobs, skills, rollouts and audit. A small agent on each host reports to a central API server. Magnus can also manage the AI agents on those hosts: Hermes Agent, the Codex CLI and [Ardent](https://hivemagnus.com/guides/ardent.md), a separate product with its own repository. Oathweave sign-in, HiveMem memory, HiveSkills distribution and Emberpath model routing are optional integrations.
 
-There are two ways to run Magnus. Through [Hive](https://hivemagnus.com/guides/hive.md) 3.8.0, the full profile adds Magnus 2.10.0 and its browser pages are the Magnus section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md) at `/fleet`, reaching the API through an allowlist of browser routes with a short-lived Oathweave token. Agents and services keep using the Magnus endpoint directly. The standalone installer below is for Magnus without Hive, and installs the Next.js UI that Magnus's README documents for standalone installs.
+There are two ways to run Magnus. Through [Hive](https://hivemagnus.com/guides/hive.md) 3.9.0, the full profile adds Magnus 3.0.1 and its browser pages are the Magnus section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md) at `/fleet`, reaching the API through an allowlist of browser routes with a short-lived Oathweave token. Agents and services keep using the Magnus endpoint directly. The standalone installer below is for Magnus without Hive, and installs the Next.js UI that Magnus's README documents for standalone installs.
 
 Cindertrace is the separate security product for correlated cases, evidence, investigations and approvals. Magnus can export observations and provide fleet context and approved host execution; the embedded security runtime was retired in Magnus 2.0. See the [Cindertrace guide](https://hivemagnus.com/guides/cindertrace.md) and the repository migration guidance before upgrading an existing local-security installation.
 
+## Reviewed release: 3.0.1
+
+Magnus 3.0.0 is a major release: per-node credentials reach their last phase, and nodes authenticate with their own Ed25519 keys only. 3.0.1 adds the supported way to move existing agents across the major version. Neither release adds a datastore migration, a new environment variable or a removed one. Both upgrade from 2.10.2 only (`minUpgradeFrom`).
+
+- **`enforce` by default.** `NODE_AUTH_MODE` defaults to `enforce` on the server and on the agent (it was `compat`). The shared node secret (`x-node-token`) is refused on every node route and no longer sent, in both directions. Evidence that carries only the shared `RESULT_SIGNING_SECRET` HMAC is refused, and decisions the server makes for a node are signed with the server key only. A 2.10.2 agent with a key keeps working: the server goes by its signature and ignores the secret it also sends.
+- **Start-up guard.** A server whose `NODE_AUTH_MODE` is unset refuses to start (exit 1) while any real node has no active key (`NODES_WITHOUT_KEY`), only revoked keys (`NODES_REVOKED`), an agent that does not sign its evidence (`NODES_NOT_SIGNING_EVIDENCE`), or an agent 2.10.0 or 2.10.1 (`AGENTS_NEED_UPGRADE`), whose managed requests enforce cannot reach. The message names the nodes and the two ways out: enroll or upgrade them, or set `NODE_AUTH_MODE=compat` explicitly. Decommissioned nodes and the internal `__control-api__` and `__dashboard__` log sources never count. An explicit mode is never checked.
+- **`compat` and `warn` are deprecated.** Set explicitly, either keeps working for this major and logs `DEPRECATED` at start; the fleet summary reports `modeDeprecated` with a `deprecationNotice`. Both are removed in the next major, with `NODE_MANAGER_SECRET`, `RESULT_SIGNING_SECRET` and `COMMAND_RECONCILIATION_SECRET`.
+- **Automatic binding closed.** `POST /api/v1/node-enrollment/legacy-upgrade` answers `410 LEGACY_UPGRADE_CLOSED` in enforce mode, whatever `NODE_AUTH_LEGACY_UPGRADE_UNTIL` says, and a binding refused for its address can no longer be approved. New nodes enroll with a one-time token.
+- **`NODE_AUTO_REGISTER` off.** In enforce mode unknown agents are no longer added to the inventory on their first heartbeat: register the node first.
+- **Shared secrets optional.** The server and the agent no longer require `NODE_MANAGER_SECRET` or `RESULT_SIGNING_SECRET` outside an explicit `compat` or `warn`, and still honour them when set. `magnus init` of 3.0.0 or later no longer generates them.
+- **New in 3.0.0:** server-key rotation (stage, promote, retire) and a two-ADMIN approval for scheduler-source settlements in place of the reviewer's `COMMAND_RECONCILIATION_SECRET` signature. Agents MAC their own records with node-local keys when the shared keys are absent.
+- **New in 3.0.1:** `magnus-server agents upgrade --allow-major`, a server-signed path that moves agents from 2.10.x to 3.0.x by way of the 2.10.3 stepping stone.
+
 ## In a Hive installation
 
-Hive 3.8.0 pins the Magnus server and fleet gateway 2.10.0 by image digest and the host agent `@hivemagnus/magnus-agent` 2.10.0 by npm integrity. With a port for host agents, `hive.sh magnus-agent install` installs the agent on a fleet host and stages the Ardent 3.1.3 package the agent's lock pins; `hive.sh magnus-agent enroll` then reviews and enables full node capabilities on an installer-owned single host: commands, managed cron and a selected restricted web terminal. Guided setup offers both after installation. After a suite upgrade, `hive.sh post-upgrade` or `hive.sh magnus-agent install` updates an existing agent while keeping its enrollment scope. See the [Hive guide](https://hivemagnus.com/guides/hive.md#fleet-hosts-and-security-events).
+Hive 3.9.0 pins the Magnus server and fleet gateway 3.0.1 by image digest and the host agent `@hivemagnus/magnus-agent` 3.0.1 by npm integrity, with HiveXUI 0.9.0, whose console reads the Magnus 3 contract. With a port for host agents, `hive.sh magnus-agent install` installs the agent on a fleet host and stages the Ardent 3.1.3 package the agent's lock pins; `hive.sh magnus-agent enroll` then reviews and enables full node capabilities on an installer-owned single host: commands, managed cron and a selected restricted web terminal. Guided setup offers both after installation. From 3.9.0 `magnus-agent install` copies no `NODE_MANAGER_SECRET`, `RESULT_SIGNING_SECRET` or `COMMAND_RECONCILIATION_SECRET` to an agent: a new agent, and an existing agent without a key, is enrolled with a one-time token read by `magnus-agent enroll --token-file -`, and without a token the install stops before changing anything. An agent with a key keeps it. A fresh installation generates none of those three secrets for Magnus. After a suite upgrade, `hive.sh post-upgrade` or `hive.sh magnus-agent install` updates an existing agent while keeping its enrollment scope. See the [Hive guide](https://hivemagnus.com/guides/hive.md#fleet-hosts-and-security-events) and [Upgrade to 3.0.1](#upgrade-to-301) below.
 
-In HiveXUI, **Magnus > Ardent > Installations** installs and updates the staged Ardent package, and **New Agent** creates, configures and starts an Ardent profile with its own HiveMem identity. [Ardent Project Studio](https://hivemagnus.com/guides/ardent-studio.md) uses the same Magnus Ardent bridge through its own Oathweave service identity. Since the reviewed 2.4.2, Magnus added an agent identity lookup that HiveXUI's Agent 360 uses (2.7.0), an event feed for the HiveXUI inbox (2.8.0) an opt-in Emberpath model provider for the fleet assistant (2.9.0) and per-node credentials (2.10.0). An external Magnus, managed and upgraded separately, can serve an installation's Magnus pages and Studio instead of the `magnus` component.
-
-## Per-node keys
-
-From 2.10.0 each host agent has its own Ed25519 node key, and the server has a signing key; requests in both directions are signed for exactly one node. The fleet-wide `NODE_MANAGER_SECRET` keeps working while the fleet moves over, in the default `compat` mode. Nothing has to be done on the nodes: upgrade the server first, then the agents, and each upgraded agent binds its own key after its first accepted heartbeat, for 30 days after the server's first start on 2.10.0 (or until `NODE_AUTH_LEGACY_UPGRADE_UNTIL`). The server binds a key only for an inventory node without one, from the node's recorded address, and notifies you with the key fingerprint; compare it with `magnus-agent identity show` on the host. A binding refused because the agent calls from another address, for example through a reverse proxy, is kept for an administrator to approve after comparing fingerprints. Agents that reach a Hive installation's Magnus through the suite's host agent port cannot ask for the automatic binding at all and keep the shared secret until they are enrolled with a one-time token (`magnus-agent enroll --token-file`). Agents upgraded after the window need a token too.
-
-In HiveXUI, **Magnus > Fleet > Nodes** shows each node's key, the fleet's progress and what blocks enforcing keys; administrators can approve a binding refused for its address and revoke or reset a key. Enforcing keys only (`NODE_AUTH_MODE=enforce`) is opt-in and last: set it on an agent only once it has a bound key, and on the server only when `GET /api/v1/node-credentials/summary` reports nothing that blocks it; `warn` first shows what still uses the shared secret. Back up the server key file (`$MAGNUS_HOME/state/node-auth/`) with the database. Before moving an agent with a key back to a release older than 2.10.0, reset its credentials on the server. Per the changelog, 2.10.0 and 2.10.1 agents with a key refuse the server's managed requests on enrolled nodes, so agent upgrades from Magnus, Embermend, skills and other changes to such a node fail; 2.10.2 fixes this; Hive 3.8.0 pins 2.10.0 and Hive 3.8.1 pins 2.10.2. Hive 3.9.0 pins Magnus 3.0.1, which accepts node keys only: `enforce` is its default, and with `NODE_AUTH_MODE` unset its start-up guard refuses to start while a real node has no active key, only revoked keys, an agent that does not sign its evidence, or a 2.10.0 or 2.10.1 agent (an explicit `compat` keeps the shared secret for this major, deprecated). Magnus 3 upgrades from 2.10.2 only, server first; a 2.10.2 agent with a key keeps working with it. Agents cross the major by way of 2.10.3: `magnus-server agents upgrade --to 2.10.3`, then `magnus-server agents upgrade --to 3.0.1 --allow-major`, each after a `--dry-run`. See [per-node credentials](https://github.com/ChefTaco/magnus/blob/v2.10.0/docs/NODE_CREDENTIALS.md) and, for 3.0.1, [moving agents across a major version](https://github.com/ChefTaco/magnus/blob/v3.0.1/docs/NODE_CREDENTIALS.md#moving-agents-across-a-major-version).
+In HiveXUI, **Magnus > Ardent > Installations** installs and updates the staged Ardent package, and **New Agent** creates, configures and starts an Ardent profile with its own HiveMem identity. [Ardent Project Studio](https://hivemagnus.com/guides/ardent-studio.md) uses the same Magnus Ardent bridge through its own Oathweave service identity. Since the reviewed 2.4.2, Magnus added an agent identity lookup that HiveXUI's Agent 360 uses (2.7.0), an event feed for the HiveXUI inbox (2.8.0), an opt-in Emberpath model provider for the fleet assistant (2.9.0), per-node credentials (2.10.0) and node keys only (3.0.0). An external Magnus, managed and upgraded separately, can serve an installation's Magnus pages and Studio instead of the `magnus` component.
 
 ## Install Magnus on its own
 
@@ -32,7 +39,7 @@ Prerequisites: Linux with systemd, npm, Node.js 24.22.3+ in the 24 series or 26.
 npx @hivemagnus/magnus init
 ```
 
-Expected result: the installer creates `~/.magnus`, installs the server and the standalone UI, generates credentials and a self-signed certificate, prepares PostgreSQL/Redis through Compose (or uses `--database-url` and `--redis-url`), and starts systemd user services. Use the printed URL and login. Save the generated password privately; the self-signed certificate is for evaluation.
+Expected result: the installer creates `~/.magnus`, installs the server and the standalone UI, generates credentials and a self-signed certificate, prepares PostgreSQL/Redis through Compose (or uses `--database-url` and `--redis-url`), and starts systemd user services. Use the printed URL and login. Save the generated password privately; the self-signed certificate is for evaluation. From 3.0.0 the generated server settings include no shared node secret: agents enroll with their own keys.
 
 Inspect options before choosing an installation mode:
 
@@ -40,11 +47,96 @@ Inspect options before choosing an installation mode:
 npx @hivemagnus/magnus init --help
 ```
 
-`--system --service-user magnus` installs system units under `/opt/magnus` instead. For user services to survive logout and start at boot, the setup may require `loginctl enable-linger $USER`. Add managed nodes through the standalone UI and the documented node-agent setup; each node requires its own configuration and secret. Installing the server alone does not enroll other hosts.
+`--system --service-user magnus` installs system units under `/opt/magnus` instead. For user services to survive logout and start at boot, the setup may require `loginctl enable-linger $USER`. Installing the server alone does not enroll other hosts.
+
+### Add a host
+
+Register the node in the standalone UI or through the API with the host's FQDN. `POST /api/v1/nodes/register` returns a one-time `enrollmentToken`, valid for one hour; for an existing node an ADMIN issues one with `POST /api/v1/nodes/<nodeId>/enrollment-token`. Issuing a token stays with the API and the command line, never a browser route, because its response is a secret. On the host, install the agent, set `CONTROL_API_URL` and the TLS paths in `/opt/magnus-agent/.env`, enroll once with the token on standard input, then validate and enable the service:
+
+```bash
+sudo npm install --prefix /opt/magnus-agent @hivemagnus/magnus-agent
+sudo install -m 0600 /opt/magnus-agent/node_modules/@hivemagnus/magnus-agent/.env.example /opt/magnus-agent/.env
+# set CONTROL_API_URL, TLS_CERT_PATH and TLS_KEY_PATH in /opt/magnus-agent/.env
+cd /opt/magnus-agent
+printf '%s' "$ENROLLMENT_TOKEN" | sudo node node_modules/@hivemagnus/magnus-agent/dist/index.js enroll --token-file -
+sudo node node_modules/@hivemagnus/magnus-agent/dist/index.js check
+sudo cp node_modules/@hivemagnus/magnus-agent/deploy/magnus-agent.service /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now magnus-agent
+```
+
+Expected result: the agent creates its key, proves possession, and stores its node id and the server's public key; the host shows as online within one heartbeat interval (30 seconds). The server stores only the SHA-256 of a token; a token works once, issuing a new one withdraws the previous one, and enrolling with a token replaces whatever key the node had. `--token-file PATH` reads the token from a file instead; `--token` still works but puts it on the process table. No `NODE_MANAGER_SECRET` or `RESULT_SIGNING_SECRET` is needed. By default the agent runs as root; the [agent README](https://github.com/ChefTaco/magnus/blob/v3.0.1/packages/agent/README.md) covers both modes.
+
+## Upgrade to 3.0.1
+
+Magnus 3 upgrades from 2.10.2 only, server first. Nothing crosses a major version by itself: `magnus upgrade` and the agent upgrade action stay on the current major unless asked with `--allow-major`.
+
+**Prepare on 2.10.2.** Every agent runs 2.10.2 or later with a bound key (`nodeCredential.state: active`); agents 2.10.0 and 2.10.1 move to 2.10.2 with **Upgrade agents** or `magnus-server agents upgrade`. Optionally set `NODE_AUTH_MODE=warn` on the 2.10.2 server, restart it and use the fleet for a day, so remaining uses of the shared secret show up before they are refused. Then confirm `GET /api/v1/node-credentials/summary` reports `enforceReady: true`, and remove `NODE_AUTH_MODE` from the server's environment (or set `enforce`).
+
+**The server, 2.10.2 to 3.0.1.** On a managed install, straight to 3.0.1:
+
+```bash
+magnus upgrade --to 3.0.1 --allow-major --dry-run
+magnus upgrade --to 3.0.1 --allow-major
+```
+
+There is no migration to apply. The start-up guard reads the inventory first: if a node would be locked out, the server does not start, names the nodes, and `magnus upgrade` switches back to 2.10.2 by itself. A 3.0.0 server upgrades to 3.0.1 in place with `magnus upgrade`.
+
+**The agents, 2.10.2 to 2.10.3 to 3.0.1.** There is no hurry: a 2.10.2 agent with a key keeps working with a 3.0.x server in enforce mode. An agent before 2.10.3 cannot verify a major-upgrade authorization, so the fleet takes the 2.10.3 patch first (on npm under the dist-tag `maintenance-2.10`; `latest` is 3.0.1). On the server host, dry runs first:
+
+```bash
+magnus-server agents upgrade --to 3.0.1 --allow-major --dry-run
+magnus-server agents upgrade --to 2.10.3 --dry-run
+magnus-server agents upgrade --to 2.10.3
+magnus-server agents upgrade --to 3.0.1 --allow-major --dry-run
+magnus-server agents upgrade --to 3.0.1 --allow-major
+```
+
+The first dry run lists who needs which step: agents 2.10.0 to 2.10.2 as `MAJOR_NEEDS_STEPPING_STONE`, a node without an active key as `MAJOR_NEEDS_NODE_KEY` (enroll it, or let it bind its key). Without `--allow-major` such nodes stay `MAJOR_VERSION`. With it, each request that crosses the major carries an authorization signed with the server key for that node, the version it runs, the target and the tarball integrity, valid for one hour; the agent verifies it against the server key it pins, and the shared node secret never authorizes a major. Once accepted it is an ordinary upgrade with its trial: a node whose trial fails switches back to 2.10.3 by itself. Without `--integrity` the server reads each version's integrity from the registry (`MAGNUS_UPDATE_REGISTRY`); pass it explicitly for offline installs. New nodes install 3.0.x directly and enroll with a token.
+
+Two things wait for a 3.0 agent on the node: the two-ADMIN [scheduler-source settlement](#settling-a-scheduler-source) and pinning a staged server key from the heartbeat, so rotate the server key only after the agents are on 3.0.x.
+
+**In a Hive installation,** follow Hive's [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.9.0/UPGRADING.md#suite-390-magnus-301-node-keys-only): upgrade to suite 3.8.1 (Magnus 2.10.2) first, prepare the fleet there, then `./hive.sh upgrade --config FILE --release 3.9.0`, which needs no flag from 3.8.1. Before it confirms the plan or changes anything, it checks the running Magnus as Magnus 3's guard will and refuses, naming the blockers. After the upgrade, `./hive.sh post-upgrade` moves the Magnus host's own agent to 3.0.1, and `./hive.sh magnus-agent install --config FILE --host HOST` does the same for each fleet host the suite installed; agents that Magnus manages take the commands above inside Magnus's container (`docker compose -f DIRECTORY/compose.json exec magnus ...`). A Hive installation moves to Magnus 3 through the suite release, not by hand.
+
+## Per-node keys
+
+Each host agent has its own Ed25519 node key, in `$AGENT_INSTALL_DIR/identity/node.key` (mode 0600), and the server has a signing key, in `$MAGNUS_HOME/state/node-auth/server-signing-key.json` (`NODE_AUTH_SERVER_KEY_PATH`, mode 0600). Requests in both directions are signed for exactly one node, with a timestamp, a single-use nonce and the hash of the body; the server stores only public keys. Back up the server key file with the database. To check a key, compare `magnus-agent identity show` on the host with the fingerprint the server lists for the node.
+
+**The summary.** `GET /api/v1/node-credentials/summary` (ADMIN, OPERATOR) counts real nodes by credential state, sums the use of the shared credentials over the last 24 hours and lists what blocks `enforce`: `SERVER_KEY_UNAVAILABLE`, `NODES_WITHOUT_KEY`, `NODES_REVOKED`, `NODES_NOT_SIGNING_EVIDENCE`, `AGENTS_NEED_UPGRADE`, `RECENT_SHARED_SECRET_USE` and `PENDING_BINDINGS`. From 3.0.0 it also carries `modeExplicit`, `modeDeprecated` with a `deprecationNotice`, and `serverKeyRotation`.
+
+**Rotate, revoke, re-enroll.** `magnus-agent identity rotate` on the node makes a new key signed for by the old one, which stays valid for 24 hours. A revoke (`POST /api/v1/nodes/<nodeId>/credentials/revoke`, ADMIN, optionally with a `reason`) leaves the agent refused with `401 NODE_CREDENTIAL_REVOKED` once no active key is left, and the node stays closed to the shared secret: re-enroll it with a new token, which replaces the old keys. A reset, which lets a node use the shared secret again, answers `409 NODE_AUTH_ENFORCED` in enforce mode; it needs an explicit `compat` or `warn` on the server and the same in the agent's `.env`. In HiveXUI, **Magnus > Fleet > Nodes** shows each node's key, the fleet's progress and what blocks enforcing keys; an administrator can list and revoke a node's keys there, and Magnus refuses a reset while the mode is `enforce`. The server checks the ADMIN role on each request.
+
+**Rotating the server key.** Each step changes the key file, so back it up with the database afterwards:
+
+```bash
+magnus-server node-auth server-key status
+magnus-server node-auth server-key stage
+magnus-server node-auth server-key promote --force --grace-hours 168
+magnus-server node-auth server-key retire
+```
+
+Stage creates the next key, which agents pin from their next heartbeats; the server signs nothing with it yet. Promote once the summary shows `serverKeyRotation.agents.pinningNext` equal to `keyedNodes`: `POST /api/v1/node-credentials/server-key/promote` refuses earlier with `409 SERVER_KEY_NOT_PINNED` unless `force`, and the command line cannot see the pins, so it always needs `--force`. The replaced key stays accepted for the grace period (default 7 days). Retire then destroys its private part and keeps its public key, so decisions it signed keep verifying. An agent that missed a promotion is refused once and pins the new key by itself. The rotation routes are not browser routes. See [per-node credentials](https://github.com/ChefTaco/magnus/blob/v3.0.1/docs/NODE_CREDENTIALS.md#rotating-the-server-key).
+
+## Settling a scheduler source
+
+The reviewer-signed `POST /api/v1/cron/scheduler-sources/reconcile` took an assertion signed with `COMMAND_RECONCILIATION_SECRET`, a key that agents held too, so a copy from any node could sign a settlement. In enforce mode it answers `409 NODE_AUTH_ENFORCED`. Its replacement is a two-ADMIN approval: one ADMIN person requests the settlement with a reason (`POST /api/v1/cron/scheduler-sources/reconcile-requests`), a different ADMIN person approves it within 15 minutes (`.../reconcile-requests/<id>/approve`, or `.../reject` to withdraw it), and only then does the server sign it for that node with its server key. The API secret and service identities can take neither step; each step is audited. It needs a 3.0 agent on the node (`features.schedulerSourceAuthorizations`): an older agent gets `409 AGENT_UPGRADE_REQUIRED` in enforce mode. Open requests live in the server process and do not survive a restart. These are API routes with no browser caller yet. See [settling a scheduler source](https://github.com/ChefTaco/magnus/blob/v3.0.1/docs/NODE_CREDENTIALS.md#settling-a-scheduler-source).
+
+## Retiring the shared secrets
+
+On the server, `NODE_MANAGER_SECRET` and `RESULT_SIGNING_SECRET` are required only under an explicit `compat` or `warn`. An agent upgraded from 2.10.x keeps its shared keys in `.env` and keeps MACing its own records (command ledger, mutation observations, receipts and decisions) with `RESULT_SIGNING_SECRET`, so a downgrade to 2.10.x still reads every record. Without the shared key a 3.0 agent uses node-local keys, `local-result.key` and `local-reconciliation.key` in its `identity` directory, separate from the node key. It reads a record signed with any key it may have used: the shared key, its previous value `RESULT_SIGNING_PREVIOUS_SECRET`, or the node-local key.
+
+To retire the shared key from an upgraded agent, move its value from `RESULT_SIGNING_SECRET` to `RESULT_SIGNING_PREVIOUS_SECRET`, and keep it there while those records matter: new records are MACed with the node-local key and old ones keep verifying. Removing the value outright makes records signed with it unreadable. This makes a downgrade lossy: an agent that wrote records with a node-local key cannot be downgraded to 2.10.x without losing them. Hive's `magnus-agent install` never removes the secret lines an existing agent's `.env` has, for the same reason. Log forwarding (`LOG_INGEST_TOKEN`) and the Hermes registry token are separate credentials and are unchanged.
+
+## Rollback
+
+- **Back to the shared secret, same release.** Set `NODE_AUTH_MODE=compat` on the 3.0.x server and restart it: the shared node secret is accepted, and sent where needed, again, and the automatic binding reopens while its window lasts. An agent that should accept the shared secret again needs `NODE_AUTH_MODE=compat` in its `.env`. In a Hive installation, set it in `config/magnus.env` and restart Magnus, with no change of release; remove it again once the summary has no blockers.
+- **Back to 2.10.2.** `magnus rollback`: there is no migration to undo, and 2.10.2 reads the same database and server key file (of a rotated file, it uses the active and next keys). 3.0 agents keep working with it: they sign, it verifies.
+- **An agent below 3.0.0.** Keep `RESULT_SIGNING_SECRET` in its `.env` first: records it MACed with its node-local key cannot be read by 2.10.x.
+- **An agent below 2.10.0.** It knows only the shared secret, which the server refuses for a node with a key. `GET /api/v1/node-credentials/downgrade-check?nodeId=<id>&to=<version>` names the reset to post first; in enforce mode there is none (`enroll-instead`), so keep such nodes on 2.10.0 or later.
+- **A lost server key file** (a database restored without `$MAGNUS_HOME/state`): the server creates a new key, and agents re-pin it over verified TLS on their next refused request. A database that lost a node's credential leaves that node refused in enforce mode (`401 NODE_CREDENTIAL_UNKNOWN`) until it is enrolled with a token.
 
 ## Web terminal
 
-The browser terminal runs through a separate [fleet gateway](https://github.com/ChefTaco/magnus/tree/v2.10.0/services/fleet-gateway) that holds the restricted SSH key, so neither the browser nor the Magnus API does. It is off by default: HiveXUI offers a terminal only when a gateway is deployed and configured on the server, and the person holds an `ADMIN` link and the `magnus:terminal` permission. Opening one also needs identity verified within the last five minutes, otherwise `STEP_UP_REQUIRED`, and an operator-approved host key for that node; unknown keys are refused and nothing is learned on first use. The audit log records metadata only. The gateway ships as the container image `ghcr.io/cheftaco/magnus-fleet-gateway`; Hive offers it in every release but never selects it in a profile.
+The browser terminal runs through a separate [fleet gateway](https://github.com/ChefTaco/magnus/tree/v3.0.1/services/fleet-gateway) that holds the restricted SSH key, so neither the browser nor the Magnus API does. It is off by default: HiveXUI offers a terminal only when a gateway is deployed and configured on the server, and the person holds an `ADMIN` link and the `magnus:terminal` permission. Opening one also needs identity verified within the last five minutes, otherwise `STEP_UP_REQUIRED`, and an operator-approved host key for that node; unknown keys are refused and nothing is learned on first use. The audit log records metadata only. The gateway ships as the container image `ghcr.io/cheftaco/magnus-fleet-gateway`; Hive offers it in every release but never selects it in a profile.
 
 ## Ardent with bundled Emberfold
 
@@ -52,13 +144,15 @@ Ardent now has [its own guide](https://hivemagnus.com/guides/ardent.md): standal
 
 ## Full instructions
 
-- [Magnus installer](https://github.com/ChefTaco/magnus/tree/v2.10.0/packages/magnus)
-- [Node agent setup](https://github.com/ChefTaco/magnus/tree/v2.10.0/packages/agent)
-- [Ardent agents, New Agent and the service bridge](https://github.com/ChefTaco/magnus/blob/v2.10.0/docs/ARDENT.md)
-- [Browser route inventory](https://github.com/ChefTaco/magnus/blob/v2.10.0/docs/console-api.md)
-- [Cindertrace migration](https://github.com/ChefTaco/magnus/blob/v2.10.0/docs/CINDERTRACE_MIGRATION.md)
-- [Repository instructions](https://github.com/ChefTaco/magnus/blob/v2.10.0/AGENTS.md)
+- [Magnus installer](https://github.com/ChefTaco/magnus/tree/v3.0.1/packages/magnus)
+- [Upgrading, including agents across a major version](https://github.com/ChefTaco/magnus/blob/v3.0.1/UPGRADING.md)
+- [Per-node credentials](https://github.com/ChefTaco/magnus/blob/v3.0.1/docs/NODE_CREDENTIALS.md)
+- [Node agent setup](https://github.com/ChefTaco/magnus/tree/v3.0.1/packages/agent)
+- [Ardent agents, New Agent and the service bridge](https://github.com/ChefTaco/magnus/blob/v3.0.1/docs/ARDENT.md)
+- [Browser route inventory](https://github.com/ChefTaco/magnus/blob/v3.0.1/docs/console-api.md)
+- [Cindertrace migration](https://github.com/ChefTaco/magnus/blob/v3.0.1/docs/CINDERTRACE_MIGRATION.md)
+- [Repository instructions](https://github.com/ChefTaco/magnus/blob/v3.0.1/AGENTS.md)
 
 ## Source review
 
-Reviewed 2026-11-14 against tag `v2.10.0`, commit `32417a3742172858c6fdb8c44009ebbe737b13ec`, the version Hive `v3.8.0` pins: the [changelog](https://github.com/ChefTaco/magnus/blob/v2.10.0/CHANGELOG.md) entry for 2.10.0, [per-node credentials](https://github.com/ChefTaco/magnus/blob/v2.10.0/docs/NODE_CREDENTIALS.md), the [agent README](https://github.com/ChefTaco/magnus/blob/v2.10.0/packages/agent/README.md) and the host agent's `npm-shrinkwrap.json`, which pins Ardent `3.1.3`, with the changelog entries for 2.10.1 and 2.10.2. The root README, installer README, fleet gateway README and Ardent management doc are unchanged from `v2.9.1`; they were last read in full at `v2.4.2` on 2026-11-12, and the changelog from 2.4.3 to 2.9.1 on 2026-11-13. Suite behavior follows Hive `v3.8.0` [full profile](https://github.com/ChefTaco/hive/blob/v3.8.0/deployment/FULL.md#node-keys), [upgrading](https://github.com/ChefTaco/hive/blob/v3.8.0/UPGRADING.md) and [installation guide](https://github.com/ChefTaco/hive/blob/v3.8.0/deployment/QUICKSTART.md). npm publishes `@hivemagnus/magnus` and `@hivemagnus/magnus-agent` 2.10.0, and 2.10.2 as `latest`. No installation command was run for this review. The standalone commands are unpinned: npm resolves `@hivemagnus/magnus` to its current `latest`, which may be newer than the suite pin. Follow current instructions for upgrades. License: Apache-2.0.
+Reviewed 2026-11-14 against tag `v3.0.1`, commit `17331cff15b9d3de5010b56807ff72ad88acd03f`, the version Hive `v3.9.0` pins: the [README](https://github.com/ChefTaco/magnus/blob/v3.0.1/README.md), [per-node credentials](https://github.com/ChefTaco/magnus/blob/v3.0.1/docs/NODE_CREDENTIALS.md), [UPGRADING](https://github.com/ChefTaco/magnus/blob/v3.0.1/UPGRADING.md) (major-version rules, agent upgrades and problem codes), the [agent README](https://github.com/ChefTaco/magnus/blob/v3.0.1/packages/agent/README.md), the node key section of the [browser route inventory](https://github.com/ChefTaco/magnus/blob/v3.0.1/docs/console-api.md#node-key-administration), the [changelog](https://github.com/ChefTaco/magnus/blob/v3.0.1/CHANGELOG.md) from 2.10.0 to 3.0.1, `release/3.0.0.json` and `release/3.0.1.json` (no migrations, no new or removed settings, `minUpgradeFrom` 2.10.2), and the host agent's `npm-shrinkwrap.json`, which pins Ardent `3.1.3`. The installer README, fleet gateway README, `docs/ARDENT.md` and `docs/HERMES_REGISTRY.md` are unchanged from `v2.10.0`. Suite behavior follows Hive `v3.9.0` [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.9.0/UPGRADING.md#magnus-300-node-keys-only), sections "Suite 3.9.0" and "Magnus 3.0.0: node keys only". The [3.0.1 release](https://github.com/ChefTaco/magnus/releases/tag/v3.0.1) is published; npm publishes `@hivemagnus/magnus` and `@hivemagnus/magnus-agent` 3.0.1 as `latest` and 2.10.3 as `maintenance-2.10`. The earlier review of 2.10.0, on the same date, is superseded. No installation command was run for this review. The standalone commands are unpinned: npm resolves `@hivemagnus/magnus` to its current `latest`, which may be newer than the suite pin. Follow current instructions for upgrades. License: Apache-2.0.
