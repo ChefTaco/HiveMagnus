@@ -254,7 +254,7 @@ const demos: Record<DemoId, Demo> = {
       },
       {
         title: "Add a node",
-        text: "Register a Linux host in the console, then follow the agent setup instructions to give it a node secret and start its service.",
+        text: "Register a Linux host in the console, then follow the agent setup instructions to enroll it once with a one-time token and start its service. From Magnus 3.0.0 no shared node secret is needed.",
         note: "Node registration and TLS configuration are host-specific. Follow the complete guide before enabling a remote agent.",
       },
     ],
