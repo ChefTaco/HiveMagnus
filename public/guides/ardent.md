@@ -64,7 +64,7 @@ Ardent 3.0 replaced `better-sqlite3` with the pinned Node-API SQLite driver. Pro
 - [Configuration, channels, A2A, team missions and plugins](https://github.com/ChefTaco/Ardent/blob/v3.1.3/README.md)
 - [OpenAPI contract](https://github.com/ChefTaco/Ardent/blob/v3.1.3/openapi/ardent.json)
 - [Changelog](https://github.com/ChefTaco/Ardent/blob/v3.1.3/CHANGELOG.md)
-- [Managing Ardent with Magnus](https://github.com/ChefTaco/magnus/blob/v2.10.0/docs/ARDENT.md)
+- [Managing Ardent with Magnus](https://github.com/ChefTaco/magnus/blob/v3.0.2/docs/ARDENT.md)
 - [Repository instructions](https://github.com/ChefTaco/Ardent/blob/v3.1.3/AGENTS.md)
 
 ## Source review

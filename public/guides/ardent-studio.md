@@ -19,7 +19,7 @@ Each product keeps its own records. Studio owns projects, templates, team revisi
 ## Requirements
 
 - Magnus with **at least one Ardent agent**, HiveMem and Oathweave. All three are required.
-- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.8.0 pins Ardent Project Studio 0.4.1.
+- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.9.1 pins Ardent Project Studio 0.4.1.
 - Node.js 24.22.3+ or 26.13.1+ only when running the service outside the suite.
 
 ## In a Hive installation
@@ -64,7 +64,7 @@ Expected result: the service listens on `127.0.0.1:8097` by default and serves i
 - [Conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.1/docs/CONDUCTOR.md)
 - [Oathweave account links](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.1/docs/OATHWEAVE.md)
 - [Operations and backups](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.1/docs/OPERATIONS.md)
-- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.8.0/deployment/FULL.md#ardent-project-studio)
+- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.9.1/deployment/FULL.md#ardent-project-studio)
 - [Repository instructions](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.1/AGENTS.md)
 
 ## Source review
