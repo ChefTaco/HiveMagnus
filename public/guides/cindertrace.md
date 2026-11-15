@@ -70,7 +70,7 @@ Response requires explicit confirmation of an exact immutable plan, expires afte
 
 - **Oathweave and Emberpath:** sign-in and scoped identity audit and routing security metadata. Security export uses scoped OAuth client credentials; the retired static-token fallback is not supported.
 - **Magnus:** inventory, durable observations, summaries and links, and explicitly approved restart, isolation, or release through its response bridge. Fleet operations remain independent of Cindertrace availability.
-- **Suite products:** from 0.5.0 Cindertrace serves an event feed for the HiveXUI inbox, and from 0.6.0 its collector can pull the audit exports of HiveMem, HiveSkills, Ardent Project Studio and Embermend. Hive 3.8.0 still leaves that suite audit collection off.
+- **Suite products:** from 0.5.0 Cindertrace serves an event feed for the HiveXUI inbox, and from 0.6.0 its collector can pull the audit exports of HiveMem, HiveSkills, Ardent Project Studio and Embermend. Hive 3.9.1 still leaves that suite audit collection off.
 - **Sources:** Wazuh, UniFi, NetFlow/IPFIX, Tailscale, Loki, and ChatterMost/Mattermost adapters. Only configured inputs and listeners run. ChatterMost/Mattermost audit export excludes message bodies.
 - **Agents:** the server-side Cindertrace adapter supports scoped reads and investigation drafts. Keep its credentials server-side.
 

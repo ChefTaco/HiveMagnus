@@ -63,7 +63,7 @@ Restart an existing gateway through its current supervisor instead. Keep one gat
 
 Mattermost-compatible REST lives under `/api/v4`; WebSocket events use `/api/v4/websocket`. Connect official clients using the HTTPS origin, without an API path. Mobile background push, calls and upstream plugins/marketplace are not implemented.
 
-In a [Hive](https://hivemagnus.com/guides/hive.md) installation (3.8.0 pins ChatterMost 0.6.1 with its private PostgreSQL in the `full` profile), the browser interface is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md). An explicitly linked Oathweave identity is exchanged for a short native session; existing user IDs, roles, memberships and Mattermost sessions remain product-owned. ChatterMost keeps its small included web UI, which the official desktop app loads and recovery relies on. ChatterMost is independently developed; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.
+In a [Hive](https://hivemagnus.com/guides/hive.md) installation (3.9.1 pins ChatterMost 0.6.1 with its private PostgreSQL in the `full` profile), the browser interface is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md). An explicitly linked Oathweave identity is exchanged for a short native session; existing user IDs, roles, memberships and Mattermost sessions remain product-owned. ChatterMost keeps its small included web UI, which the official desktop app loads and recovery relies on. ChatterMost is independently developed; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.
 
 - [Container installation](https://github.com/ChefTaco/ChatterMost/blob/main/docs/containers.md)
 - [Hermes setup](https://github.com/ChefTaco/ChatterMost/blob/main/docs/hermes-compatibility.md)
