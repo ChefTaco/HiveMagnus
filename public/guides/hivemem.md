@@ -10,7 +10,7 @@ HiveMem gives agents, IDE tools and runtimes one server-side system for remember
 
 ## In a Hive installation
 
-HiveMem and its private Qdrant are part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.8.0 installs HiveMem 1.7.0 as a digest-pinned image. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md): memory search, sessions, webhooks, graph evidence, conflicts, consolidation and queue operations, limited by workspace. Issuer and subject mappings remain explicit product configuration.
+HiveMem and its private Qdrant are part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.9.3 installs HiveMem 1.7.1 as a digest-pinned image. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md): memory search, sessions, webhooks, graph evidence, conflicts, consolidation and queue operations, limited by workspace. Issuer and subject mappings remain explicit product configuration.
 
 ## Workspace access
 
@@ -31,12 +31,12 @@ EOF
 docker network create hivemem
 docker run -d --name hivemem-qdrant --network hivemem -v hivemem-qdrant:/qdrant/storage \
   ghcr.io/cheftaco/hive-qdrant:1.18.3-3
-docker run --rm --network hivemem --env-file hivemem.env ghcr.io/cheftaco/hivemem:1.7.0 check
+docker run --rm --network hivemem --env-file hivemem.env ghcr.io/cheftaco/hivemem:1.7.1 check
 docker run -d --name hivemem --network hivemem -p 127.0.0.1:18790:18790 \
-  -v hivemem-data:/data --env-file hivemem.env ghcr.io/cheftaco/hivemem:1.7.0
+  -v hivemem-data:/data --env-file hivemem.env ghcr.io/cheftaco/hivemem:1.7.1
 ```
 
-Expected result: `check` reports `Result: ready to start`, and once the container is healthy, `curl http://127.0.0.1:18790/v1/health/ready` reports readiness. Without an OpenAI-compatible embeddings endpoint, HiveMem uses deterministic lexical retrieval. Mint an access token with `docker run --rm --env-file hivemem.env ghcr.io/cheftaco/hivemem:1.7.0 issue-token --subject operator --role admin`. The image listens on every interface inside the container, so keep the port published on loopback as shown. This listener is plain HTTP; serve HTTPS as the README describes before exposing it. HiveMem has no dashboard of its own: on this standalone path use its REST API, and in the suite use HiveXUI. `GET /dashboard` returns only a placeholder page; the `/dashboard/login` and `/dashboard/api/*` compatibility routes remain for existing callers.
+Expected result: `check` reports `Result: ready to start`, and once the container is healthy, `curl http://127.0.0.1:18790/v1/health/ready` reports readiness. Without an OpenAI-compatible embeddings endpoint, HiveMem uses deterministic lexical retrieval. Mint an access token with `docker run --rm --env-file hivemem.env ghcr.io/cheftaco/hivemem:1.7.1 issue-token --subject operator --role admin`. The image listens on every interface inside the container, so keep the port published on loopback as shown. This listener is plain HTTP; serve HTTPS as the README describes before exposing it. HiveMem has no dashboard of its own: on this standalone path use its REST API, and in the suite use HiveXUI. `GET /dashboard` returns only a placeholder page; the `/dashboard/login` and `/dashboard/api/*` compatibility routes remain for existing callers.
 
 ## Source review
 
@@ -47,3 +47,5 @@ Release update, 2026-11-12: [Hive 3.3.0](https://github.com/ChefTaco/hive/releas
 Release update, 2026-11-13: [Hive 3.7.0](https://github.com/ChefTaco/hive/releases/tag/v3.7.0) pins HiveMem 1.6.0, tag [`v1.6.0`](https://github.com/ChefTaco/HiveMem/releases/tag/v1.6.0), commit `8948d16389194821e707fc31910e764e38443e8d`. The container example now matches the [README](https://github.com/ChefTaco/HiveMem/blob/v1.6.0/README.md) at that tag: the `1.6.0` image, the suite's `hive-qdrant:1.18.3-3` image, and no `HIVEMEM_TS_CORE_HOST` line, which the image now sets itself. It was not re-run with the new images. Per the [changelog](https://github.com/ChefTaco/HiveMem/blob/v1.6.0/CHANGELOG.md), 1.6.0 adds the suite audit export at `GET /v1/audit/export` for administrators and service tokens with `hivemem:audit:read`.
 
 Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releases/tag/v3.8.0) pins HiveMem 1.7.0, tag [`v1.7.0`](https://github.com/ChefTaco/HiveMem/releases/tag/v1.7.0), commit `53b0c636cf81400926030601a89376a0b69e411d`. The container example now uses the `1.7.0` image, as the [README](https://github.com/ChefTaco/HiveMem/blob/v1.7.0/README.md) at that tag does, with the same `hive-qdrant:1.18.3-3` image; it was not re-run with the new image. The workspace rules above follow the [changelog](https://github.com/ChefTaco/HiveMem/blob/v1.7.0/CHANGELOG.md) at that tag, which also fixes a server stop caused by such agent IDs.
+
+Release update, 2026-11-15: [Hive 3.9.3](https://github.com/ChefTaco/hive/releases/tag/v3.9.3) pins HiveMem 1.7.1, tag [`v1.7.1`](https://github.com/ChefTaco/HiveMem/releases/tag/v1.7.1), commit `590a54722ce69269b40bd4ed53f14a20490603b7`. The container example now uses the `1.7.1` image, as the [README](https://github.com/ChefTaco/HiveMem/blob/v1.7.1/README.md) at that tag does, with the same `hive-qdrant:1.18.3-3` image; it was not re-run with the new image. Per the [changelog](https://github.com/ChefTaco/HiveMem/blob/v1.7.1/CHANGELOG.md), 1.7.1 moves to `@hivemagnus/hive-common` 0.5.0, which also masks URL credentials with only a user or only a password in audit export details, and reads request bodies with the shared bounded reader: the rest of an upload over `HIVEMEM_MAX_BODY_BYTES` is discarded after the 413 instead of the connection being reset, and a client that disconnects mid-body gets a 400. Routes, responses and tokens are unchanged, and it adds no migration.

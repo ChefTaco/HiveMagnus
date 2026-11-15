@@ -4,7 +4,7 @@ Embermend tracks continuous hardening and vulnerability remediation for Magnus-m
 
 ## Install
 
-Use a compatible signed Hive release, starting with 3.2.2, and select the optional Embermend product. It is off by default. Hive 3.9.1 pins Embermend 0.3.1 with Magnus 3.0.2. Select compatible Magnus 2.5.0 or newer, or explicitly configure an existing Magnus with the versioned Embermend bridge.
+Use a compatible signed Hive release, starting with 3.2.2, and select the optional Embermend product. It is off by default. Hive 3.9.3 pins Embermend 0.3.2 with Magnus 3.0.3. Select compatible Magnus 2.5.0 or newer, or explicitly configure an existing Magnus with the versioned Embermend bridge.
 
 ```sh
 git clone https://github.com/ChefTaco/hive.git && cd hive
@@ -74,3 +74,13 @@ and HiveXUI 0.8.0. Per its changelog, 0.3.1 keeps a policy authorization's ID
 in the suite audit export and skips a source file that is not UTF-8 in a
 repository scan instead of failing the scan. It adds no migration. The
 acceptance record below was not reviewed again for this update.
+
+Release update, 2026-11-15: signed Hive `v3.9.3` pins Embermend 0.3.2, tag
+[`v0.3.2`](https://github.com/ChefTaco/Embermend/releases/tag/v0.3.2), commit
+`0aefa2b1c87a95b32864a63bf20a090fe2bf6e36`, with Magnus 3.0.3, Oathweave 2.3.0
+and HiveXUI 0.9.1. Its `compatibility.json` still asks for Magnus 2.5.0 or newer
+with Embermend protocol 1. Per its changelog, 0.3.2 moves to
+`@hivemagnus/hive-common` 0.5.0, so the suite audit export also masks URL
+credentials without a user or without a password and detail values under keys
+containing `jwt`, `bearer` or `signature`. It adds no migration. The acceptance
+record below was not reviewed again for this update.
