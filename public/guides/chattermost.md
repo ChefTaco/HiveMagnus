@@ -13,14 +13,14 @@
 
 The distribution includes PostgreSQL, persistent files, and optional Redis for abuse counters. It requires one application writer. It does not require Node, a source checkout, or a registry login. Existing installations use their current manager and the upgrade guide.
 
-## Verify and install release 0.6.4
+## Verify and install release 0.7.0
 
 The following is the public agent runbook's first-install sequence. Replace `https://chat.example.test` with the actual HTTPS origin before running. Run the complete block in one shell:
 
 ```bash
 set -eu
 umask 077
-VERSION=0.6.4
+VERSION=0.7.0
 INSTALL_DIR="$HOME/chattermost-installation"
 test ! -e "$INSTALL_DIR"
 DOWNLOAD_DIR="$(mktemp -d)"
@@ -63,7 +63,7 @@ Restart an existing gateway through its current supervisor instead. Keep one gat
 
 Mattermost-compatible REST lives under `/api/v4`; WebSocket events use `/api/v4/websocket`. Connect official clients using the HTTPS origin, without an API path. Mobile background push, calls and upstream plugins/marketplace are not implemented.
 
-In a [Hive](https://hivemagnus.com/guides/hive.md) installation (3.9.3 pins ChatterMost 0.6.4 with its private PostgreSQL in the `full` profile), the browser interface is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md). An explicitly linked Oathweave identity is exchanged for a short native session; existing user IDs, roles, memberships and Mattermost sessions remain product-owned. ChatterMost keeps its small included web UI, which the official desktop app loads and recovery relies on. ChatterMost is independently developed; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.
+In a [Hive](https://hivemagnus.com/guides/hive.md) installation (3.11.0 pins ChatterMost 0.7.0 with its private PostgreSQL in the `full` profile), the browser interface is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md). An explicitly linked Oathweave identity is exchanged for a short native session; existing user IDs, roles, memberships and Mattermost sessions remain product-owned. From 0.7.0, an optional loopback-only administrator provisioning API, enabled by its own purpose secret, lets `hive.sh admin-access setup` create a separate native account for a suite administrator with a permanent receipt; it never adopts an existing account or infers an Oathweave link, and needs no SQL migration. ChatterMost keeps its small included web UI, which the official desktop app loads and recovery relies on. ChatterMost is independently developed; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.
 
 - [Container installation](https://github.com/ChefTaco/ChatterMost/blob/main/docs/containers.md)
 - [Hermes setup](https://github.com/ChefTaco/ChatterMost/blob/main/docs/hermes-compatibility.md)
@@ -84,3 +84,5 @@ Release update, 2026-11-13: [Hive 3.7.0](https://github.com/ChefTaco/hive/releas
 Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releases/tag/v3.8.0) pins ChatterMost 0.6.1, so the installation block now uses tag [`v0.6.1`](https://github.com/ChefTaco/ChatterMost/releases/tag/v0.6.1), commit `ff218472096906fbf9770f3061d995f0c9c39953`. The [agent runbook](https://github.com/ChefTaco/ChatterMost/blob/v0.6.1/AGENTS.md) block at that tag differs from 0.5.2 only in `VERSION`, and the release attaches `chattermost-0.6.1.tar.gz` and `SHA256SUMS`; the archive was not downloaded or installed for this update. The [container guide](https://github.com/ChefTaco/ChatterMost/blob/v0.6.1/docs/containers.md) lists 0.3.2, 0.3.3, 0.4.1, 0.4.2, 0.4.4, 0.4.5, 0.5.1 and 0.5.2 as reviewed upgrade sources for 0.6.1. Per Hive's release notes, 0.6.1 closes a WebSocket when its credential ends and tightens channel, post and team permissions; its `v0.6.0` tag is not a release.
 
 Release update, 2026-11-15: [Hive 3.9.3](https://github.com/ChefTaco/hive/releases/tag/v3.9.3) pins ChatterMost 0.6.4, so the installation block now uses tag [`v0.6.4`](https://github.com/ChefTaco/ChatterMost/releases/tag/v0.6.4), commit `836e4e7d8d10e8076f4da8c3a051b4f9fb15f9e4`. The [agent runbook](https://github.com/ChefTaco/ChatterMost/blob/v0.6.4/AGENTS.md) block at that tag differs from 0.6.1 only in `VERSION`, and the release attaches `chattermost-0.6.4.tar.gz` and `SHA256SUMS`; the archive was not installed for this update. The [container guide](https://github.com/ChefTaco/ChatterMost/blob/v0.6.4/docs/containers.md) adds 0.6.1 to the reviewed upgrade sources. Per its [release notes](https://github.com/ChefTaco/ChatterMost/blob/v0.6.4/docs/releases.md), 0.6.4 moves to `@hivemagnus/hive-common` 0.5.0, refuses an Oathweave token without a `roles` array before the online session check and adds `X-Request-Id` to the health responses; it adds no database migration. Its `v0.6.2` and `v0.6.3` tags are not releases.
+
+Release update, 2026-11-16: [Hive 3.11.0](https://github.com/ChefTaco/hive/releases/tag/v3.11.0) pins ChatterMost 0.7.0 and its matching migrator, tag [`v0.7.0`](https://github.com/ChefTaco/ChatterMost/releases/tag/v0.7.0), commit `3e14259c6ce1caebb7baddbe370ee8447d9c4386`. The installation block now uses `VERSION=0.7.0` and otherwise matches the [agent runbook](https://github.com/ChefTaco/ChatterMost/blob/v0.7.0/AGENTS.md#installation-runbook-for-agents) at that tag; the release attaches `chattermost-0.7.0.tar.gz` and `SHA256SUMS`. The provisioning API above follows the [release notes](https://github.com/ChefTaco/ChatterMost/blob/v0.7.0/docs/releases.md#changes-in-070). No installation command was run for this update.

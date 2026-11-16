@@ -1,5 +1,8 @@
 # Contributing
 
+Read [AGENTS.md](AGENTS.md) for the layout, the build and browser checks, and the content
+rules. Keep commits and pull requests free of private details; Cloudflare Pages deploys `main`.
+
 ## Secret scanning
 
 Install the pinned, checksum-verified Gitleaks CLI before contributing:
@@ -20,7 +23,8 @@ Missing or incompatible binaries fail the hooks rather than skipping checks.
 The commit hook scans an export of the exact Git index, including force-added
 ignored files. The push hook scans every outgoing ref's commit range, including
 secrets deleted in a later commit. New refs or unavailable remote bases receive
-a complete reachable-history scan. Existing privacy checks still run.
+a complete reachable-history scan. Gitleaks finds secrets only: review hostnames, addresses,
+usernames, home paths and other private details yourself (see [AGENTS.md](AGENTS.md#content-rules)).
 
 The `Gitleaks` workflow scans full reachable history on pushes, pull requests
 and merge queues, and runs synthetic regression checks. Maintain `Gitleaks` as a

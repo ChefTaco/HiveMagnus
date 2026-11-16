@@ -13,7 +13,7 @@ type DemoId = "embermend" | "hive" | "magnus" | "cindertrace" | "chattermost" | 
 // The launcher resolves the published release at install time; source reviews stay versioned.
 const HIVE_RELEASE_URL = "https://github.com/ChefTaco/hive/releases/latest";
 // The signed suite release the product details are reviewed against. Bump this one value per release.
-const HIVE_SUITE_VERSION = "3.9.7";
+const HIVE_SUITE_VERSION = "3.11.0";
 const HIVE_SUITE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_SUITE_VERSION}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
@@ -144,7 +144,7 @@ const projects: Record<
   ardent: {
     name: "Ardent", role: "Agent runtime · tasks · tools",
     summary: "Give your agents a durable place to work.",
-    detail: `A headless agent runtime with durable tasks, typed tools, scheduled jobs and a task journal. Run it on its own or let Magnus manage it on fleet hosts. It uses a pinned Emberfold library for context fitting and can connect to HiveMem and ChatterMost. Hive ${HIVE_SUITE_VERSION} ships no Ardent container: the Magnus host agent stages the pinned package and Magnus installs it.`,
+    detail: `A headless agent runtime with durable tasks, typed tools, scheduled jobs and a task journal. Run it on its own or let Magnus manage it on fleet hosts. It uses a pinned Emberfold library for context fitting and can connect to HiveMem and ChatterMost. Hive ${HIVE_SUITE_VERSION} ships no Ardent container: the Magnus host agent stages the pinned package, Magnus installs it, and <code>hive.sh ardent setup</code> creates a first assistant profile through Magnus.`,
     href: "https://github.com/ChefTaco/Ardent",
     connections: [{ to: "Magnus", how: "optional installation and management on fleet hosts" }, { to: "Emberfold", how: "bundled library for context fitting; no HTTP service required" }, { to: "HiveMem / ChatterMost", how: "optional scoped memory and Mattermost chat channels" }, { to: "Model providers", how: "external OpenAI-compatible inference or Codex App Server" }, { to: "Ardent Project Studio", how: "optional team projects for several agents, through Magnus" }],
   },
@@ -216,14 +216,14 @@ const demos: Record<DemoId, Demo> = {
         title: "Review the plan",
         text: "Setup shows a plan and applies it only after you confirm. To repeat or automate it, keep the installation JSON and run the same reviewed configuration. Planning does not contact hosts, and retries check the exact inputs.",
         code: "./hive.sh plan --config installation.json\n./hive.sh install --config installation.json",
-        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten. Some upgrades need <code>--allow-migrations</code>, such as from 2.x with PostgreSQL stores, from a release before 3.4.0, or to 3.8.0 with Magnus; see the guide.",
+        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten. Some upgrades need <code>--allow-migrations</code>, such as from 2.x with PostgreSQL stores, from a release before 3.4.0, or from one before 3.8.0 with Magnus; see the guide.",
       },
       {
         title: "Open HiveXUI",
         text: "Visit the HTTPS origin you configured and sign in through Oathweave. HiveXUI shows a section for each product in this installation, so a core install has no Magnus, Cindertrace or ChatterMost section.",
         code: "https://hive.example.com/",
         kind: "address",
-        note: "The install ends by naming the HTTPS origin and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. <code>./hive.sh status --config installation.json</code> reports what is running and lists the setup steps still pending, which HiveXUI also shows to administrators.",
+        note: "The install ends by naming the HTTPS origin and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. Then create your own administrator in Oathweave and run <code>./hive.sh admin-access setup</code> to give it access to each installed product. <code>./hive.sh status --config installation.json</code> reports what is running and lists the setup steps still pending, which HiveXUI also shows to administrators.",
       },
     ],
     guide: "/guides/hive.md",
@@ -272,7 +272,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the reviewed release",
         text: "Clone the public repository at the current release into a new directory. Use a fresh environment for this walkthrough.",
-        code: "git clone --branch v0.7.0 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
+        code: "git clone --branch v0.7.1 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
         note: "Use the repository’s release notes when choosing a version. There is no npm installer for Cindertrace.",
       },
       {
@@ -308,7 +308,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the release",
         text: "Download the pinned release and its checksum file into a new temporary directory. Keep the following steps in the same terminal.",
-        code: 'VERSION=0.6.1\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
+        code: 'VERSION=0.7.0\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
       },
       {
         title: "Verify before setup",
