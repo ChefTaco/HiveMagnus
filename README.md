@@ -10,21 +10,19 @@ The interactive walkthroughs are browser-only explanations. Commands are sourced
 
 The homepage leads with full-stack agent management, a copyable one-line launch command using `--release latest` for the signed Hive release, Linux availability (macOS and Windows are coming), an interactive architecture view, and twelve individual product sections. The launcher resolves the release when run; users can substitute an exact version. It opens guided setup on a prepared host: choose `full`, review the plan, then confirm. A nearby prerequisite link and walkthrough cover fresh Linux hosts. Inference runtimes and model storage stay external.
 
-Tailscale is the recommended optional path to private access to HiveXUI and a certificate. The recommendation links to Tailscale, and its setup modal covers installation and sign-in, MagicDNS and HTTPS Certificates, Hive's explicit certificate helper, and separately scheduled renewal. Hive setup asks for existing certificate files; it does not automatically install Tailscale or request a certificate. Bring-your-own certificates remain supported.
+Tailscale is the recommended optional path to private access to HiveXUI and a certificate. The recommendation links to Tailscale, and its setup modal covers installation and sign-in, MagicDNS and HTTPS Certificates, Hive's explicit certificate helper, and separately scheduled renewal. Hive never installs Tailscale. When Tailscale is already signed in with HTTPS Certificates enabled, guided setup can request this host's certificate; otherwise setup asks for existing certificate files. Bring-your-own certificates remain supported.
 
-With the local preview open in Playwright CLI (`npx @playwright/cli`), run `playwright-cli run-code --filename scripts/check-browser.js`. It checks page hierarchy, all twelve architecture selections and product sections, capture switching and image loading, walkthroughs, clipboard, modal focus and dismissal, deep links, agent docs, accessibility and overflow at desktop, tablet and phone widths. Save review screenshots under the ignored `output/playwright/` directory.
+With `npm run preview` serving the build, open it in Playwright CLI with `npx @playwright/cli open http://127.0.0.1:4173/`, then run `npx @playwright/cli run-code --filename scripts/check-browser.js`. It checks page hierarchy, all twelve architecture selections and product sections, capture switching and image loading, walkthroughs, clipboard, modal focus and dismissal, deep links, agent docs, accessibility and overflow at desktop, tablet and phone widths. Save review screenshots under the ignored `output/playwright/` directory.
 
 The product sections show ten areas of HiveXUI, the single browser UI. Magnus and Cindertrace have switchable captures. Ardent is headless and is illustrated by a clearly labeled Magnus mission-control capture; Emberfold shows its verified CLI excerpt. All products remain visible while scrolling, and `#interface-PROJECT`, `#interfaces` and legacy `#security` links remain supported. The footer links the GitHub account and npm publisher profile.
 
-Regenerate captures with `scripts/capture-hivexui.mjs` against a disposable seeded installation; see [media provenance](docs/media.md).
-
-See [media provenance](docs/media.md) for screenshot sources and the verified CLI example. Font licenses are included in `public/licenses/`.
+Regenerate captures with `scripts/capture-hivexui.mjs` against a disposable seeded installation. See [media provenance](docs/media.md) for screenshot sources and the verified CLI example. Font licenses are included in `public/licenses/`.
 
 ## Agent documentation
 
 The public agent index is [`public/llms.txt`](public/llms.txt). The Markdown site overview is [`public/index.md`](public/index.md); project guides live in [`public/guides/`](public/guides/). These are static files copied unchanged into the build. The site links them through the For agents section, a no-JavaScript fallback, and discovery links in the HTML head.
 
-Each guide records the public source revision and review date. Before changing commands, fetch the current public repository docs and compare prerequisites, arguments, release versions, and expected results. Review existing website walkthroughs for consistency. Do not test installation examples against an existing operator environment. See [the source review record](docs/agent-guides.md).
+Each guide records the public source revision and review date. Before changing commands, fetch the current public repository docs and compare prerequisites, arguments, release versions, and expected results. Review existing website walkthroughs for consistency. Do not test installation examples against an existing operator environment. [Updating the guides](docs/agent-guides.md) lists the files to change for a new suite or product release and keeps the dated review history.
 
 Project metadata is a static Schema.org `SoftwareSourceCode` JSON-LD graph in `index.html`, including Ardent, which has its own repository. If editing that script, update its exact SHA-256 hash in `public/_headers` to preserve the content security policy.
 
@@ -32,22 +30,8 @@ Project metadata is a static Schema.org `SoftwareSourceCode` JSON-LD graph in `i
 
 Cloudflare Pages builds the public GitHub repository's `main` branch with `npm run build` and publishes `dist/`. The production domain is `hivemagnus.com`.
 
-See the [deployment and rollback guide](docs/deployment.md).
+See the [deployment and rollback guide](docs/deployment.md), which also covers the Node.js version Pages builds with.
 
 ## License
 
 Apache-2.0. Product names and screenshots belong to their respective open source projects.
-
-## Cloudflare Pages Node.js selection
-
-The preview and production build environments use
-`NODE_BUILD_DEFINITIONS=/opt/buildhome/repo/deployment/node-build`.
-This is [node-build's supported definition search path](https://github.com/nodenv/node-build#custom-build-configuration).
-The repository definition selects the official Node.js 24.22.3 archive and verifies
-its SHA-256 from the [upstream release checksums](https://nodejs.org/dist/v24.22.3/SHASUMS256.txt).
-It lets Pages install the security release before its shared node-build catalog
-includes that version. Cloudflare documents the checkout directory in its
-[build configuration guide](https://developers.cloudflare.com/pages/how-to/npm-private-registry/#managing-multiple-environments).
-
-When changing `.node-version`, add the matching definition with reviewed upstream
-checksums and prove a preview build before updating production settings.

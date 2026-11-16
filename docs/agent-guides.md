@@ -1,8 +1,47 @@
-# Agent documentation maintenance
+# Updating the agent guides
 
-`public/llms.txt` indexes the Markdown overview and twelve project guides. The visual site links them in its For agents section and no-JavaScript fallback. The HTML head advertises `llms.txt` with `rel="describedby"` and the overview with `rel="alternate" type="text/markdown"`. Markdown responses also advertise the index through an HTTP Link header.
+`public/llms.txt` indexes the Markdown overview (`public/index.md`) and the thirteen project guides in `public/guides/`. The visual site links them in its For agents section and no-JavaScript fallback. The HTML head advertises `llms.txt` with `rel="describedby"` and the overview with `rel="alternate" type="text/markdown"`, and Markdown responses advertise the index through an HTTP Link header (`public/_headers`). The guides state facts about other repositories, so every change starts from the owning repository at its release tag. The dated review records are kept under [History](#history).
 
-## Public source review, 2026-11-03
+## When a suite release ships
+
+1. Find the release and read it at its tag, not from a working tree:
+
+   ```bash
+   git -C HIVE_CHECKOUT fetch --tags origin
+   git -C HIVE_CHECKOUT describe --tags --abbrev=0 origin/main
+   git -C HIVE_CHECKOUT show vX.Y.Z:releases/X.Y.Z.json
+   ```
+
+   The manifest's `components.*.version`, `components.magnus.agentPackage` and `controllerSHA256` are the pins. Compare them with the previous release's manifest to see which products changed. Verify the signature from a checkout of the tag with `openssl pkeyutl -verify -pubin -inkey trust/publisher.pub -rawin -in releases/X.Y.Z.json -sigfile releases/X.Y.Z.json.sig`. Read the tag's `CHANGELOG.md`, `UPGRADING.md`, `deployment/QUICKSTART.md`, `deployment/FULL.md`, `deployment/BACKUPS.md` and the `./hive.sh --help` text.
+2. For each product whose pin changed, read its repository at the new tag: changelog or release notes, README and the install docs the guide quotes. Check the Ardent version the Magnus host agent stages in Magnus's `packages/agent/npm-shrinkwrap.json`.
+3. Update:
+   - `HIVE_SUITE_VERSION` in `src/main.ts`, and any walkthrough command that names a product version there (the Cindertrace clone tag, the ChatterMost `VERSION`).
+   - `public/guides/hive.md`: header links, the version table, the recent-release summary, every `--release` command and `/blob/vX.Y.Z/` link above the source review, the upgrade notes, and a dated `Release update` record at the end.
+   - `public/llms.txt` and `public/index.md`: the reviewed release, the example version and any product line that names a version or a new command.
+   - Each product guide whose pin changed: its suite sentence, example image, tag or `VERSION`, any changed behaviour, and a dated `Release update` record. A guide whose pin did not change only needs its suite sentence ("Hive X installs P V (pinned since W)").
+   - A dated entry under [History](#history) listing what changed and the sources read.
+4. Run the checks below, open a pull request and confirm the deployed site after merge.
+
+A product release that no suite release pins yet changes only that product's guide, and only where the guide describes the standalone product.
+
+## Rules
+
+- Quote commands and expected results from the owning repository's docs at a tag, and link to that tag or an exact commit. Preserve exact release pins; never substitute mutable image tags or `latest` where a guide shows a version. The homepage install command deliberately uses `--release latest`.
+- Do not rewrite dated `Release update` records or the entries under History, except to fix a link. Correct current-state text instead.
+- Do not run installation examples against an operator environment. Say in the record whether a command was run.
+- Recheck the interactive walkthroughs in `src/main.ts` whenever a documented command changes.
+- The static JSON-LD graph in `index.html` describes thirteen repositories, Ardent and Ardent Project Studio included, as Schema.org `SoftwareSourceCode`, with descriptions, repository URLs, language, license and guide links. Keep its CSP SHA-256 in `public/_headers` equal to the hash of the exact script text, including whitespace; `npm run build`, then compare `public/_headers` with the output of `node -e 'const s=require("fs").readFileSync("dist/index.html","utf8");const m=s.match(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/);JSON.parse(m[1]);console.log("sha256-"+require("crypto").createHash("sha256").update(m[1]).digest("base64"))'`. Do not loosen the policy to allow arbitrary inline scripts.
+
+## Checks before publishing
+
+- `npm run build` and the browser check in [AGENTS.md](../AGENTS.md#commands); inspect the For agents section at desktop and mobile widths.
+- Every GitHub link resolves at the ref it names (the file exists at that tag, and a `#anchor` matches a heading), every `hivemagnus.com/guides/...` link and anchor exists, and every guide is listed in `public/llms.txt` and `public/sitemap.xml`.
+- Bash blocks pass `bash -n`, and the JSON-LD parses and matches its CSP hash.
+- Review the Pages preview before merging. After deployment, verify the Markdown content types and discovery headers, the assets, and that the served pages carry the new text.
+
+## History
+
+### Public source review, 2026-11-03
 
 Commands were compared against the public GitHub source at these exact revisions, fetched independently of local product checkouts:
 
@@ -22,15 +61,7 @@ The published Emberfold CLI `0.1.0` example was run in a temporary directory: ex
 
 Command review does not install or reconfigure Hive, Magnus, ChatterMost, or a Hermes gateway. The Emberfold synthetic CLI example can be exercised in a temporary directory with no model credentials or persistent runtime. Full installation and release acceptance remain the owning repositories' responsibility.
 
-## Updating guides
-
-Fetch current public docs, record their commit IDs, and compare commands and prerequisites before changing examples. Preserve exact release pins where shown; never substitute mutable image tags. Recheck the interactive install lab if any documented command changes. Update each guide's source review date and immutable source links.
-
-The static JSON-LD graph in `index.html` describes eleven repositories, Ardent included, using Schema.org `SoftwareSourceCode`. It includes descriptions, repository URLs, TypeScript language, license links, and links to the guides. Keep its CSP SHA-256 hash in `public/_headers` synchronized with the exact script text, including whitespace. Do not loosen the policy to allow arbitrary inline scripts.
-
-Before publishing, build, check local Markdown links and shell syntax, validate the JSON-LD and CSP hash, run the browser check, and inspect the For agents section at desktop/mobile widths. Review the Pages preview before promotion to `main`; verify live Markdown content types, discovery headers, assets, and the intended source revision after deployment.
-
-## Cindertrace addition, 2026-11-04
+### Cindertrace addition, 2026-11-04
 
 Reviewed public Cindertrace `a92c12a4e7386be6099e6becebc115fc146b91b1`: README, installation, integrations, upgrade runbook, and package Node engines. The release pin `v0.1.0` resolves to application commit `576f4b4e7ba4ef5f0524deb213137b3fd643aa88`. The installation walkthrough uses that release's documented source/Compose path; no npm installer is advertised. The upgrade guide uses an explicit immutable commit and a dry run before activation. Current-state rollback and uncertain-effect handling follow the owning repository's runbook.
 
@@ -38,11 +69,11 @@ Magnus security ownership was checked against public `7a6782d2085702ef14e1bc997d
 
 The metadata graph now contains six SoftwareSourceCode entries: five projects and Ardent within Magnus. The Cindertrace captures come from a new disposable Compose installation, documented in media.md.
 
-## Cindertrace evolving lab, 2026-11-04
+### Cindertrace evolving lab, 2026-11-04
 
 Reviewed the public lab workflow at `0368abb6779c0c715e1dc00f7f346b2253f5f040` and the matching README, initialization and lifecycle scripts, API contracts, and upgrade guidance. The lab commands explicitly check out that revision in a new directory; `v0.1.0` predates the lab and remains the normal installation example. Documentation covers evidence-bound revisions, structured comparisons, separate progression credentials, human-approved simulation, and history-preserving restarts. The site links the lab from Cindertrace's interface panel; existing captures continue to depict the original synthetic demo, not the new lab. No screenshots or source metadata changed.
 
-## Ecosystem candidate boundaries, 2026-11-05
+### Ecosystem candidate boundaries, 2026-11-05
 
 The maintainer requested the five extracted products in the public directory: Emberpath, Oathweave, HiveMem, HiveSkills and HiveXUI. This supersedes the earlier five-project content limit. Candidate guides identify local implementation review and explicitly state that official publication and migration acceptance are pending. Existing published installation recipes retain their original source review and are labeled legacy where appropriate. No unverified new public repository link or official release is advertised.
 
@@ -50,7 +81,7 @@ The ten-product atlas distinguishes deployment orchestration, identity, model ro
 
 These two earlier records describe the site as reviewed then. The section below supersedes the candidate labels.
 
-## Unified console, 2026-11-05
+### Unified console, 2026-11-05
 
 The extracted products are now public repositories, and HiveXUI is the single browser UI of a Hive installation. Guides for Emberpath, Oathweave, HiveMem, HiveSkills and HiveXUI now carry real commands from their READMEs at these public revisions, and link the repositories instead of a candidate label. Hive, Magnus, Cindertrace and ChatterMost guides gained their console and installer changes; Emberfold's revision is unchanged.
 
@@ -71,7 +102,7 @@ At this review Hive had published no suite release, so its `hive.sh` commands ca
 
 Cindertrace's lab commands keep their pinned `0368abb6779c0c715e1dc00f7f346b2253f5f040` review; the lab's startup fence at the revision above confirms it forbids `OATHWEAVE_`, `HIVE_` and `MAGNUS_` settings, so it keeps its own console. No installation command was exercised against an operational environment. All guide Bash blocks passed `bash -n`.
 
-## Hive 2.0.0 and product releases, 2026-11-05
+### Hive 2.0.0 and product releases, 2026-11-05
 
 Hive published suite release 2.0.0, and each product published the release it pins. Every guide's source review now names a release tag and its commit, verified with the GitHub API and against local fetches of the public tags. Each release was confirmed published, not a draft or prerelease, and marked latest.
 
@@ -94,7 +125,7 @@ Product guides: ChatterMost pins `0.4.1`, whose runbook block is unchanged apart
 
 The standalone npm commands for Oathweave, Emberpath, HiveMem and HiveSkills follow their READMEs, but npm still resolves those package names to the legacy `1.2.2` line; the new releases ship as container images, which Hive installs. Only Emberpath's README says so explicitly. No installation command was exercised against an operational environment.
 
-## Standalone container paths, 2026-11-06
+### Standalone container paths, 2026-11-06
 
 npm resolves `@hivemagnus/hive-iam-server`, `@hivemagnus/hivemem-server`, `@hivemagnus/hive-skills` and `@hivemagnus/hive-router` to the legacy `1.2.2` line, and `@hivemagnus/oathweave` and `@hivemagnus/emberpath` are not on npm. The current releases ship only as GHCR images, so the Oathweave, HiveMem, HiveSkills and Emberpath READMEs now document their images, and the guides' standalone sections follow those container examples instead of `npx`. Each block was run with throwaway containers against the image its release publishes (the multi-architecture digests Hive `2.0.0` and `2.0.1` both pin); Emberpath's block was run on the network of the Oathweave example.
 
@@ -107,16 +138,16 @@ npm resolves `@hivemagnus/hive-iam-server`, `@hivemagnus/hivemem-server`, `@hive
 
 The Cindertrace guide already installs from the release tag with Compose and does not claim release assets; its README now says that only `v0.1.0` attaches a native archive and that later releases publish the image. The HiveXUI and Cindertrace guides already keep the investigation lab out of HiveXUI, which now matches the HiveXUI README.
 
-## Hive 2.0.1, 2026-11-06
+### Hive 2.0.1, 2026-11-06
 
 Hive published suite release 2.0.1, a controller-only release with the same images and product versions as 2.0.0. `migrate-native` now verifies migrated data before serving clients. The Hive guide, the agent index and the walkthrough constant now name `v2.0.1`, commit `02f9f9ff1becb9b14b74a8634f54cdc9ce1fba52`, and every linked file was checked to exist at that commit.
 
-## Ardent repository, 2026-11-07
+### Ardent repository, 2026-11-07
 
 Ardent moved out of the Magnus monorepo into its own public repository, `https://github.com/ChefTaco/Ardent`, at extraction commit `90ec90594a15ad412e1385dc6cb9972f15eec66a` (package `@hivemagnus/ardent` 2.1.1, unchanged). The site now presents Ardent as its own product: the metadata graph gives it its own repository and license and no longer nests it in Magnus, the atlas shows Magnus managing Ardent as a configured connection, the fallback and footer link the repository, `security.txt` lists its advisories, and `llms.txt` links its AGENTS.md. Ardent keeps sharing the Magnus guide. The install commands in that guide were compared with the Ardent README at the extraction commit and are unchanged. The earlier review records above, including the Magnus guide's `v2.1.1` source pin, are historical and were not edited.
 
 
-## Hive 2.0.4, 2026-11-07
+### Hive 2.0.4, 2026-11-07
 
 The site moves from Hive suite release 2.0.2 (commit `a7f8c285ff9d111435d569b0d068f1381828109e`, presented without a record in this file) to 2.0.4; 2.0.3 was never presented. The Hive guide, the agent index, the overview, the walkthrough constant and the deployment note now name `v2.0.4`, which marks commit `f16a80c71a546e950867d6987c42ff2b6b1b9b50`. Every Hive link the guide carries points at that commit, and every linked file and anchor was checked to exist there.
 
@@ -130,7 +161,7 @@ Since 2.0.2 the suite pins Oathweave 2.0.2, Emberpath 2.0.2 and HiveMem 1.3.2, s
 
 The tag and release did not exist at this review, so the attached manifest, signature and key were not compared with the tree, and no installation command was exercised against an operational environment.
 
-## Homepage install and Tailscale preparation, 2026-11-07
+### Homepage install and Tailscale preparation, 2026-11-07
 
 Rechecked the published `v2.0.4` README and `deployment/QUICKSTART.md` through the public repository, and confirmed the release exists with the signed manifest, signature and publisher key attached. The homepage one-line command combines the documented tag checkout and setup invocation; it is explicitly for a prepared Linux host and opens the reviewed plan rather than bypassing setup. The fresh-host prerequisites remain linked beside it.
 
@@ -138,7 +169,7 @@ Checked `scripts/console-certificate.sh` and `scripts/suite/controller.sh` at `v
 
 Rechecked Ardent's public README for its headless runtime, independently configured integrations and bundled Emberfold library. The homepage labels its visual as Magnus mission control and keeps native Ardent installation separate from the signed Hive 2.0.4 suite. npm package metadata for `@hivemagnus/ardent` identifies publisher `hivemagnus`; the footer links that public npm profile.
 
-## Hive 2.0.5, 2026-11-07
+### Hive 2.0.5, 2026-11-07
 
 The site moves from Hive suite release 2.0.4 to 2.0.5. The Hive guide, the agent index, the overview, the walkthrough constant, the product guides' "Hive installs" lines and the deployment note now name `v2.0.5`, which marks commit `91bd31da798e6a3ddd986728301a5119c6a53d0c`. Every Hive link the guides carry points at that commit, and every linked file and anchor was checked to exist there.
 
@@ -149,14 +180,14 @@ The site moves from Hive suite release 2.0.4 to 2.0.5. The Hive guide, the agent
 
 `releases/2.0.5.json` differs from `releases/2.0.4.json` only in the Oathweave image, now 2.0.3, which updates `@simplewebauthn/server` to 14.1.0 for GHSA-2g3p-m8c9-hhwh; `controllerSHA256` and the publisher key are unchanged. The release attaches the manifest, signature and publisher key; they are byte-identical to the tagged tree and the signature verifies. The Oathweave guide's standalone container example keeps the image reviewed and run on 2026-11-06; its review record is otherwise unchanged. The install commands are those of 2.0.4 with the new version, as in the README and installation guide at that commit.
 
-## Hive release launcher, 2026-11-07
+### Hive release launcher, 2026-11-07
 
 The website quick start, walkthrough, Markdown overview and agent index now use `./hive.sh --release latest` from an unpinned launcher checkout. An exact version remains selectable. Commands were checked against published Hive commit [`e5079e9`](https://github.com/ChefTaco/hive/blob/e5079e996b7cf799edd56dd23444586ea898e110/deployment/QUICKSTART.md), its README and release launcher. The launcher resolves GitHub’s published release once, retains the matching tagged controller, checks its signature and signed source digest before execution, and forwards the exact version while preserving working directory, arguments and terminal input. Failed lookup, modified source, signature tampering and a publisher-key change stop execution.
 
 Live checks selected published release 2.0.5 and explicit release 2.0.0. The published controller reached its first interactive setup prompt, and an unattended run produced a digest-bearing plan then refused to apply without confirmation. No operational installation was changed. The product details in the Hive guide remain explicitly labeled as a review of 2.0.5; they are not a moving claim about the latest release. Local site checks covered all five viewport widths, ten accessibility audits, clipboard and walkthroughs, plus inspected desktop and mobile captures. No public product captures were replaced.
 
 
-## Hive 2.0.6 security release, 2026-11-07
+### Hive 2.0.6 security release, 2026-11-07
 
 The current product review moves to Hive 2.0.6, source commit `3cadb5590a9c9b0aa0884ecfcac48c7ebc10aa5b`. The launcher command stays `./hive.sh --release latest`, with exact-version examples updated to 2.0.6. The signed controller includes the release launcher reviewed above; the source review in the Hive guide now pins both launcher and product documentation to the same revision. Referenced files were checked in that tree.
 
@@ -170,7 +201,7 @@ The refreshed lifecycle guidance also covers the launcher’s offline fast path:
 
 Publication verification: the three downloaded Hive 2.0.6 release assets are byte-identical to the tagged manifest, signature and publisher key, and the detached signature verifies. Local site validation passed the build, all five viewport widths, ten accessibility audits, clipboard actions and walkthroughs, with zero page or console errors. Desktop and mobile captures were inspected.
 
-## Hive 3.1.1, Ardent and Ardent Project Studio, 2026-11-12
+### Hive 3.1.1, Ardent and Ardent Project Studio, 2026-11-12
 
 The current product review moves from Hive 2.0.6 to the published suite release 3.1.1, tag `v3.1.1`, commit `d1ff02dd4fbe16e9552f891584e8221aa52d0d93`. The 3.1.2 manifest merged on Hive `main` is not tagged or published and is not presented. The launcher command stays `./hive.sh --release latest`; exact-version examples, the walkthrough and the homepage now use one `HIVE_SUITE_VERSION` constant in `src/main.ts`. Hive guide links now point at the `v3.1.1` tag instead of a commit SHA, and every linked file and anchor was checked to exist in that tree.
 
@@ -196,7 +227,7 @@ Embermend's README describes a development preview with no tags, and it is not i
 Site copy no longer calls HiveXUI a console. Script and file names such as `console-certificate.sh` keep their real names, and Cindertrace's and Magnus's own standalone UIs keep their documented names. No installation command was run against an operational environment. No public product captures were replaced.
 
 
-## Embermend and signed Hive 3.2.2, 2026-11-12
+### Embermend and signed Hive 3.2.2, 2026-11-12
 
 The portfolio adds Embermend as a Magnus-dependent optional suite product, with a
 HiveXUI section, installation guide, recommendation workflow and explicit
@@ -234,7 +265,7 @@ six walkthroughs, thirteen guides and five viewport widths.
 
 The operational documentation review uses Embermend commit `31390ff520d13ed0faf598b4151dba424e095aea`, separately from the immutable 0.1.0 runtime source. It records all 24 reference acceptance journeys, three post-upgrade production assessments with explicit partial Ubuntu coverage, exact final product/native restore identities, unchanged identity security fields and disabled production mutation policies. The signed suite review uses Hive `v3.2.2` at `e99f6be17b3f6858d9f29da4d2b40716e12d11e2`; both PostgreSQL majors passed native amd64/arm64 checks and the full release image policy.
 
-## Signed Hive 3.3.0 product update, 2026-11-12
+### Signed Hive 3.3.0 product update, 2026-11-12
 
 The current suite review moves from Hive 3.2.2 to the published release 3.3.0, tag `v3.3.0`, commit `f2d4db2af7e9827fc85ef4cc6c527e003d6740d5`. `HIVE_SUITE_VERSION` in `src/main.ts`, the Hive guide, the overview and the agent index now name 3.3.0. The three release assets are byte-identical to the tagged manifest, signature and publisher key; the detached Ed25519 signature verifies with the unchanged key, DER SHA-256 `c0d0665a70969f37c8f1cffbdcf8e54df13626f8dbd4b5759a7c44843d86d1b2`. The manifest keeps the 3.2.2 `controllerSHA256` (`86d48819063894b8266e07c48609d1c50fba42e85b4ee91d7f4d4dfb205b64a9`), and every Hive file the guide links exists at the tag. The tag's README, quick start and Embermend deployment note differ from 3.2.2 only in version numbers.
 
@@ -253,7 +284,7 @@ The current suite review moves from Hive 3.2.2 to the published release 3.3.0, t
 
 The Hive guide's product table and release summary follow the manifest and changelog. ChatterMost and Cindertrace installation examples, and the ChatterMost and Cindertrace walkthroughs, move to the pinned tags; their command blocks are otherwise unchanged at those tags. The ChatterMost 0.5.1 archive matches its `SHA256SUMS` line and GitHub asset digest and contains `chattermost-0.5.1/`. The Ardent Project Studio guide links to `v0.3.0` and drops the superseded Node.js note. HiveSkills, Emberpath, HiveMem and HiveXUI update their Hive-installed versions and add dated release notes; standalone container examples keep their original source reviews. The Embermend guide notes that 3.3.0 keeps its reviewed Magnus and Oathweave versions. The Oathweave, Magnus, Ardent and Emberfold guides are not changed in this update. No installation command was run against an operational environment, and no public product captures were replaced.
 
-## Signed Hive 3.7.0 review, 2026-11-13
+### Signed Hive 3.7.0 review, 2026-11-13
 
 `HIVE_SUITE_VERSION` moved to 3.6.0, 3.6.1 and 3.7.0 without the guides following; they still described 3.3.0. This review brings the Hive guide, the product guides, the overview, the agent index and the walkthroughs to release 3.7.0, tag `v3.7.0`, commit `5d16e488d8fcc725d7cebd1a8d1cad952714e098`. Its `controllerSHA256` equals 3.6.1's.
 
@@ -278,7 +309,7 @@ Limits of this review: the only command run was the Emberfold `0.3.0` CLI dry ru
 
 Site checks: `npm run build` and the browser gate pass with twelve product sections, six walkthroughs, thirteen guides and five viewport widths. The sitemap now lists the Markdown overview and guides. The JSON-LD graph is unchanged, so its CSP hash still agrees.
 
-## Signed Hive 3.8.0 review, 2026-11-14
+### Signed Hive 3.8.0 review, 2026-11-14
 
 This review brings the Hive guide, the product guides, the overview, the agent index and the walkthroughs to release 3.8.0, tag `v3.8.0`, commit `2fe6f690556ff75d47b76301eb6cc8e5c25a4a91`. 3.8.0 has a new controller (`controllerSHA256` `3e9635029c5c689e046ed5cb47df019a7e50ea81f19170656a6add340ce8e28c`). The manifest signature was verified against `trust/publisher.pub`, whose DER SHA-256 matches the fingerprint in the release notes.
 
@@ -310,7 +341,7 @@ Hive 3.8.1 update, 2026-11-14: `HIVE_SUITE_VERSION`, the Hive guide (version tab
 
 Hive 3.9.0 update, 2026-11-14: `HIVE_SUITE_VERSION`, the Hive guide (version table, release summary, links and commands), the agent index and the Magnus guide's pin note move to release 3.9.0, tag `v3.9.0`, commit `7ce6c8fe5448d15898754b24b283996df5851dc2`, which pins Magnus, its gateway and host agent 3.0.1 and HiveXUI 0.9.0 with a new controller (`controllerSHA256` `78e3447193b1b49728d4d8331d41795188ab2a010c6df221a9b403cd4a67cf3c`); the manifest signature verifies against `trust/publisher.pub`. Facts come from the tag's `UPGRADING.md` and `CHANGELOG.md` and from Magnus `docs/NODE_CREDENTIALS.md` at `v3.0.1`.
 
-## Magnus 3.0.1 guide, 2026-11-14
+### Magnus 3.0.1 guide, 2026-11-14
 
 The Magnus guide is now a review of release 3.0.1, the version Hive 3.9.0 pins, replacing the 2.10.0 review whose body still said `compat` was the default. The earlier records above are historical and were not edited.
 
@@ -336,3 +367,7 @@ Hive 3.9.5 update, 2026-11-15: `HIVE_SUITE_VERSION`, the Hive guide (version tab
 Hive 3.9.6 update, 2026-11-15: `HIVE_SUITE_VERSION`, the Hive guide (version table, release summary with native profile backup, links and commands, and a dated record), the agent index and the Magnus guide's Hive pin note and 3.1.0 summary move to release 3.9.6, tag `v3.9.6`, commit `9a3563e39b0c2c37f0bc0a23427f5e4239a0cc13`, which pins Magnus 3.1.0 (server, fleet gateway and host agent) and keeps every other pin and the controller of 3.9.5 (`controllerSHA256` `201be83c28295a72be050253299f7ce45910f00c42be7aec12e44fdf9bde71b8`); the manifest signature verifies against `trust/publisher.pub`. Facts come from the Hive tag's `UPGRADING.md`, `CHANGELOG.md` and `deployment/BACKUPS.md`, and from Magnus `v3.1.0`'s `CHANGELOG.md`, `release/3.1.0.json` and `docs/NATIVE_SNAPSHOTS.md`. No installation command was run.
 
 Hive 3.9.7 update, 2026-11-16: `HIVE_SUITE_VERSION`, the Hive guide (version table, release summary, links and commands, and a dated record), the HiveXUI guide (installed version, the software card, and a dated record), the Magnus guide's Hive pin note and the agent index move to release 3.9.7, tag `v3.9.7`, commit `ef4b9f3439188d10a78c4a88a0e5e1242fd932a7`, which pins HiveXUI 0.9.2 (tag `v0.9.2`, commit `b696d70453f63f5dc696757983600356bcc6cd28`) and keeps every other pin, Magnus 3.1.0 included, and the controller of 3.9.6 (`controllerSHA256` `201be83c28295a72be050253299f7ce45910f00c42be7aec12e44fdf9bde71b8`); the manifest signature verifies against `trust/publisher.pub`. Facts come from the Hive tag's `UPGRADING.md` and `CHANGELOG.md` and from HiveXUI `v0.9.2`'s `CHANGELOG.md` and `README.md`. No installation command was run.
+
+### Documentation accuracy pass, 2026-11-16
+
+Current-state text was checked against each product repository at its latest tag: Hive `v3.11.0` (commit `f2536e7531c1d30db0c8f47f9c0cf522333b5621`, manifest signature verified against `trust/publisher.pub`), Magnus `v3.1.1`, HiveXUI `v0.9.2`, HiveMem `v1.8.0`, HiveSkills `v1.8.1`, Oathweave `v2.3.0`, Emberpath `v2.5.1`, Emberfold `v0.4.0`, Embermend `v0.3.2`, Cindertrace `v0.7.1`, ChatterMost `v0.7.0`, Ardent `v3.1.3` and Ardent Project Studio `v0.4.2`. `HIVE_SUITE_VERSION`, the agent index, the overview and every guide's suite sentence now name Hive 3.11.0. The Hive guide gets the 3.11.0 version table, a condensed recent-release summary in place of the per-release paragraph, `hive.sh admin-access setup` (3.11.0) and `hive.sh ardent setup` (3.10.0); the HiveMem (1.8.0), ChatterMost (0.7.0), Magnus (3.1.1) and Ardent guides get dated release records. The Cindertrace walkthrough now clones `v0.7.1` and the ChatterMost walkthrough uses `0.7.0`; the agent index named ChatterMost 0.6.1 and Hive 3.9.5, and the overview Hive 3.8.0 and 3.9.1. `/.well-known/security.txt` adds the six products it was missing. This file now leads with the update procedure, and the dated records above moved under History unchanged. No installation command was run.

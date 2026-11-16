@@ -9,6 +9,30 @@ Policy: https://github.com/ChefTaco/hive/security/policy
 Contact: https://github.com/ChefTaco/magnus/security/advisories/new
 Policy: https://github.com/ChefTaco/magnus/security/policy
 
+# HiveXUI
+Contact: https://github.com/ChefTaco/HiveXUI/security/advisories/new
+Policy: https://github.com/ChefTaco/HiveXUI/security/policy
+
+# Oathweave
+Contact: https://github.com/ChefTaco/Oathweave/security/advisories/new
+Policy: https://github.com/ChefTaco/Oathweave/security/policy
+
+# Emberpath
+Contact: https://github.com/ChefTaco/Emberpath/security/advisories/new
+Policy: https://github.com/ChefTaco/Emberpath/security/policy
+
+# HiveMem
+Contact: https://github.com/ChefTaco/HiveMem/security/advisories/new
+Policy: https://github.com/ChefTaco/HiveMem/security/policy
+
+# HiveSkills
+Contact: https://github.com/ChefTaco/HiveSkills/security/advisories/new
+Policy: https://github.com/ChefTaco/HiveSkills/security/policy
+
+# Ardent Project Studio
+Contact: https://github.com/ChefTaco/ArdentStudio/security/advisories/new
+Policy: https://github.com/ChefTaco/ArdentStudio/security/policy
+
 # Ardent
 Contact: https://github.com/ChefTaco/Ardent/security/advisories/new
 Policy: https://github.com/ChefTaco/Ardent/security/policy
