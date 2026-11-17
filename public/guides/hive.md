@@ -2,7 +2,7 @@
 
 > Bash installer and controller for signed, digest-pinned suite releases, with upgrades, backups, restore rehearsals and the Hive Registry.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/hive) · [Release 3.11.2](https://github.com/ChefTaco/hive/releases/tag/v3.11.2) · [Deployment overview](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/README.md)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/hive) · [Release 3.12.0](https://github.com/ChefTaco/hive/releases/tag/v3.12.0) · [Deployment overview](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/README.md)
 
 ## When to use Hive
 
@@ -16,22 +16,22 @@ Choose Hive to plan, install, upgrade and recover a tested combination of indepe
 
 Embermend is an explicit optional selection requiring compatible Magnus; see [its guide](https://hivemagnus.com/guides/embermend.md). No profile selects the Magnus web terminal gateway or [Ardent Project Studio](https://hivemagnus.com/guides/ardent-studio.md); every release offers the gateway, and interactive setup suggests Studio with the full profile. Selecting Magnus does not install a host agent: the guided setup offers one after installation, and `hive.sh magnus-agent install` installs it separately. [Ardent](https://hivemagnus.com/guides/ardent.md) is not a suite container: the Magnus host agent stages the Ardent package its signed dependency lock pins, and Magnus installs and manages it on the host; `hive.sh ardent setup` creates a first assistant profile through Magnus.
 
-## Reviewed release: 3.11.2
+## Reviewed release: 3.12.0
 
-The release reviewed for the product details below is [Hive 3.11.2](https://github.com/ChefTaco/hive/releases/tag/v3.11.2). Its tag `v3.11.2` holds the signed manifest `releases/3.11.2.json`, its detached Ed25519 signature `releases/3.11.2.json.sig` and the publisher key `trust/publisher.pub`; the same three files are attached to the release. The manifest pins every product, datastore and initialization image by multi-architecture digest (linux/amd64 and linux/arm64), and pins the controller source with `controllerSHA256`.
+The release reviewed for the product details below is [Hive 3.12.0](https://github.com/ChefTaco/hive/releases/tag/v3.12.0). Its tag `v3.12.0` holds the signed manifest `releases/3.12.0.json`, its detached Ed25519 signature `releases/3.12.0.json.sig` and the publisher key `trust/publisher.pub`; the same three files are attached to the release. The manifest pins every product, datastore and initialization image by multi-architecture digest (linux/amd64 and linux/arm64), and pins the controller source with `controllerSHA256`.
 
-| Product | Version in 3.11.2 |
+| Product | Version in 3.12.0 |
 | --- | --- |
 | Oathweave | 2.3.1 |
-| Emberpath | 2.5.2 |
-| HiveMem | 1.8.1 |
+| Emberpath | 2.5.3 |
+| HiveMem | 1.9.0 |
 | HiveSkills | 1.8.1 |
-| HiveXUI | 0.9.2 |
+| HiveXUI | 0.10.0 |
 | Embermend and its worker (optional) | 0.3.2 |
-| Magnus server and fleet gateway | 3.1.2 |
-| Magnus host agent `@hivemagnus/magnus-agent` | 3.1.2, with its npm integrity (`components.magnus.agentPackage`) |
-| Ardent, staged by the Magnus host agent | 3.1.3 |
-| Cindertrace | 0.7.2 |
+| Magnus server and fleet gateway | 3.1.3 |
+| Magnus host agent `@hivemagnus/magnus-agent` | 3.1.3, with its npm integrity (`components.magnus.agentPackage`) |
+| Ardent, staged by the Magnus host agent | 3.1.4 |
+| Cindertrace, with its optional managed collector | 0.8.0 |
 | ChatterMost and its migrator | 0.7.0 |
 | Emberfold HTTP service | 0.4.0 |
 | Ardent Project Studio | 0.4.3 |
@@ -42,6 +42,7 @@ The release notes list every image digest, including the private PostgreSQL 17.1
 
 ### What recent releases changed
 
+- **3.12.0** pins Cindertrace 0.8.0, whose standalone console is removed (HiveXUI is its only browser interface; the API, collector and schema migrations are unchanged), HiveXUI 0.10.0 with a Cindertrace recovery sign-in using Cindertrace's local accounts when Oathweave is unavailable, HiveMem 1.9.0, Emberpath 2.5.3 and Magnus 3.1.3 for the server, the fleet gateway and the host agent (Ardent 3.1.4). The manifest gives HiveMem a signed initialization that moves data owned by `hive-router` (installations migrated from the native Hive Router) to `emberpath` and re-links the memory credential, so such an upgrade needs `--allow-migrations`; others need no flag. New commands: `./hive.sh add cindertrace` adds Cindertrace to an existing installation, and the optional `cindertrace-collector` component runs Cindertrace's collector inside the installation for sources such as a logging host's Loki. It pins a new controller (`controllerSHA256` `d05034b2299fa831349cddde2c6fb9ecc544130333b16e6a48f432be1fa7bf48`), so run 3.12.0 from a checkout of its tag.
 - **3.11.2** pins Oathweave 2.3.1, whose SDK's default issuer now matches the server default (the server is unchanged), HiveMem 1.8.1 (deployment script and documentation fixes), Emberpath 2.5.2, which removes the expired static security-export credential so its security export accepts only the `security-exporter` Oathweave client token, Magnus 3.1.2 for the server, the fleet gateway and the host agent (help text and environment schema fixes; Ardent stays at 3.1.3), and Ardent Project Studio 0.4.3 (Magnus contracts 3.1.2, no behaviour change). HiveXUI stays at 0.9.2. It pins a new controller (`controllerSHA256` `dd8910e233ceb1e3db6658707e1947e9e4a965c4ad7c3f9b862c32a94240414e`) whose `./hive.sh --help` now says `--release latest` also works for `admin-access`, so run 3.11.2 from a checkout of its tag. No storage format changes, and an upgrade from 3.11.1 needs no flag.
 - **3.11.1** pins Cindertrace 0.7.2, whose standalone console is built with Next.js 16.4.6 for GHSA-mfr8-8qww-v76h. Every other pin, the storage formats and the controller are those of 3.11.0 (`controllerSHA256` `829e1e3d75a6d4dd0f33164044cd86218c6725d882a7d3ad5338e22b0e32c3f1`), and an upgrade from 3.11.0 needs no flag.
 - **3.11.0** pins HiveMem 1.8.0 and ChatterMost 0.7.0, whose product-owned provisioning APIs let the new `./hive.sh admin-access setup` give an existing Oathweave administrator separate native accounts and reviewed grants in each installed product, with durable receipts; see [Sign in to HiveXUI](#sign-in-to-hivexui). The setup checklist tracks `administrator-product-access` separately from `first-admin`. Once you have run it, keep using the 3.11.0 or a newer controller: earlier controllers change the ownership of its protected access journals during privileged operations. It pins a new controller (`controllerSHA256` `829e1e3d75a6d4dd0f33164044cd86218c6725d882a7d3ad5338e22b0e32c3f1`); every other pin and storage format is that of 3.10.0, and an upgrade from 3.10.0 needs no flag.
@@ -53,7 +54,7 @@ The release notes list every image digest, including the private PostgreSQL 17.1
 - **3.9.0 to 3.9.2** move Magnus to 3, which accepts node keys only and upgrades from Magnus 2.10.2 only; see [Upgrade](#upgrade). 3.9.1 lets operators retire the last shared keys, and 3.9.2 pins the ingress 2.0.6.
 - **3.8.0** moved every product except the ingress to a new version; see [What 3.8.0 changes for users](#what-380-changes-for-users). Earlier, 3.4.0 added Agent 360 and new Emberpath and HiveSkills data formats, 3.5.0 the HiveXUI inbox and the retirement of the web UIs Emberpath and HiveSkills used to bundle, and 3.6.0 the setup checklist and record search.
 
-Suite audit collection by Cindertrace is prepared in the controller but stays off in 3.11.2. Every release is described in the [changelog](https://github.com/ChefTaco/hive/blob/v3.11.2/CHANGELOG.md) and [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.11.2/UPGRADING.md).
+Suite audit collection by Cindertrace is prepared in the controller but stays off in 3.12.0. Every release is described in the [changelog](https://github.com/ChefTaco/hive/blob/v3.12.0/CHANGELOG.md) and [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.12.0/UPGRADING.md).
 
 Since 3.0.0 the suite runs maintained system libraries and patched embedded SQLite, and its PostgreSQL images are rebuilt against new glibc and ICU libraries. An existing PostgreSQL store from 2.x needs an explicit, rehearsed migration to enter that runtime; see [Upgrade](#upgrade). From 2.4.0, guided local setup prepares the host itself with consent, and full-node enrollment adds commands, managed cron and a selected web terminal to the local Magnus host.
 
@@ -75,7 +76,7 @@ A passing disposable rehearsal is not production cutover approval, physical mult
 
 ## Install
 
-The [installation guide](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/QUICKSTART.md) covers every step and setup question. On a fresh host:
+The [installation guide](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/QUICKSTART.md) covers every step and setup question. On a fresh host:
 
 ```bash
 git clone https://github.com/ChefTaco/hive.git && cd hive
@@ -87,13 +88,13 @@ Expected result: the launcher resolves GitHub’s latest published, non-prerelea
 To choose this release explicitly, as its release notes show:
 
 ```bash
-git clone --branch v3.11.2 https://github.com/ChefTaco/hive.git hive && cd hive
-./hive.sh --release 3.11.2
+git clone --branch v3.12.0 https://github.com/ChefTaco/hive.git hive && cd hive
+./hive.sh --release 3.12.0
 ```
 
 Failed lookups stop setup instead of falling back to an older release. An already-matching local checkout stays in use. Otherwise the launcher retains the tagged controller under `${XDG_DATA_HOME:-$HOME/.local/share}/hive/releases/` and prints its path. After setup, change to that retained checkout for the lifecycle and certificate commands below, and keep it while a renewal timer uses it. Return to the original launcher checkout when selecting a new release with `--release latest`.
 
-The launcher checks the manifest signature against its original publisher key and verifies the signed controller source digest before executing it. It refuses changed release checkouts or a different key. For example, 3.11.2 verifies `releases/3.11.2.json` against its signature with `trust/publisher.pub`, then asks for the installation name, directory, host, browser address (the HTTPS origin), profile, bind address and certificate files, and, with Magnus, an optional port for host agents. It never asks for a password on the command line. It shows a plan, applies it after you confirm, and ends with the HTTPS origin, the initial sign-in file and the next commands. After installation it offers the certificate renewal timer and, when an agent port was selected, the Magnus host agent, full-node enrollment and then a first Ardent assistant. The steps that still need a person are recorded as a setup checklist: `./hive.sh status` and `./hive.sh setup` list the pending ones, `./hive.sh setup done ID` or `setup skip ID` settles one, and HiveXUI shows the list to administrators. If setup stops after writing its configuration, running it again offers to continue with that file.
+The launcher checks the manifest signature against its original publisher key and verifies the signed controller source digest before executing it. It refuses changed release checkouts or a different key. For example, 3.12.0 verifies `releases/3.12.0.json` against its signature with `trust/publisher.pub`, then asks for the installation name, directory, host, browser address (the HTTPS origin), profile, bind address and certificate files, and, with Magnus, an optional port for host agents. It never asks for a password on the command line. It shows a plan, applies it after you confirm, and ends with the HTTPS origin, the initial sign-in file and the next commands. After installation it offers the certificate renewal timer and, when an agent port was selected, the Magnus host agent, full-node enrollment and then a first Ardent assistant. The steps that still need a person are recorded as a setup checklist: `./hive.sh status` and `./hive.sh setup` list the pending ones, `./hive.sh setup done ID` or `setup skip ID` settles one, and HiveXUI shows the list to administrators. If setup stops after writing its configuration, running it again offers to continue with that file.
 
 ### Manual host preparation
 
@@ -108,7 +109,7 @@ sudo ./scripts/console-certificate.sh tailscale
 
 Expected result: `install-prerequisites.sh` shows its plan and asks before changing anything. It installs Docker Engine and the Compose plugin from Docker's apt repository after checking its signing key, plus jq, OpenSSL, curl, git, iproute2 and the other tools `hive.sh` uses, adds you to the `docker` group and creates `/opt/hive`; `--check` then prints `Ready`. `console-certificate.sh tailscale` writes `/etc/hive/tls/console.crt` and `console.key` for the host's MagicDNS name, owned by you. With your own certificate, check it instead with `./scripts/console-certificate.sh check --cert FILE --key FILE --name NAME`. Hive runs no ACME client itself.
 
-To install from separately downloaded files instead, pass `--manifest`, `--signature` and `--trust-key`, still from the same tag's checkout. First check the key's fingerprint against the one in the [release notes](https://github.com/ChefTaco/hive/releases/tag/v3.11.2). The fingerprint is the SHA-256 of the DER public key:
+To install from separately downloaded files instead, pass `--manifest`, `--signature` and `--trust-key`, still from the same tag's checkout. First check the key's fingerprint against the one in the [release notes](https://github.com/ChefTaco/hive/releases/tag/v3.12.0). The fingerprint is the SHA-256 of the DER public key:
 
 ```bash
 openssl pkey -pubin -in trust/publisher.pub -outform DER | sha256sum
@@ -116,18 +117,18 @@ openssl pkey -pubin -in trust/publisher.pub -outform DER | sha256sum
 
 ### Repeatable plans
 
-For retries and for planning then applying, use the same exact release setup reported; do not resolve `latest` separately between the two steps. To prepare configuration separately or run unattended, supply the same installation JSON ([example](https://github.com/ChefTaco/hive/blob/v3.11.2/examples/installation.json), [schema](https://github.com/ChefTaco/hive/blob/v3.11.2/examples/installation.schema.json)). Interactive setup writes it to a protected configuration directory outside the checkout, by default `~/.config/hive/ID/installation.json`:
+For retries and for planning then applying, use the same exact release setup reported; do not resolve `latest` separately between the two steps. To prepare configuration separately or run unattended, supply the same installation JSON ([example](https://github.com/ChefTaco/hive/blob/v3.12.0/examples/installation.json), [schema](https://github.com/ChefTaco/hive/blob/v3.12.0/examples/installation.schema.json)). Interactive setup writes it to a protected configuration directory outside the checkout, by default `~/.config/hive/ID/installation.json`:
 
 ```bash
-./hive.sh plan --config installation.json --release 3.11.2
-./hive.sh install --config installation.json --release 3.11.2 --non-interactive --yes
+./hive.sh plan --config installation.json --release 3.12.0
+./hive.sh install --config installation.json --release 3.12.0 --non-interactive --yes
 ./hive.sh status --config installation.json
 ./hive.sh doctor --config installation.json
 ```
 
 Planning does not contact hosts. Per-product secrets, initial identities and internal transport keys are generated once into protected files, and retries check the exact inputs. Existing data, configuration, model resources and Compose projects are never silently adopted or overwritten. `./hive.sh --help` lists the lifecycle commands, including `init`, `upgrade`, `post-upgrade`, `setup`, `rollback`, `backup`, `backups`, `adopt`, `restore`, `rehearse`, `admin-access`, `ardent` and `migrate-native`. Commands other than `install`, `init` and `plan` find the installation file themselves when `~/.config/hive` holds exactly one.
 
-For hosts beyond one, read the [distributed](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/DISTRIBUTED.md), [full](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/FULL.md) and [custom](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/CUSTOM.md) guides.
+For hosts beyond one, read the [distributed](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/DISTRIBUTED.md), [full](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md) and [custom](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/CUSTOM.md) guides.
 
 ## Sign in to HiveXUI
 
@@ -138,14 +139,14 @@ On a fresh installation, the initial username and password are in `config/initia
 Keep the initial operator for recovery and work as your own administrator. Create it in **Oathweave > Users**, then give it access to the installed products:
 
 ```bash
-./hive.sh admin-access setup --release 3.11.2
+./hive.sh admin-access setup --release 3.12.0
 ```
 
-Expected result: it lists the active administrators to choose from (`admin-access list` shows them), shows the products the account will administer, asks for sudo when needed, adds the Suite Administrator role, creates separate product accounts with reviewed grants, reconnects only the affected services and records `first-admin` and `administrator-product-access` as done in the setup checklist. Existing accounts and service identities are preserved; conflicting, locked or disabled accounts are refused. `admin-access setup NAME` selects an account by name, `--yes` confirms an unattended run after review, and `admin-access status NAME` reads the retained operation; after an interruption, repeat the same command. Sign out of HiveXUI and sign in with your own account, then take and rehearse a fresh backup. An external Magnus needs its own installation owner. See [administrator product access](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/QUICKSTART.md#administrator-product-access).
+Expected result: it lists the active administrators to choose from (`admin-access list` shows them), shows the products the account will administer, asks for sudo when needed, adds the Suite Administrator role, creates separate product accounts with reviewed grants, reconnects only the affected services and records `first-admin` and `administrator-product-access` as done in the setup checklist. Existing accounts and service identities are preserved; conflicting, locked or disabled accounts are refused. `admin-access setup NAME` selects an account by name, `--yes` confirms an unattended run after review, and `admin-access status NAME` reads the retained operation; after an interruption, repeat the same command. Sign out of HiveXUI and sign in with your own account, then take and rehearse a fresh backup. An external Magnus needs its own installation owner. See [administrator product access](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/QUICKSTART.md#administrator-product-access).
 
-The installer copies the certificate into the ingress. After renewing it, run `./hive.sh tls-refresh --config FILE`; `sudo ./scripts/console-certificate.sh schedule --config FILE` does this weekly for a Tailscale certificate, and successful upgrades refresh an existing renewal service to the new checkout. Back up with `./hive.sh backup --config FILE --archive NAME --yes`, which keeps the suite serving; each application pauses only briefly, however much data it holds. See [backups](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/BACKUPS.md). Each upgrade keeps a backup and a restored rehearsal copy: on a single-host installation, `./hive.sh backups schedule enable --config FILE --at HH:MM` prunes old pairs every day with the [retention rules](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/BACKUPS.md#daily-pruning), and `./hive.sh backups schedule status --config FILE` shows the crontab line and the last run.
+The installer copies the certificate into the ingress. After renewing it, run `./hive.sh tls-refresh --config FILE`; `sudo ./scripts/console-certificate.sh schedule --config FILE` does this weekly for a Tailscale certificate, and successful upgrades refresh an existing renewal service to the new checkout. Back up with `./hive.sh backup --config FILE --archive NAME --yes`, which keeps the suite serving; each application pauses only briefly, however much data it holds. See [backups](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/BACKUPS.md). Each upgrade keeps a backup and a restored rehearsal copy: on a single-host installation, `./hive.sh backups schedule enable --config FILE --at HH:MM` prunes old pairs every day with the [retention rules](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/BACKUPS.md#daily-pruning), and `./hive.sh backups schedule status --config FILE` shows the crontab line and the last run.
 
-An installation migrated with `hive.sh migrate-native` keeps its accounts, roles and password hashes instead, and the owner sets a new administrator password once with a one-use reset token. Cutover writes the token to the configured `adminAccount.tokenFile` on the controller, mode 0600; it expires after 24 hours. On the host, run the installation's `bin/hive-set-admin-password` with `sudo`, or `hive.sh migrate-native set-admin-password --config FILE` from the controller. It prompts for the token and the new password without echo; neither can be a command-line argument. Then sign in and delete the token file. See [first sign-in](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/MIGRATE_NATIVE.md#first-sign-in).
+An installation migrated with `hive.sh migrate-native` keeps its accounts, roles and password hashes instead, and the owner sets a new administrator password once with a one-use reset token. Cutover writes the token to the configured `adminAccount.tokenFile` on the controller, mode 0600; it expires after 24 hours. On the host, run the installation's `bin/hive-set-admin-password` with `sudo`, or `hive.sh migrate-native set-admin-password --config FILE` from the controller. It prompts for the token and the new password without echo; neither can be a command-line argument. Then sign in and delete the token file. See [first sign-in](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/MIGRATE_NATIVE.md#first-sign-in).
 
 ## Upgrade
 
@@ -161,26 +162,27 @@ Some upgrades also need explicit migration approval with `--allow-migrations`:
 - from a release before 3.4.0, when the installation includes Emberpath or HiveSkills, whose data formats changed;
 - from a release before 3.6.0, when the installation includes Embermend;
 - from a release before 3.8.0, when the installation runs Magnus, for Magnus 2.10.0's two additive migrations.
+- from a release before 3.12.0, when HiveMem has data owned by `hive-router` (an installation migrated from the native Hive Router), which HiveMem 1.9.0's signed initialization moves to `emberpath` before re-linking the memory credential.
 
-An upgrade from 3.7.x without Magnus, or with an external Magnus, needs none, and neither does one from 3.8.0 to 3.8.1 or from 3.8.1 to any later release (for example 3.9.7 to 3.9.8, 3.10.0 to 3.11.0, 3.11.0 to 3.11.1 or 3.11.1 to 3.11.2). Magnus 3 upgrades from Magnus 2.10.2 only, so an installation that runs Magnus on a release before 3.8.1 upgrades to 3.8.1 first, then to 3.11.2. Before it changes anything, `hive.sh upgrade` checks a suite-managed Magnus as Magnus 3's start-up guard will and refuses, naming the blockers, while a node has no active key or its agent does not sign its evidence.
+An upgrade from 3.7.x without Magnus, or with an external Magnus, needs none, and neither does one from 3.8.0 to 3.8.1 or from 3.8.1 to any later release (for example 3.9.7 to 3.9.8, 3.10.0 to 3.11.0, 3.11.0 to 3.11.1 or 3.11.1 to 3.11.2). Magnus 3 upgrades from Magnus 2.10.2 only, so an installation that runs Magnus on a release before 3.8.1 upgrades to 3.8.1 first, then to 3.12.0. Before it changes anything, `hive.sh upgrade` checks a suite-managed Magnus as Magnus 3's start-up guard will and refuses, naming the blockers, while a node has no active key or its agent does not sign its evidence.
 
 ```bash
-./hive.sh plan --config installation.json --release 3.11.2 --allow-migrations
-./hive.sh upgrade --config installation.json --release 3.11.2 --allow-migrations
+./hive.sh plan --config installation.json --release 3.12.0 --allow-migrations
+./hive.sh upgrade --config installation.json --release 3.12.0 --allow-migrations
 ```
 
 The installer takes a verified pre-change backup, rehearses the new runtime and migration on a disposable copy, then migrates the stopped live stores and rebuilds their indexes before activation. Credentials, ownership, PostgreSQL majors, application records and component selection are retained. HiveXUI is unavailable while services and stores are stopped or migrated; the duration depends on the data and index rebuilds. A core installation has no PostgreSQL store to migrate, and moving between releases with unchanged datastore formats does not repeat a migration.
 
-**Code-only rollback across the 3.0.0 PostgreSQL boundary is refused.** `./hive.sh rollback` can still return to a compatible storage format, but recovery from the PostgreSQL collation change requires the verified original-state backup, rehearsed with the retained original controller and images, and reconciliation of later writes; it must not discard them. A failed or uncertain live migration holds the transaction for recovery: repeat exactly the same command rather than editing transaction or runtime receipts. Read the release notes, [advisory remediation](https://github.com/ChefTaco/hive/blob/v3.11.2/docs/ADVISORY_REMEDIATION.md#postgresql-needs-a-separate-migration-proof), the [upgrade procedure](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/QUICKSTART.md#8-upgrade) and [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.11.2/UPGRADING.md) first.
+**Code-only rollback across the 3.0.0 PostgreSQL boundary is refused.** `./hive.sh rollback` can still return to a compatible storage format, but recovery from the PostgreSQL collation change requires the verified original-state backup, rehearsed with the retained original controller and images, and reconciliation of later writes; it must not discard them. A failed or uncertain live migration holds the transaction for recovery: repeat exactly the same command rather than editing transaction or runtime receipts. Read the release notes, [advisory remediation](https://github.com/ChefTaco/hive/blob/v3.12.0/docs/ADVISORY_REMEDIATION.md#postgresql-needs-a-separate-migration-proof), the [upgrade procedure](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/QUICKSTART.md#8-upgrade) and [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.12.0/UPGRADING.md) first.
 
 After upgrading, switch to the retained checkout the launcher printed and finish the remaining steps. `post-upgrade` shows and confirms each change: it updates Magnus host agents older than the release, adds missing HiveXUI browser clients to Oathweave, marks the setup checklist items it completes as done, and lists what is left. A successful interactive upgrade also offers `admin-access setup`; after an unattended one, run it when ready:
 
 ```bash
-./hive.sh post-upgrade --config installation.json --release 3.11.2
-./hive.sh magnus-agent install --config installation.json --release 3.11.2
+./hive.sh post-upgrade --config installation.json --release 3.12.0
+./hive.sh magnus-agent install --config installation.json --release 3.12.0
 ```
 
-`magnus-agent install` is the same scope-preserving package maintenance path run on its own: it upgrades the agent and stages the verified Ardent package while keeping its enrollment scope, node identity, profiles and completed history. Full-node enrollment remains a separate explicit operation. An updated agent is not re-enrolled for a node key either: with Magnus 2.10 it binds its own key automatically, and with Magnus 3 an agent that has a key keeps it while one without a key is enrolled with a one-time token. Agents that Magnus manages cross from 2.10.2 to 3.x by way of 2.10.3, with `magnus-server agents upgrade --to 2.10.3` and then `--to 3.1.2 --allow-major` (or **Allow major upgrade** in HiveXUI), and move from an earlier 3.x with `--to 3.1.2` within the major, each after a `--dry-run`; see the [Magnus guide](https://hivemagnus.com/guides/magnus.md#upgrade-to-301). Then, in **Magnus > Ardent > Installations** in HiveXUI, stop running profiles, choose **Update package** and start them again. From 3.9.1 `./hive.sh post-upgrade` asks Magnus, read only, which installations are behind the Ardent version their node agent stages, names them, and records `ardent-packages-updated` as done once none is; with an external Magnus it asks through Ardent Project Studio's service identity, so without Studio record it with `./hive.sh setup done ardent-packages-updated`.
+`magnus-agent install` is the same scope-preserving package maintenance path run on its own: it upgrades the agent and stages the verified Ardent package while keeping its enrollment scope, node identity, profiles and completed history. Full-node enrollment remains a separate explicit operation. An updated agent is not re-enrolled for a node key either: with Magnus 2.10 it binds its own key automatically, and with Magnus 3 an agent that has a key keeps it while one without a key is enrolled with a one-time token. Agents that Magnus manages cross from 2.10.2 to 3.x by way of 2.10.3, with `magnus-server agents upgrade --to 2.10.3` and then `--to 3.1.3 --allow-major` (or **Allow major upgrade** in HiveXUI), and move from an earlier 3.x with `--to 3.1.3` within the major, each after a `--dry-run`; see the [Magnus guide](https://hivemagnus.com/guides/magnus.md#upgrade-to-301). Then, in **Magnus > Ardent > Installations** in HiveXUI, stop running profiles, choose **Update package** and start them again. From 3.9.1 `./hive.sh post-upgrade` asks Magnus, read only, which installations are behind the Ardent version their node agent stages, names them, and records `ardent-packages-updated` as done once none is; with an external Magnus it asks through Ardent Project Studio's service identity, so without Studio record it with `./hive.sh setup done ardent-packages-updated`.
 
 ## Fleet hosts and security events
 
@@ -202,7 +204,7 @@ With Magnus, HiveMem and Oathweave and an enrolled host agent, `ardent setup` in
 ./hive.sh ardent check --profile assistant --config installation.json
 ```
 
-See the [setup checklist](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/FULL.md#setup-checklist), [creating an Ardent assistant](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/FULL.md#create-an-ardent-assistant), [Magnus host agents](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/FULL.md#magnus-host-agents), [Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/FULL.md#ardent-project-studio) and [sending security events](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/FULL.md#sending-security-events-to-cindertrace).
+See the [setup checklist](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#setup-checklist), [creating an Ardent assistant](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#create-an-ardent-assistant), [Magnus host agents](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#magnus-host-agents), [Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#ardent-project-studio) and [sending security events](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#sending-security-events-to-cindertrace).
 
 ## Hive Registry
 
@@ -213,17 +215,17 @@ Every installation runs a Hive Registry: its install catalog and lookup API, a s
 ./hive.sh registry get emberpath --config installation.json
 ```
 
-`list` also has `installed`, `summary` and `history` forms. `hive.sh` is the normal writer; `registry add`, `update` and `remove` cover externally managed products only, and any credential in an entry is refused. The ingress passes only explicit `GET` routes under `/api/registry/`, so writes never leave the private network. `status` reports drift by name and `doctor` fails on any drift. See the [API reference](https://github.com/ChefTaco/hive/blob/v3.11.2/docs/hive-registry-api.md).
+`list` also has `installed`, `summary` and `history` forms. `hive.sh` is the normal writer; `registry add`, `update` and `remove` cover externally managed products only, and any credential in an entry is refused. The ingress passes only explicit `GET` routes under `/api/registry/`, so writes never leave the private network. `status` reports drift by name and `doctor` fails on any drift. See the [API reference](https://github.com/ChefTaco/hive/blob/v3.12.0/docs/hive-registry-api.md).
 
 ## External inference
 
-Ollama, llama.cpp, other inference services and hosted APIs are external dependencies. Hive only verifies connectivity, model discovery, generation and streaming, then registers verified providers with Emberpath. It never installs or manages inference services, model downloads, storage, licenses or GPUs. See [external inference](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/INFERENCE.md).
+Ollama, llama.cpp, other inference services and hosted APIs are external dependencies. Hive only verifies connectivity, model discovery, generation and streaming, then registers verified providers with Emberpath. It never installs or manages inference services, model downloads, storage, licenses or GPUs. See [external inference](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/INFERENCE.md).
 
 ## Existing installations
 
-A native installation, with Router, IAM, HiveMem and, where installed, Skills running as systemd services, moves onto the suite on the same host and ports with `hive.sh migrate-native`. It keeps every native port, certificate, issuer, key and account. Read [migrating a native installation](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/MIGRATE_NATIVE.md) before any separately approved maintenance window. `adopt` takes over existing Compose stacks only.
+A native installation, with Router, IAM, HiveMem and, where installed, Skills running as systemd services, moves onto the suite on the same host and ports with `hive.sh migrate-native`. It keeps every native port, certificate, issuer, key and account. Read [migrating a native installation](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/MIGRATE_NATIVE.md) before any separately approved maintenance window. `adopt` takes over existing Compose stacks only.
 
-The npm launcher `@hivemagnus/hive` and the other 1.x npm packages are the legacy line. The suite products supersede them; 1.2.2 was the final legacy npm release and its archived source remains at that tag. Installations the launcher manages follow [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.11.2/UPGRADING.md). To bring one under the controller, rehearse its own backups and read [existing-data rehearsals](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/EXISTING_DATA_REHEARSALS.md) first. Preserve each installation's state.
+The npm launcher `@hivemagnus/hive` and the other 1.x npm packages are the legacy line. The suite products supersede them; 1.2.2 was the final legacy npm release and its archived source remains at that tag. Installations the launcher manages follow [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.12.0/UPGRADING.md). To bring one under the controller, rehearse its own backups and read [existing-data rehearsals](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/EXISTING_DATA_REHEARSALS.md) first. Preserve each installation's state.
 
 ## Source review
 
@@ -252,3 +254,5 @@ Release update, 2026-11-16: [Hive 3.11.0](https://github.com/ChefTaco/hive/relea
 Release update, 2026-11-17: [Hive 3.11.1](https://github.com/ChefTaco/hive/releases/tag/v3.11.1), tag `v3.11.1`, commit `9b8eedb8963adcf4a88e6e20ad0ae41ebe1d6556`, pins Cindertrace 0.7.2 and keeps every other pin and the controller of 3.11.0 (`controllerSHA256` `829e1e3d75a6d4dd0f33164044cd86218c6725d882a7d3ad5338e22b0e32c3f1`), so the installation and upgrade links and commands now use `v3.11.1`. Per its [changelog](https://github.com/ChefTaco/hive/blob/v3.11.1/CHANGELOG.md) and [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.11.1/UPGRADING.md#suite-3111-cindertrace-072), Cindertrace 0.7.2 updates its standalone console to Next.js 16.4.6 for GHSA-mfr8-8qww-v76h, it adds no migrations, and an upgrade from 3.11.0 needs no flag. No installation command was run for this update.
 
 Release update, 2026-11-17: [Hive 3.11.2](https://github.com/ChefTaco/hive/releases/tag/v3.11.2), tag `v3.11.2`, commit `bdbcfb36c937aad12e7a969e0dbf268f42fd470f`, pins Oathweave 2.3.1, Emberpath 2.5.2, HiveMem 1.8.1, Magnus 3.1.2 (server, fleet gateway and host agent) and Ardent Project Studio 0.4.3, keeps every other pin, HiveXUI 0.9.2 included, and pins a new controller (`controllerSHA256` `dd8910e233ceb1e3db6658707e1947e9e4a965c4ad7c3f9b862c32a94240414e`) whose `hive.sh --help` text now says `--release latest` also works for `admin-access`. The version table, the recent-release summary and the installation and upgrade links and commands now use `v3.11.2`, and the Magnus agent upgrade targets name 3.1.2. Per its [changelog](https://github.com/ChefTaco/hive/blob/v3.11.2/CHANGELOG.md) and [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.11.2/UPGRADING.md#suite-3112-product-maintenance-releases), no storage format changes, none of the new product versions has a database migration, and an upgrade from 3.11.1 needs no flag; a checkout of the 3.11.1 tag refuses the 3.11.2 manifest. No installation command was run for this update.
+
+Release update, 2026-11-17: [Hive 3.12.0](https://github.com/ChefTaco/hive/releases/tag/v3.12.0), tag `v3.12.0`, commit `8434ebd2877915e4081e7244d03b2c90bcfbadb1`, pins Cindertrace 0.8.0, HiveXUI 0.10.0, HiveMem 1.9.0, Emberpath 2.5.3 and Magnus 3.1.3 (server, fleet gateway and host agent, which stages Ardent 3.1.4), keeps every other pin, and pins a new controller (`controllerSHA256` `d05034b2299fa831349cddde2c6fb9ecc544130333b16e6a48f432be1fa7bf48`) that adds `hive.sh add`, the managed `cindertrace-collector` component and HiveMem's signed `hive-router` to `emberpath` initialization with the memory credential re-link. The version table, the recent-release summary, the migration list and the installation and upgrade links and commands now use `v3.12.0`, and the Magnus agent upgrade targets name 3.1.3. Per its [changelog](https://github.com/ChefTaco/hive/blob/v3.12.0/CHANGELOG.md) and [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.12.0/UPGRADING.md#suite-3120-cindertrace-080-and-the-emberpath-memory-principal), an upgrade needs `--allow-migrations` only where HiveMem has data owned by `hive-router`. The manifest signature verifies against `trust/publisher.pub`, unchanged from 3.11.2. No installation command was run for this update.
