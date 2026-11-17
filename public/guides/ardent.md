@@ -2,7 +2,7 @@
 
 > A headless TypeScript agent runtime with durable tasks, typed tools, scheduled jobs, A2A and a journal of every task. It runs standalone or under Magnus management, with bundled Emberfold context fitting.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/Ardent) · [Release 3.1.3](https://github.com/ChefTaco/Ardent/releases/tag/v3.1.3) · [npm package](https://www.npmjs.com/package/@hivemagnus/ardent) · [README](https://github.com/ChefTaco/Ardent/blob/v3.1.3/README.md)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/Ardent) · [Tag v3.1.4](https://github.com/ChefTaco/Ardent/releases/tag/v3.1.4) · [npm package](https://www.npmjs.com/package/@hivemagnus/ardent) · [README](https://github.com/ChefTaco/Ardent/blob/v3.1.4/README.md)
 
 ## Responsibility
 
@@ -18,7 +18,7 @@ Ardent imports the pinned `@hivemagnus/emberfold` library for context fitting an
 
 ## In a Hive installation
 
-Ardent is not a suite container and has no HiveXUI section of its own. [Magnus](https://hivemagnus.com/guides/magnus.md) installs and manages it on fleet hosts, and its pages are in the Magnus section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md). In [Hive](https://hivemagnus.com/guides/hive.md) 3.11.2, `hive.sh magnus-agent install` stages the Ardent 3.1.3 package that the signed Magnus 3.1.2 host agent's dependency lock pins, after verifying its npm integrity. Staging never installs or starts a runtime. From Hive 3.10.0, `hive.sh ardent setup`, which guided setup offers after full-node enrollment, installs that staged package and creates the default `assistant` profile through Magnus's **New Agent** workflow: it asks for an OpenAI-compatible model URL (including `/v1`) and model name, configures HiveMem, starts the profile and makes a real model request. It accepts only model endpoints that need no separate API key; `--profile NAME` creates another new profile, and `ardent status`, `ardent check` and `ardent resume OPERATION_ID` follow it. Otherwise, in **Magnus > Ardent > Installations**, choose **Install package**, then create a profile with **New Agent**. New Agent gives each agent its own HiveMem identity and can use an Emberpath model alias.
+Ardent is not a suite container and has no HiveXUI section of its own. [Magnus](https://hivemagnus.com/guides/magnus.md) installs and manages it on fleet hosts, and its pages are in the Magnus section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md). In [Hive](https://hivemagnus.com/guides/hive.md) 3.12.0, `hive.sh magnus-agent install` stages the Ardent 3.1.4 package that the signed Magnus 3.1.3 host agent's dependency lock pins, after verifying its npm integrity. Staging never installs or starts a runtime. From Hive 3.10.0, `hive.sh ardent setup`, which guided setup offers after full-node enrollment, installs that staged package and creates the default `assistant` profile through Magnus's **New Agent** workflow: it asks for an OpenAI-compatible model URL (including `/v1`) and model name, configures HiveMem, starts the profile and makes a real model request. It accepts only model endpoints that need no separate API key; `--profile NAME` creates another new profile, and `ardent status`, `ardent check` and `ardent resume OPERATION_ID` follow it. Otherwise, in **Magnus > Ardent > Installations**, choose **Install package**, then create a profile with **New Agent**. New Agent gives each agent its own HiveMem identity and can use an Emberpath model alias.
 
 To update the package after a suite upgrade, run `hive.sh post-upgrade` or `hive.sh magnus-agent install` from the new release, which updates the host agent and stages the new package while keeping the node's enrollment scope. Then stop the running profiles, choose **Update package** and start them again. [Ardent Project Studio](https://hivemagnus.com/guides/ardent-studio.md), an optional suite product, gives several Ardent agents a shared team project through Magnus.
 
@@ -57,16 +57,16 @@ A non-loopback management host is refused; put a TLS proxy in front instead. Ena
 
 ## Upgrading to 3.x
 
-Ardent 3.0 replaced `better-sqlite3` with the pinned Node-API SQLite driver. Profile databases keep their format and journal history. The management API, CLI and plugin hooks keep their contracts, but code that used driver-specific methods of the low-level `TaskStore.db` must move to the application storage boundary; import extension primitives from `@hivemagnus/ardent/plugin-sdk`. Release 3.1.2 is a security patch that requires the patched Node.js lines above and updates Hono; 3.1.3 fixes Mattermost, Telegram, llama.cpp stream and artifact handling.
+Ardent 3.0 replaced `better-sqlite3` with the pinned Node-API SQLite driver. Profile databases keep their format and journal history. The management API, CLI and plugin hooks keep their contracts, but code that used driver-specific methods of the low-level `TaskStore.db` must move to the application storage boundary; import extension primitives from `@hivemagnus/ardent/plugin-sdk`. Release 3.1.2 is a security patch that requires the patched Node.js lines above and updates Hono; 3.1.3 fixes Mattermost, Telegram, llama.cpp stream and artifact handling; 3.1.4 updates `@hono/node-server` to 2.1.6 and requires at least that version.
 
 ## Full instructions
 
-- [Configuration, channels, A2A, team missions and plugins](https://github.com/ChefTaco/Ardent/blob/v3.1.3/README.md)
-- [OpenAPI contract](https://github.com/ChefTaco/Ardent/blob/v3.1.3/openapi/ardent.json)
-- [Changelog](https://github.com/ChefTaco/Ardent/blob/v3.1.3/CHANGELOG.md)
-- [Managing Ardent with Magnus](https://github.com/ChefTaco/magnus/blob/v3.1.2/docs/ARDENT.md)
-- [Hive: create an Ardent assistant](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/FULL.md#create-an-ardent-assistant)
-- [Repository instructions](https://github.com/ChefTaco/Ardent/blob/v3.1.3/AGENTS.md)
+- [Configuration, channels, A2A, team missions and plugins](https://github.com/ChefTaco/Ardent/blob/v3.1.4/README.md)
+- [OpenAPI contract](https://github.com/ChefTaco/Ardent/blob/v3.1.4/openapi/ardent.json)
+- [Changelog](https://github.com/ChefTaco/Ardent/blob/v3.1.4/CHANGELOG.md)
+- [Managing Ardent with Magnus](https://github.com/ChefTaco/magnus/blob/v3.1.3/docs/ARDENT.md)
+- [Hive: create an Ardent assistant](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#create-an-ardent-assistant)
+- [Repository instructions](https://github.com/ChefTaco/Ardent/blob/v3.1.4/AGENTS.md)
 
 ## Source review
 
@@ -75,3 +75,5 @@ Reviewed 2026-11-12 against tag `v3.1.2`, commit `58c4b35034ea20a3400f04e9f13101
 Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releases/tag/v3.8.0) stages Ardent 3.1.3, tag [`v3.1.3`](https://github.com/ChefTaco/Ardent/releases/tag/v3.1.3), commit `4ea00d3a5bc0ea8c601fb611a6770651e7313de0`, which the Magnus `v2.10.0` host agent's `npm-shrinkwrap.json` pins; npm resolves `@hivemagnus/ardent` to `3.1.3` as `latest`. Its README is unchanged from `v3.1.2`, so the commands are the same. Per the [changelog](https://github.com/ChefTaco/Ardent/blob/v3.1.3/CHANGELOG.md), 3.1.3 is a bug-fix release; per Magnus's changelog its management API is unchanged. No installation command was run for this update.
 
 Release update, 2026-11-16: [Hive 3.11.0](https://github.com/ChefTaco/hive/releases/tag/v3.11.0) still stages Ardent 3.1.3, which the Magnus `v3.1.1` host agent's `npm-shrinkwrap.json` pins; npm resolves `@hivemagnus/ardent` to `3.1.3` as `latest`. The suite section above adds `hive.sh ardent setup` from Hive 3.10.0, per [Create an Ardent assistant](https://github.com/ChefTaco/hive/blob/v3.11.0/deployment/FULL.md#create-an-ardent-assistant) and the `hive.sh --help` text at `v3.11.0`. No installation command was run for this update.
+
+Release update, 2026-11-17: [Hive 3.12.0](https://github.com/ChefTaco/hive/releases/tag/v3.12.0) stages Ardent 3.1.4, tag [`v3.1.4`](https://github.com/ChefTaco/Ardent/releases/tag/v3.1.4), commit `ac9173270ffc75d553f0fce8d76a42ee9ee1867d`, which the Magnus [`v3.1.3`](https://github.com/ChefTaco/magnus/releases/tag/v3.1.3) host agent's `npm-shrinkwrap.json` pins; npm resolves `@hivemagnus/ardent` to `3.1.4` as `latest`; the tag has no GitHub release entry yet. The header now links the tag; the README, OpenAPI, changelog and repository-instruction links use `v3.1.4`, and the Magnus and Hive links use `v3.1.3` and `v3.12.0`. Per the [changelog](https://github.com/ChefTaco/Ardent/blob/v3.1.4/CHANGELOG.md), 3.1.4 updates `@hono/node-server` to 2.1.6 and raises its minimum to `^2.1.6`; per Magnus's [changelog](https://github.com/ChefTaco/magnus/blob/v3.1.3/CHANGELOG.md), the Ardent management API is unchanged. The [README](https://github.com/ChefTaco/Ardent/blob/v3.1.4/README.md) install commands are unchanged; it adds a section on running under Magnus and in the Hive suite and documents per-mount plugin rate limits. No installation command was run for this update.

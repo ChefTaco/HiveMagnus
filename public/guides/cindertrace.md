@@ -6,25 +6,25 @@
 
 ## Choose an entry point
 
-Use Cindertrace to investigate endpoint, network, identity, and application observations. In a Hive installation it is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md), signed in through Oathweave with resource tokens, and [Hive](https://hivemagnus.com/guides/hive.md) 3.11.2 installs Cindertrace 0.7.2 (pinned since 3.11.1) with its private PostgreSQL in the `full` profile. Fresh Hive setup starts its ingestion, dispatch and notification integrations disabled until you review them. It also runs on its own with its retained console, local administrator login, PostgreSQL, and Redis. Hive and Magnus are optional. Collectors send signed observations directly to Cindertrace; sources and listeners must be explicitly configured.
+Use Cindertrace to investigate endpoint, network, identity, and application observations. In a Hive installation it is a section of [HiveXUI](https://hivemagnus.com/guides/hivexui.md), signed in through Oathweave with resource tokens, and [Hive](https://hivemagnus.com/guides/hive.md) 3.12.0 installs Cindertrace 0.8.0 with its private PostgreSQL in the `full` profile, and `hive.sh add cindertrace` adds it to an existing installation. Fresh Hive setup starts its ingestion, dispatch and notification integrations disabled until you review them. When Oathweave is unavailable, HiveXUI's Cindertrace recovery sign-in uses Cindertrace's own local administrator. HiveXUI is Cindertrace's only UI: 0.8.0 removed its standalone console. It also runs on its own with its local administrator sign-in, PostgreSQL, and Redis; a standalone installation then serves HiveXUI in local mode, which shows only Cindertrace's pages. Hive and Magnus are optional. Collectors send signed observations directly to Cindertrace; sources and listeners must be explicitly configured.
 
 Cindertrace owns security cases, evidence, correlation, investigations, assurance, policies, retention, audit, and approvals. Magnus owns fleet management and host execution. Existing `/security-fusion` pages and `/api/v1/security-fusion/*` API paths remain compatible.
 
 ## Install a fresh Compose stack on its own
 
-Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.3 or later on the 24.x line, or 26.13.1 or later on the 26.x line. Use a fresh checkout and installation directory. The release reviewed here is [`v0.7.2`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.7.2).
+Prerequisites: Git, npm, OpenSSL, Docker Engine with Compose v2, and Node.js 24.22.3 or later on the 24.x line, or 26.13.1 or later on the 26.x line. Use a fresh checkout and installation directory. The release reviewed here is [`v0.8.0`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.8.0).
 
 ```bash
-git clone --branch v0.7.2 https://github.com/ChefTaco/cindertrace.git
+git clone --branch v0.8.0 https://github.com/ChefTaco/cindertrace.git
 cd cindertrace
 npm ci
 npm run init
 docker compose up --build -d
 ```
 
-Expected result: initialization writes unique installation secrets, an Argon2id administrator hash, and a 90-day local TLS certificate. It refuses to overwrite an existing `.env`. Compose starts the console, API, PostgreSQL, and Redis, applies migrations, and keeps database and Redis ports private to the Compose network.
+Expected result: initialization writes unique installation secrets, an Argon2id administrator hash, a 90-day local TLS certificate and HiveXUI's `ui/runtime.json`. It refuses to overwrite an existing `.env`. Compose starts the API, PostgreSQL, Redis, HiveXUI (the pinned `ghcr.io/cheftaco/hivexui` image, static files only) and a small gateway from the Cindertrace image, applies migrations, and keeps database and Redis ports private to the Compose network.
 
-Open `https://localhost:3444`. This is the retained standalone console, which binds to loopback by default. Read the generated login privately from `state/initial-credentials.txt`. Trust the generated local certificate for development. For remote access, use your own CA-issued certificate, configure the public origin, and explicitly choose the listening interface using the full installation guide. Keep certificate verification enabled.
+Open `https://localhost:3444`. The gateway is the only published service and binds to loopback by default: it serves HiveXUI in local mode and forwards `/api/cindertrace/*` to the API's `/api/v1/*`, and the API owns the sign-in and its `cindertrace_session` cookie. Read the generated login privately from `state/initial-credentials.txt`. Trust the generated local certificate for development. For remote access, use your own CA-issued certificate, set `DASHBOARD_PUBLIC_ORIGIN` to the exact HTTPS origin people open, and publish the gateway on your chosen interface in a `compose.override.yaml`, as the [installation guide](https://github.com/ChefTaco/cindertrace/blob/v0.8.0/docs/INSTALLATION.md#the-ui-hivexui-in-local-mode) describes. Keep certificate verification enabled.
 
 Source adapters begin disabled. After configuring admitted sources and their credentials, start the optional collector:
 
@@ -36,17 +36,17 @@ Do not publish `.env`, credentials, certificates, state, incident records, or li
 
 ## Try the evolving investigation lab
 
-The optional lab is a disposable three-stage investigation for people and external agents, using synthetic evidence. It runs without Hive, Magnus, external sources, or a model provider. Lab startup forbids external identity and integration settings, including Oathweave, so the lab keeps its own console with local administrator login and is not reached through HiveXUI. Use a **fresh separate checkout**; never initialize it over an operational installation. The lab ships in the release above:
+The optional lab is a disposable three-stage investigation for people and external agents, using synthetic evidence. It runs without Hive, Magnus, external sources, or a model provider. Lab startup forbids external identity and integration settings, including Oathweave, so the lab serves HiveXUI in local mode with its own local administrator sign-in and is not reached through a suite installation. Use a **fresh separate checkout**; never initialize it over an operational installation. Labs initialized before 0.8.0 ran the retired console: initialize a new lab instead of upgrading one. The lab ships in the release above:
 
 ```bash
-git clone --branch v0.7.2 https://github.com/ChefTaco/cindertrace.git cindertrace-lab
+git clone --branch v0.8.0 https://github.com/ChefTaco/cindertrace.git cindertrace-lab
 cd cindertrace-lab
 npm ci
 npm run init -- --lab
 npm run lab -- up
 ```
 
-Open `https://localhost:3445`, sign in using this checkout's private `state/initial-credentials.txt`, then choose **Lab → Start investigation**. Initialization creates separate credentials, state, database volumes, and a dedicated Compose project; it refuses existing configuration. The console binds to loopback.
+Open `https://localhost:3445/security-fusion/lab`, sign in using this checkout's private `state/initial-credentials.txt`, then choose **Start investigation**. Initialization creates separate credentials, state, database volumes, TLS certificate, and a dedicated Compose project; it refuses existing configuration. The gateway binds to loopback.
 
 1. **Suspicious login:** repeated authentication failures invite competing hypotheses; failures alone do not establish compromise.
 2. **Benign explanation:** an approved automation change explains the retries. Revisit confidence while keeping other activity open to investigation.
@@ -56,7 +56,7 @@ Save a revision before each evidence release and before completion. Record compr
 
 Containment remains an explicitly labeled simulation: an ADMIN reviews the exact target, effect, evidence and expiry, then approves or rejects it. Approval expires after ten minutes and is consumed once; newer evidence or a revision invalidates pending plans. Simulated decisions never contact Magnus or enter the production action outbox. External collection, integrations, notifications and dispatch are disabled, and synthetic evidence does not alter integration health.
 
-External agents use separate server-side read, draft and lab-control credentials through `CindertraceClient`. They can investigate and advance evidence, but cannot start runs or approve containment. Keep generated agent credentials in the lab's private state directory. See the [complete lab workflow and API](https://github.com/ChefTaco/cindertrace/blob/36d3a00e0e9588cf87128226083fc804d64d9a49/docs/INVESTIGATION-LAB.md).
+External agents use separate server-side read, draft and lab-control credentials through `CindertraceClient`. They can investigate and advance evidence, but cannot start runs or approve containment. Keep generated agent credentials in the lab's private state directory. See the [complete lab workflow and API](https://github.com/ChefTaco/cindertrace/blob/v0.8.0/docs/INVESTIGATION-LAB.md).
 
 `npm run lab -- stop` preserves history; `npm run lab -- up` resumes it. Restarting an investigation creates a new run while retaining prior results. Destruction requires `npm run lab -- destroy NAME`, with the exact generated `COMPOSE_PROJECT_NAME`, and removes only that lab's containers and volumes. Local state and credentials remain until separately removed.
 
@@ -70,7 +70,7 @@ Response requires explicit confirmation of an exact immutable plan, expires afte
 
 - **Oathweave and Emberpath:** sign-in and scoped identity audit and routing security metadata. Security export uses scoped OAuth client credentials; the retired static-token fallback is not supported.
 - **Magnus:** inventory, durable observations, summaries and links, and explicitly approved restart, isolation, or release through its response bridge. Fleet operations remain independent of Cindertrace availability.
-- **Suite products:** from 0.5.0 Cindertrace serves an event feed for the HiveXUI inbox, and from 0.6.0 its collector can pull the audit exports of HiveMem, HiveSkills, Ardent Project Studio and Embermend. Hive 3.11.2 still leaves that suite audit collection off.
+- **Suite products:** from 0.5.0 Cindertrace serves an event feed for the HiveXUI inbox, and from 0.6.0 its collector can pull the audit exports of HiveMem, HiveSkills, Ardent Project Studio and Embermend. Hive 3.12.0 still leaves that suite audit collection off. From Hive 3.12.0 the collector can also run inside the installation as the optional managed `cindertrace-collector` component, for sources outside it such as a logging host's Loki; no profile selects it. See the [Hive guide](https://hivemagnus.com/guides/hive.md#fleet-hosts-and-security-events).
 - **Sources:** Wazuh, UniFi, NetFlow/IPFIX, Tailscale, Loki, and ChatterMost/Mattermost adapters. Only configured inputs and listeners run. ChatterMost/Mattermost audit export excludes message bodies.
 - **Agents:** the server-side Cindertrace adapter supports scoped reads and investigation drafts. Keep its credentials server-side.
 
@@ -84,7 +84,9 @@ Use the dedicated upgrade command from a trusted Cindertrace checkout. Review a 
 npm run upgrade -- --to COMMIT --project-dir /opt/cindertrace --dry-run
 ```
 
-Expected result: the tool builds the selected source and checks the installation before downtime. Follow the [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/main/docs/UPGRADING.md) to resume the resulting upgrade record and activate it. It covers Compose and native systemd layouts, frozen encrypted backups, independent restore verification, additive migration reruns, health checks, and interrupted upgrades.
+Expected result: the tool builds the selected source and checks the installation before downtime. Follow the [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/main/docs/UPGRADING.md) to resume the resulting upgrade record and activate it. It covers Compose installations, frozen encrypted backups, independent restore verification, additive migration reruns, health checks, and interrupted upgrades. From 0.8.0 the command upgrades Compose installations only; native systemd installations are no longer supported and move to Compose through a verified backup and restore.
+
+Moving a standalone 0.7.x installation to 0.8.0 is a one-time manual step, because the standalone console is replaced by the `ui` and `gateway` services and the upgrade command refuses that layout change. Follow [From 0.7.x to 0.8.0](https://github.com/ChefTaco/cindertrace/blob/v0.8.0/docs/UPGRADING.md#from-07x-to-080): make and verify a recovery backup, stop the old services and check out `v0.8.0`, create HiveXUI's `ui/runtime.json`, edit `.env` as it lists (including `CINDERTRACE_BROWSER_AUTH_ENABLED=true`), then start 0.8.0 with `--remove-orphans`. 0.8.0 adds no database migration, and Hive suite installations are unaffected because they never ran that console.
 
 Rollback keeps current state and requires reviewed application compatibility. After new writes, reconcile current state; do not restore a stale database or automatically replay uncertain host effects. Database engine or deployment-layout changes require a separate rehearsed migration.
 
@@ -112,3 +114,5 @@ Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releas
 Release update, 2026-11-15: [Hive 3.9.3](https://github.com/ChefTaco/hive/releases/tag/v3.9.3) pins Cindertrace 0.7.1, so the installation and lab examples now check out tag [`v0.7.1`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.7.1), commit `b9424c17b03228b0134b0a5d220f5538296e3c73`. Its [README](https://github.com/ChefTaco/cindertrace/blob/v0.7.1/README.md) commands and Node.js engines are unchanged from `v0.7.0`, so the commands are the same. Per the [changelog](https://github.com/ChefTaco/cindertrace/blob/v0.7.1/CHANGELOG.md), 0.7.1 moves to `@hivemagnus/hive-common` 0.5.0 and uses its credential comparisons, security headers and HiveEvent feed order; responses, status codes and feed cursors are unchanged, and it needs no database migration. The examples were not run for this update.
 
 Release update, 2026-11-17: [Hive 3.11.1](https://github.com/ChefTaco/hive/releases/tag/v3.11.1) pins Cindertrace 0.7.2, so the installation and lab examples now check out tag [`v0.7.2`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.7.2), commit `d413a9469d9afa6bae80625fed0cce7baa1b6c6e`. Its [README](https://github.com/ChefTaco/cindertrace/blob/v0.7.2/README.md) commands and Node.js engines are unchanged from `v0.7.1`, so the commands are the same. Per the [changelog](https://github.com/ChefTaco/cindertrace/blob/v0.7.2/CHANGELOG.md), 0.7.2 updates the standalone console to Next.js 16.4.6 for GHSA-mfr8-8qww-v76h; the console is part of the runtime image, and it needs no database migration. The examples were not run for this update.
+
+Release update, 2026-11-17: [Hive 3.12.0](https://github.com/ChefTaco/hive/releases/tag/v3.12.0) pins Cindertrace 0.8.0, so the installation and lab examples now check out tag [`v0.8.0`](https://github.com/ChefTaco/cindertrace/releases/tag/v0.8.0), commit `0c9064793020c9adeaea9c249f9a9ba98d5b6140`. Per its [changelog](https://github.com/ChefTaco/cindertrace/blob/v0.8.0/CHANGELOG.md), 0.8.0 removes the standalone console (`apps/security-console`) and the native systemd upgrade backend; HiveXUI is Cindertrace's only UI. The standalone and lab text above now follows the [README](https://github.com/ChefTaco/cindertrace/blob/v0.8.0/README.md), [installation guide](https://github.com/ChefTaco/cindertrace/blob/v0.8.0/docs/INSTALLATION.md), [lab workflow](https://github.com/ChefTaco/cindertrace/blob/v0.8.0/docs/INVESTIGATION-LAB.md) and [upgrade runbook](https://github.com/ChefTaco/cindertrace/blob/v0.8.0/docs/UPGRADING.md#from-07x-to-080) at that tag: the install and lab commands and Node.js engines are unchanged, Compose now runs HiveXUI 0.10.0 in local mode (`ui`) behind `scripts/ui-gateway.mjs` (`gateway`) at the same addresses (`https://localhost:3444`, lab `3445`), and a standalone 0.7.x installation moves to 0.8.0 by the manual steps summarized above. The API, collector and schema migrations are unchanged and it needs no database migration. Per Hive's [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.12.0/UPGRADING.md#suite-3120-cindertrace-080-and-the-emberpath-memory-principal), a suite installation with Cindertrace needs no change, `hive.sh add cindertrace` adds it to one without, and the optional `cindertrace-collector` component runs its collector inside the installation. The examples were not run for this update.

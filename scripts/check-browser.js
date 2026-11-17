@@ -93,7 +93,7 @@ async function checkBrowser(page) {
   const security = page.locator("#interface-cindertrace");
   await security.locator("summary").click();
   assert(await security.getByRole("link", { name: /Try the disposable investigation lab/ }).isVisible(), "Cindertrace lab details retained");
-  assert(await security.textContent().then(t => t.includes("not reached through HiveXUI")), "Lab remains separate");
+  assert(await security.textContent().then(t => t.includes("not reached through a suite installation")), "Lab remains separate");
   await page.goto(new URL("/#security", page.url()).href);
   assert(await security.isVisible(), "Legacy security deep link");
   await page.goto(new URL("/#interface-hivemem", page.url()).href);
