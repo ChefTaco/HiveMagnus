@@ -10,7 +10,7 @@ Clients talk to one endpoint. Emberpath picks an upstream provider, fails over w
 
 ## In a Hive installation
 
-Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive.md) 3.11.1 installs Emberpath 2.5.1 (pinned since 3.9.3) as a digest-pinned image, verifies external endpoints and registers verified providers. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), reached through a separate administration listener; the native model API keeps its own listener and API keys.
+Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive.md) 3.11.2 installs Emberpath 2.5.2 as a digest-pinned image, verifies external endpoints and registers verified providers. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), reached through a separate administration listener; the native model API keeps its own listener and API keys.
 
 ## Provider credentials and redirects
 
@@ -38,10 +38,10 @@ TLS_KEY_PATH=/config/tls/server.key
 NODE_EXTRA_CA_CERTS=/config/tls/server.crt
 EOF
 docker run --rm --network oathweave -v emberpath-data:/data -v "$PWD/tls:/config/tls:ro" \
-  --env-file emberpath.env ghcr.io/cheftaco/emberpath:2.5.1 check
+  --env-file emberpath.env ghcr.io/cheftaco/emberpath:2.5.2 check
 docker run -d --name emberpath --network oathweave \
   -p 127.0.0.1:4020:4020 -p 127.0.0.1:9443:9443 -v emberpath-data:/data \
-  -v "$PWD/tls:/config/tls:ro" --env-file emberpath.env ghcr.io/cheftaco/emberpath:2.5.1
+  -v "$PWD/tls:/config/tls:ro" --env-file emberpath.env ghcr.io/cheftaco/emberpath:2.5.2
 ```
 
 Expected result: `check` validates configuration, TLS and Oathweave reachability and starts nothing. Once the container is healthy, `curl --cacert tls/server.crt https://localhost:4020/health` answers, with the OpenAI-compatible API at `https://localhost:4020/v1` and the administration API at `https://localhost:9443/api`. Emberpath has no web UI of its own: it is managed through its administration API, or through HiveXUI in the suite. Non-API paths on the administration listener serve a short page pointing to HiveXUI, or redirect there when `HIVEXUI_URL` is set. See the README for keys, public URLs and HiveMem.
@@ -57,3 +57,5 @@ Release update, 2026-11-13: [Hive 3.7.0](https://github.com/ChefTaco/hive/releas
 Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releases/tag/v3.8.0) pins Emberpath 2.5.0, tag [`v2.5.0`](https://github.com/ChefTaco/Emberpath/releases/tag/v2.5.0), commit `b9c7568c4af0d2a687774b2ade2cf5eb3046677a`. The container example now uses the `2.5.0` image, as the [README](https://github.com/ChefTaco/Emberpath/blob/v2.5.0/README.md) at that tag does; its environment file and commands are otherwise unchanged, and it was not re-run with the new image. The provider rules above follow the README's editing section and the [changelog](https://github.com/ChefTaco/Emberpath/blob/v2.5.0/CHANGELOG.md) at that tag. Per Hive's upgrade notes, 2.5.0 adds no migration.
 
 Release update, 2026-11-15: [Hive 3.9.3](https://github.com/ChefTaco/hive/releases/tag/v3.9.3) pins Emberpath 2.5.1, tag [`v2.5.1`](https://github.com/ChefTaco/Emberpath/releases/tag/v2.5.1), commit `ab0d68266c7e0fb17471eb668e63e367ee933b0e`. The container example now uses the `2.5.1` image, as the [README](https://github.com/ChefTaco/Emberpath/blob/v2.5.1/README.md) at that tag does; it was not re-run with the new image. Per the [changelog](https://github.com/ChefTaco/Emberpath/blob/v2.5.1/CHANGELOG.md), 2.5.1 moves to `@hivemagnus/hive-common` 0.5.0 and has the shared verifier require the admin token's `roles` and `clientId` claims, so a token without them is refused as `invalid_claims` before the online session check; Emberpath's own behaviour is otherwise unchanged and it adds no migration.
+
+Release update, 2026-11-17: [Hive 3.11.2](https://github.com/ChefTaco/hive/releases/tag/v3.11.2) pins Emberpath 2.5.2, tag [`v2.5.2`](https://github.com/ChefTaco/Emberpath/releases/tag/v2.5.2), commit `60553429c38577ade5c4eea2e2f811ea078b2b6b`. The container example now uses the `2.5.2` image, as the [README](https://github.com/ChefTaco/Emberpath/blob/v2.5.2/README.md) at that tag does; its environment file and commands are otherwise unchanged, and it was not re-run with the new image. Per the [changelog](https://github.com/ChefTaco/Emberpath/blob/v2.5.2/CHANGELOG.md), 2.5.2 removes the static security-export credential, which expired on 2026-09-30: `GET /api/security/events` accepts only the `security-exporter` Oathweave client token. `HIVE_ROUTER_SECURITY_EXPORT_STATIC_FALLBACK_ENABLED=true` is still refused at startup, and `HIVE_ROUTER_SECURITY_EXPORT_TOKEN_HASH` is ignored, so existing env files keep working. It adds no migration.

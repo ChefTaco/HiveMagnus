@@ -2,7 +2,7 @@
 
 > Team projects for Ardent agents: team assignment, the conversation room and deliverable review, as the Studio section of HiveXUI.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/ArdentStudio) · [Release 0.4.2](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.4.2) · [npm package](https://www.npmjs.com/package/@hivemagnus/ardent-studio) · [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.2/README.md)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/ArdentStudio) · [Release 0.4.3](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.4.3) · [npm package](https://www.npmjs.com/package/@hivemagnus/ardent-studio) · [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/README.md)
 
 ## Responsibility
 
@@ -19,7 +19,7 @@ Each product keeps its own records. Studio owns projects, templates, team revisi
 ## Requirements
 
 - Magnus with **at least one Ardent agent**, HiveMem and Oathweave. All three are required.
-- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.11.1 pins Ardent Project Studio 0.4.2 (since 3.9.3).
+- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.11.2 pins Ardent Project Studio 0.4.3.
 - Node.js 24.22.3+ or 26.13.1+ only when running the service outside the suite.
 
 ## In a Hive installation
@@ -60,12 +60,12 @@ Expected result: the service listens on `127.0.0.1:8097` by default and serves i
 
 ## Full instructions
 
-- [Configuration, architecture and API](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.2/README.md)
-- [Conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.2/docs/CONDUCTOR.md)
-- [Oathweave account links](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.2/docs/OATHWEAVE.md)
-- [Operations and backups](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.2/docs/OPERATIONS.md)
-- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.11.1/deployment/FULL.md#ardent-project-studio)
-- [Repository instructions](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.2/AGENTS.md)
+- [Configuration, architecture and API](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/README.md)
+- [Conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/docs/CONDUCTOR.md)
+- [Oathweave account links](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/docs/OATHWEAVE.md)
+- [Operations and backups](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/docs/OPERATIONS.md)
+- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.11.2/deployment/FULL.md#ardent-project-studio)
+- [Repository instructions](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/AGENTS.md)
 
 ## Source review
 
@@ -78,3 +78,5 @@ Release update, 2026-11-13: [Hive 3.7.0](https://github.com/ChefTaco/hive/releas
 Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releases/tag/v3.8.0) pins Ardent Project Studio 0.4.1, so the release and documentation links now use tag [`v0.4.1`](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.4.1), commit `216cc101c07c896ada6efc69416141683e143107`, with the Hive full-profile guide at `v3.8.0`. The quick start in its [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.1/README.md) is unchanged from 0.4.0. Per its [changelog](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.1/CHANGELOG.md), 0.4.1 is a bug-fix release for artifact transfers, team publishing, knowledge sync, turn following and request size limits. No installation command was run for this update.
 
 Release update, 2026-11-15: [Hive 3.9.3](https://github.com/ChefTaco/hive/releases/tag/v3.9.3) pins Ardent Project Studio 0.4.2, so the release and documentation links now use tag [`v0.4.2`](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.4.2), commit `bbc71a1097549a836ae3fcc2af89766340fa4841`, with the Hive full-profile guide at `v3.9.3`. The quick start in its [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.2/README.md) is unchanged from 0.4.1; its overview now names the current release and the suite audit export. Per its [changelog](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.2/CHANGELOG.md), 0.4.2 moves to `@hivemagnus/magnus-contracts` 3.0.3, whose Ardent service contract is unchanged, and `@hivemagnus/hive-common` 0.5.0; Studio behaviour does not change. No installation command was run for this update.
+
+Release update, 2026-11-17: [Hive 3.11.2](https://github.com/ChefTaco/hive/releases/tag/v3.11.2) pins Ardent Project Studio 0.4.3, so the release and documentation links now use tag [`v0.4.3`](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.4.3), commit `136c8c56121f257d37aab531febd7db6abb94be1`, with the Hive full-profile guide at `v3.11.2`. The quick start in its [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/README.md) is unchanged from 0.4.2. Per its [changelog](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/CHANGELOG.md), 0.4.3 moves to `@hivemagnus/magnus-contracts` 3.1.2, whose Ardent service contract is unchanged; Studio behaviour does not change. No installation command was run for this update.

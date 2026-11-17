@@ -10,7 +10,7 @@ Oathweave issues RS256-signed JWTs and keeps sessions, roles, clients, service a
 
 ## In a Hive installation
 
-Oathweave and its private Redis are required in every profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.11.1 installs Oathweave 2.3.0 (pinned since 3.8.0) as a digest-pinned image. Hive provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
+Oathweave and its private Redis are required in every profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.11.2 installs Oathweave 2.3.1 as a digest-pinned image. Hive provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
 
 ## Sign-in clients and client addresses
 
@@ -38,9 +38,9 @@ docker network create oathweave
 docker run -d --name oathweave-redis --network oathweave --env-file redis.env \
   -v oathweave-redis:/data redis:7.4.7-alpine \
   sh -c 'exec redis-server --requirepass "$REDIS_PASSWORD" --appendonly yes'
-docker run --rm --network oathweave --env-file iam.env ghcr.io/cheftaco/oathweave:2.3.0 check
+docker run --rm --network oathweave --env-file iam.env ghcr.io/cheftaco/oathweave:2.3.1 check
 docker run -d --name oathweave --network oathweave -p 127.0.0.1:4200:4200 \
-  -v oathweave-data:/data --env-file iam.env ghcr.io/cheftaco/oathweave:2.3.0
+  -v oathweave-data:/data --env-file iam.env ghcr.io/cheftaco/oathweave:2.3.1
 ```
 
 Expected result: `check` reports `Result: OK`, and once the container is healthy, `curl http://127.0.0.1:4200/api/v1/health/ready` reports readiness. The first start creates the database, signing keys and initial `SUPER_ADMIN` account in the `oathweave-data` volume; generated client secrets are in `/data/iam/initial-credentials.env` there. This listener is plain HTTP, so keep it on loopback or behind a TLS proxy, or configure TLS as the server README describes. Keep both env files private. Later starts refuse pending migrations unless explicitly allowed, and missing databases or signing keys must be restored rather than regenerated.
@@ -52,3 +52,5 @@ Reviewed 2026-11-06 against `main` commit `056b33500181db6fbd3c124a40f5bfa7b90a9
 Release update, 2026-11-13: [Hive 3.7.0](https://github.com/ChefTaco/hive/releases/tag/v3.7.0) pins Oathweave 2.2.0, tag [`v2.2.0`](https://github.com/ChefTaco/Oathweave/releases/tag/v2.2.0), commit `3b6d7df399b72f16630b6af16ca3d49040eae2ac`. The container example now uses the `2.1.2` image, the version the [server README](https://github.com/ChefTaco/Oathweave/blob/v2.2.0/apps/iam-core/README.md) at that tag names; its environment files and commands are otherwise identical to the reviewed 2.0.1 example, and it was not re-run with the new image. Each release is tagged with its exact version, so replace `2.1.2` to run another one.
 
 Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releases/tag/v3.8.0) pins Oathweave 2.3.0, tag [`v2.3.0`](https://github.com/ChefTaco/Oathweave/releases/tag/v2.3.0), commit `d2ac3c08c8a55200160321f51bd807515bb0d249`. The container example now uses the `2.3.0` image, as the [server README](https://github.com/ChefTaco/Oathweave/blob/v2.3.0/apps/iam-core/README.md) at that tag does; its environment files and commands are otherwise unchanged, and it was not re-run with the new image. The sign-in and client address rules above follow the [changelog](https://github.com/ChefTaco/Oathweave/blob/v2.3.0/CHANGELOG.md) and the server README's client address section at that tag.
+
+Release update, 2026-11-17: [Hive 3.11.2](https://github.com/ChefTaco/hive/releases/tag/v3.11.2) pins Oathweave 2.3.1, tag [`v2.3.1`](https://github.com/ChefTaco/Oathweave/releases/tag/v2.3.1), commit `e13679c39c2265f28908cb225f58e38164c3f9d9`. The container example now uses the `2.3.1` image, as the [server README](https://github.com/ChefTaco/Oathweave/blob/v2.3.1/apps/iam-core/README.md) at that tag does; its environment files and commands are otherwise unchanged, and it was not re-run with the new image. Per the [changelog](https://github.com/ChefTaco/Oathweave/blob/v2.3.1/CHANGELOG.md), the server is unchanged: the in-repository SDK (`packages/iam-sdk`) now expects the server's default issuer, `hive-iam`, when a verifier sets none, so a service whose server signs with another `JWT_ISSUER` must set `issuer` to it. The npm package `@hivemagnus/hive-iam-sdk` 1.0.3 is retired and keeps the old `iam-core` default. Per Hive's [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.11.2/UPGRADING.md#suite-3112-product-maintenance-releases), an installation needs no change.
