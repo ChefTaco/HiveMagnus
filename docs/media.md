@@ -62,7 +62,7 @@ Ardent's section reuses `fleet-mission.webp`, explicitly labeled as Magnus missi
 
 No new operational captures, user data or generated product screens were introduced. The previous tabbed gallery layout is recorded in Git history.
 
-The social preview (`og.svg` and `og.png`) names all ten projects and shows `captures/fleet-overview.webp`, cropped, in a console-styled frame. The rest is original SVG artwork; the PNG is rendered in Chromium at 1200 × 630 and contains only public project names, website copy and that synthetic capture.
+The social preview (`og.svg` and `og.png`) names all thirteen projects and shows `captures/fleet-overview.webp`, cropped, in a console-styled frame. The rest is original SVG artwork; the PNG is rendered in Chromium at 1200 × 630 and contains only public project names, website copy and that synthetic capture.
 
 ## Embermend recommendations, 2026-11-12
 
@@ -86,3 +86,7 @@ not present an approved or completed production remediation.
 The 2026-11-12 social preview adds Embermend and Ardent to the twelve project
 names. Its SVG retains the existing synthetic fleet capture; Chromium renders
 the PNG at 1200 × 630. No production data or new operational image is introduced.
+
+The 2026-11-17 social preview adds Ardent Project Studio, so it names all thirteen
+projects, and the footer reads "Thirteen open source projects". Only text changed;
+the capture is the same synthetic `fleet-overview.webp`.

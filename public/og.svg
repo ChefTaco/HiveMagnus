@@ -15,8 +15,8 @@
     <text x="64" y="424">HIVE · HIVEXUI · OATHWEAVE · EMBERPATH</text>
     <text x="64" y="448">HIVEMEM · HIVESKILLS · MAGNUS · ARDENT</text>
     <text x="64" y="472">EMBERMEND · CINDERTRACE · CHATTERMOST</text>
-    <text x="64" y="496">EMBERFOLD</text>
-    <text x="64" y="572" fill="#00e5ff">APACHE-2.0 · TWELVE OPEN SOURCE PROJECTS</text>
+    <text x="64" y="496">EMBERFOLD · ARDENT PROJECT STUDIO</text>
+    <text x="64" y="572" fill="#00e5ff">APACHE-2.0 · THIRTEEN OPEN SOURCE PROJECTS</text>
   </g>
   <rect x="598" y="116" width="644" height="404" rx="7" fill="#06060d" stroke="#00e5ff" stroke-opacity=".5"/>
   <image href="captures/fleet-overview.webp" x="600" y="118" width="640" height="400" preserveAspectRatio="xMinYMin slice" clip-path="url(#frame)"/>
