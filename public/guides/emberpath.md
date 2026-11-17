@@ -10,7 +10,7 @@ Clients talk to one endpoint. Emberpath picks an upstream provider, fails over w
 
 ## In a Hive installation
 
-Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive.md) 3.11.0 installs Emberpath 2.5.1 (pinned since 3.9.3) as a digest-pinned image, verifies external endpoints and registers verified providers. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), reached through a separate administration listener; the native model API keeps its own listener and API keys.
+Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive.md) 3.11.1 installs Emberpath 2.5.1 (pinned since 3.9.3) as a digest-pinned image, verifies external endpoints and registers verified providers. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), reached through a separate administration listener; the native model API keeps its own listener and API keys.
 
 ## Provider credentials and redirects
 
