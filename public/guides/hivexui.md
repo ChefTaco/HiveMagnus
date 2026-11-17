@@ -2,7 +2,7 @@
 
 > The single browser UI for a Hive installation: fleet, identity, models, memory, skills, security, chat and team projects in one shell, with sections only for installed products.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/HiveXUI) · [Release 0.9.2](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.9.2) · [Theme](https://github.com/ChefTaco/HiveXUI/blob/v0.9.2/docs/THEME.md)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/HiveXUI) · [Release 0.10.0](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.10.0) · [Theme](https://github.com/ChefTaco/HiveXUI/blob/v0.10.0/docs/THEME.md)
 
 ## Responsibility
 
@@ -25,14 +25,16 @@ HiveXUI shows one section per installed product, plus Hive and System. The Hive 
 | HiveMem | Memories, memory operations, workspaces | |
 | HiveSkills | Catalogue, releases, assignments, agent targets, distribution receipts, deployment jobs | |
 | Embermend | Recommendations, scoped decisions, pause controls, evidence and outcomes | Optional product; see the [Embermend guide](https://hivemagnus.com/guides/embermend.md) |
-| Cindertrace | Cases, entities, events, evidence, sources, policies, audit, approvals | The investigation lab keeps its own UI and local sign-in; see the [Cindertrace guide](https://hivemagnus.com/guides/cindertrace.md#try-the-evolving-investigation-lab) |
+| Cindertrace | Cases, entities, events, evidence, sources, policies, audit, approvals | The investigation lab is a separate installation that HiveXUI serves in local mode; see the [Cindertrace guide](https://hivemagnus.com/guides/cindertrace.md#try-the-evolving-investigation-lab) |
 | ChatterMost | Channels, DMs, threads, files, search, administration | Official apps connect to ChatterMost directly |
 
-The [HiveXUI README](https://github.com/ChefTaco/HiveXUI/blob/8b4b66f79ac99aac5883457dce9605cf6a7dc973/README.md) retires the products' own web UIs with two exceptions: Magnus's standalone console for installations without the suite, and Cindertrace's console, which stays for standalone installs, local recovery sign-in and the investigation lab until its replacement parity gates pass. Every product API stays usable on its own, by native clients and scripts. Do not treat synthetic screenshots as evidence of backend authorization or workflow parity.
+The [HiveXUI README](https://github.com/ChefTaco/HiveXUI/blob/v0.10.0/README.md) retires the products' own web UIs, except Magnus's standalone console for installations without the suite. It kept Cindertrace's console only until Cindertrace shipped HiveXUI in local mode for standalone installs and the lab, which [Cindertrace 0.8.0](https://hivemagnus.com/guides/cindertrace.md) does: it removes its console, and HiveXUI is its only UI. Every product API stays usable on its own, by native clients and scripts. Do not treat synthetic screenshots as evidence of backend authorization or workflow parity.
+
+From 0.10.0, HiveXUI signs in to Cindertrace without Oathweave in two cases, and then shows only Cindertrace's pages and refuses requests to products the runtime does not configure. In **local mode**, for a standalone Cindertrace or its investigation lab, `runtime.json` names only Cindertrace and no `identity` (`{"schema": 1, "mode": "local", "products": {"cindertrace": "/api/cindertrace"}}`) and HiveXUI uses Cindertrace's own API sign-in. On a suite installation with Cindertrace, the sign-in page offers **Oathweave unavailable? Cindertrace recovery sign-in** with Cindertrace's local administrator; the choice lasts for the tab. See [Cindertrace sign-in](https://github.com/ChefTaco/HiveXUI/blob/v0.10.0/README.md#cindertrace-sign-in-local-mode-and-recovery).
 
 ## In a Hive installation
 
-[Hive](https://hivemagnus.com/guides/hive.md) 3.11.2 installs HiveXUI 0.9.2 (pinned since 3.9.7), a digest-pinned image, next to the ingress, in every profile, and writes its public runtime file. There is nothing else to configure. HiveXUI is the suite's browser UI: Emberpath and HiveSkills no longer bundle a web UI of their own, and Cindertrace keeps its own console only as described above. Every product's errors show a consistent message with the product's code and request ID, and destructive actions are confirmed in one shared dialog.
+[Hive](https://hivemagnus.com/guides/hive.md) 3.12.0 installs HiveXUI 0.10.0, a digest-pinned image, next to the ingress, in every profile, and writes its public runtime file. There is nothing else to configure. HiveXUI is the suite's browser UI: Emberpath, HiveSkills and, from Cindertrace 0.8.0, Cindertrace no longer bundle a web UI of their own. Every product's errors show a consistent message with the product's code and request ID, and destructive actions are confirmed in one shared dialog.
 
 From 0.8.0, with Magnus 2.10, **Magnus > Fleet > Nodes** shows each host agent's node key: a Node key column in the list, a Node credentials panel (administrators and operators) with the mode, the automatic binding window and what still blocks enforcing keys, and a Node credential card on node detail. Administrators see key fingerprints there, approve or reject a binding Magnus refused for its address, and revoke or reset a key behind the shared confirmation; issuing an enrollment token and rotating a key stay command-line and API steps. Against a Magnus without per-node credentials all of this stays hidden. On **Emberpath > Providers**, changing a provider's base URL to another server asks for its secret again before saving, matching Emberpath 2.5.0.
 
@@ -50,7 +52,7 @@ npm run build
 npm test
 ```
 
-Expected result: compiled assets in `dist/`. `Dockerfile` serves them as UID 101. Without Hive, mount a public `runtime.json` listing product prefixes and Oathweave public clients, and configure HTTPS and API routing in a separate ingress, as the README describes. Runtime JSON contains public identifiers only.
+Expected result: compiled assets in `dist/`. `Dockerfile` serves them as UID 101. Without Hive, mount a public `runtime.json` listing product prefixes and Oathweave public clients, or the local-mode file above for a standalone Cindertrace, and configure HTTPS and API routing in a separate ingress, as the README describes. Runtime JSON contains public identifiers only.
 
 ## Source review
 
@@ -69,3 +71,5 @@ Release update, 2026-11-15: [Hive 3.9.2](https://github.com/ChefTaco/hive/releas
 Release update, 2026-11-16: [Hive 3.9.7](https://github.com/ChefTaco/hive/releases/tag/v3.9.7) pins HiveXUI 0.9.2, tag [`v0.9.2`](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.9.2), commit `b696d70453f63f5dc696757983600356bcc6cd28` (Hive 3.9.2 to 3.9.6 pinned 0.9.1). The software card above follows its [changelog](https://github.com/ChefTaco/HiveXUI/blob/v0.9.2/CHANGELOG.md) and [README](https://github.com/ChefTaco/HiveXUI/blob/v0.9.2/README.md), which also move the vendored Magnus browser contract to Magnus 3.1.0. The build commands were not re-run for this update.
 
 Documentation update, 2026-11-17: Hive 3.11.2 keeps HiveXUI 0.9.2. The retained-UI paragraph above follows the [README](https://github.com/ChefTaco/HiveXUI/blob/8b4b66f79ac99aac5883457dce9605cf6a7dc973/README.md) at `main` commit `8b4b66f79ac99aac5883457dce9605cf6a7dc973`, a documentation change after `v0.9.2`, which says Cindertrace's console stays, alongside Magnus's standalone console, until its replacement parity gates pass. The 0.9.2 build and runtime are unchanged.
+
+Release update, 2026-11-17: [Hive 3.12.0](https://github.com/ChefTaco/hive/releases/tag/v3.12.0) pins HiveXUI 0.10.0, tag [`v0.10.0`](https://github.com/ChefTaco/HiveXUI/releases/tag/v0.10.0), commit `39ae4e0304159822d0eb37ba451ff687a44d87f1` (Hive 3.9.7 to 3.11.2 pinned 0.9.2). The Cindertrace sign-in paragraph above follows its [changelog](https://github.com/ChefTaco/HiveXUI/blob/v0.10.0/CHANGELOG.md) and [README](https://github.com/ChefTaco/HiveXUI/blob/v0.10.0/README.md); 0.10.0 also labels the four suite audit exports Cindertrace collects on its Sources page and reads one vendored Cindertrace browser contract. The README at that tag still lists Cindertrace's console as a retained UI until Cindertrace ships HiveXUI in local mode; Cindertrace 0.8.0, which Hive 3.12.0 pins, ships it and removes the console, so the retained-UI paragraph above names Magnus's standalone console only. Per Hive's [changelog](https://github.com/ChefTaco/hive/blob/v3.12.0/CHANGELOG.md), its vendored Magnus browser contract is byte-identical to Magnus 3.1.3's. The build commands are unchanged and were not re-run for this update.

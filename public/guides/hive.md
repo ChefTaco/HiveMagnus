@@ -164,7 +164,7 @@ Some upgrades also need explicit migration approval with `--allow-migrations`:
 - from a release before 3.8.0, when the installation runs Magnus, for Magnus 2.10.0's two additive migrations.
 - from a release before 3.12.0, when HiveMem has data owned by `hive-router` (an installation migrated from the native Hive Router), which HiveMem 1.9.0's signed initialization moves to `emberpath` before re-linking the memory credential.
 
-An upgrade from 3.7.x without Magnus, or with an external Magnus, needs none, and neither does one from 3.8.0 to 3.8.1 or from 3.8.1 to any later release (for example 3.9.7 to 3.9.8, 3.10.0 to 3.11.0, 3.11.0 to 3.11.1 or 3.11.1 to 3.11.2). Magnus 3 upgrades from Magnus 2.10.2 only, so an installation that runs Magnus on a release before 3.8.1 upgrades to 3.8.1 first, then to 3.12.0. Before it changes anything, `hive.sh upgrade` checks a suite-managed Magnus as Magnus 3's start-up guard will and refuses, naming the blockers, while a node has no active key or its agent does not sign its evidence.
+An upgrade from 3.7.x without Magnus, or with an external Magnus, needs none, and neither does one from 3.8.0 to 3.8.1 or from 3.8.1 to any later release (for example 3.9.7 to 3.9.8, 3.10.0 to 3.11.0, 3.11.0 to 3.11.1 or 3.11.1 to 3.11.2), except an upgrade to 3.12.0 or later where HiveMem has data owned by `hive-router`, as listed above. Magnus 3 upgrades from Magnus 2.10.2 only, so an installation that runs Magnus on a release before 3.8.1 upgrades to 3.8.1 first, then to 3.12.0. Before it changes anything, `hive.sh upgrade` checks a suite-managed Magnus as Magnus 3's start-up guard will and refuses, naming the blockers, while a node has no active key or its agent does not sign its evidence.
 
 ```bash
 ./hive.sh plan --config installation.json --release 3.12.0 --allow-migrations
@@ -204,7 +204,7 @@ With Magnus, HiveMem and Oathweave and an enrolled host agent, `ardent setup` in
 ./hive.sh ardent check --profile assistant --config installation.json
 ```
 
-See the [setup checklist](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#setup-checklist), [creating an Ardent assistant](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#create-an-ardent-assistant), [Magnus host agents](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#magnus-host-agents), [Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#ardent-project-studio) and [sending security events](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#sending-security-events-to-cindertrace).
+See the [setup checklist](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#setup-checklist), [creating an Ardent assistant](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#create-an-ardent-assistant), [Magnus host agents](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#magnus-host-agents), [Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#ardent-project-studio), [sending security events](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#sending-security-events-to-cindertrace), [events from a separate logging host](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#events-from-a-separate-logging-host) and [adding a product to an existing installation](https://github.com/ChefTaco/hive/blob/v3.12.0/deployment/FULL.md#adding-a-product-to-an-existing-installation).
 
 ## Hive Registry
 

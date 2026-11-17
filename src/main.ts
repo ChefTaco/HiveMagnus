@@ -119,7 +119,7 @@ const projects: Record<
     role: "Security · cases · evidence",
     summary: "Turn security observations into an investigation.",
     detail:
-      "Correlated cases, hashed evidence, investigations, policies and audit. In a Hive installation it is a section of HiveXUI, signed in through Oathweave. It also runs on its own with its retained console and local administrator login, then optionally connects Magnus fleet context and approved response. A separate disposable lab lets people and agents revise an investigation as evidence arrives.",
+      "Correlated cases, hashed evidence, investigations, policies and audit. In a Hive installation it is a section of HiveXUI, signed in through Oathweave. It also runs on its own with its local administrator sign-in, served through HiveXUI in local mode, then optionally connects Magnus fleet context and approved response. A separate disposable lab lets people and agents revise an investigation as evidence arrives.",
     href: "https://github.com/ChefTaco/cindertrace",
     connections: [
       { to: "HiveXUI", how: "the suite's security section, using resource tokens" },
@@ -266,24 +266,24 @@ const demos: Record<DemoId, Demo> = {
     kicker: "Security investigations",
     title: "Run it on its own",
     intro:
-      "In a Hive installation, Cindertrace is a section of HiveXUI. To run it alone, start its retained console, API, PostgreSQL, and Redis together. Local administrator login works without Hive or Magnus; collectors and integrations are opt-in.",
+      "In a Hive installation, Cindertrace is a section of HiveXUI. To run it alone, start its API, PostgreSQL, Redis and a gateway serving HiveXUI in local mode together. Local administrator login works without Hive or Magnus; collectors and integrations are opt-in.",
     requires: ["Node.js 24.22.3+ (24.x) or 26.13.1+ (26.x)", "npm and Git", "OpenSSL", "Docker Engine and Compose v2"],
     steps: [
       {
         title: "Get the reviewed release",
         text: "Clone the public repository at the current release into a new directory. Use a fresh environment for this walkthrough.",
-        code: "git clone --branch v0.7.2 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
+        code: "git clone --branch v0.8.0 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
         note: "Use the repository’s release notes when choosing a version. There is no npm installer for Cindertrace.",
       },
       {
         title: "Generate secrets and start",
-        text: "Initialize this installation once, then build and start its services. Initialization generates unique secrets, an administrator password hash, and a local TLS certificate.",
+        text: "Initialize this installation once, then build and start its services. Initialization generates unique secrets, an administrator password hash, a local TLS certificate and HiveXUI's runtime file.",
         code: "npm run init\ndocker compose up --build -d",
         note: "The initial login is written only to <code>state/initial-credentials.txt</code>. Keep it, <code>.env</code>, certificates, and state private. Initialization refuses to replace existing configuration.",
       },
       {
         title: "Open and configure",
-        text: "Sign in to this standalone console with the generated local administrator login. It binds to loopback. Trust the generated local certificate for development; use your own certificate and explicit network settings for remote access.",
+        text: "Sign in with the generated local administrator login. The gateway serves HiveXUI in local mode, showing only Cindertrace's pages, and binds to loopback. Trust the generated local certificate for development; use your own certificate and explicit network settings for remote access.",
         code: "https://localhost:3444",
         kind: "address",
         note: "Source adapters start disabled. Configure sources before starting the optional collector. For later releases, use the dedicated upgrade command and recovery runbook linked in the guide.",
@@ -469,7 +469,7 @@ const gallery = {
     title: "Follow the evidence.",
     copy: "Connect security observations to a case, preserve evidence, and revise hypotheses, signed in through Oathweave like every other section.",
     points: ["Correlate signed observations", "Compare revisions as evidence arrives", "Keep containment under human approval"],
-    extra: `<div class="response-note"><h4>The lab runs apart from HiveXUI.</h4><p>The investigation lab is a separate disposable installation with synthetic evidence. It forbids external identity and integrations, so it keeps its own console with local login and is not reached through HiveXUI. Containment there is a human-approved simulation.</p><a href="/guides/cindertrace.md#try-the-evolving-investigation-lab">Try the disposable investigation lab ${icon("arrow")}</a></div><div class="response-note" id="security"><h4>Response stays deliberate.</h4><p>Administrator approval binds the exact plan, expires after ten minutes, and is used once. Optional Magnus executes host actions; response controls require its configured bridge.</p><a href="https://github.com/ChefTaco/cindertrace/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy and data handling ${icon("external")}</a></div>`,
+    extra: `<div class="response-note"><h4>The lab runs apart from the suite.</h4><p>The investigation lab is a separate disposable installation with synthetic evidence. It forbids external identity and integrations, so it serves HiveXUI in local mode with its own local login and is not reached through a suite installation. Containment there is a human-approved simulation.</p><a href="/guides/cindertrace.md#try-the-evolving-investigation-lab">Try the disposable investigation lab ${icon("arrow")}</a></div><div class="response-note" id="security"><h4>Response stays deliberate.</h4><p>Administrator approval binds the exact plan, expires after ten minutes, and is used once. Optional Magnus executes host actions; response controls require its configured bridge.</p><a href="https://github.com/ChefTaco/cindertrace/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy and data handling ${icon("external")}</a></div>`,
   },
   chattermost: {
     path: "CHATTERMOST",
