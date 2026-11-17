@@ -13,7 +13,7 @@ type DemoId = "embermend" | "hive" | "magnus" | "cindertrace" | "chattermost" | 
 // The launcher resolves the published release at install time; source reviews stay versioned.
 const HIVE_RELEASE_URL = "https://github.com/ChefTaco/hive/releases/latest";
 // The signed suite release the product details are reviewed against. Bump this one value per release.
-const HIVE_SUITE_VERSION = "3.11.0";
+const HIVE_SUITE_VERSION = "3.11.1";
 const HIVE_SUITE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_SUITE_VERSION}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
@@ -272,7 +272,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the reviewed release",
         text: "Clone the public repository at the current release into a new directory. Use a fresh environment for this walkthrough.",
-        code: "git clone --branch v0.7.1 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
+        code: "git clone --branch v0.7.2 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
         note: "Use the repository’s release notes when choosing a version. There is no npm installer for Cindertrace.",
       },
       {
