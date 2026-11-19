@@ -14,7 +14,14 @@ async function checkBrowser(page) {
   const names = ["Hive", "HiveXUI", "Oathweave", "Emberpath", "HiveMem", "HiveSkills", "Magnus", "Embermend", "Ardent", "Cindertrace", "ChatterMost", "Emberfold"];
   const walkthroughs = page.locator(".demo-tabs");
   const sectionOrder = await page.locator("main > section").evaluateAll(sections => sections.map(section => section.id));
-  assert(JSON.stringify(sectionOrder) === JSON.stringify(["top", "install", "atlas", "projects", "walkthroughs", "agents"]), "Overview, install, architecture, products, then guides");
+  assert(JSON.stringify(sectionOrder) === JSON.stringify(["top", "uses", "paths", "install", "atlas", "projects", "walkthroughs", "agents"]), "Overview, use cases, deployment paths, install, architecture, products, then guides");
+  for (const href of await page.locator(".main-nav a").evaluateAll(links => links.map(link => link.getAttribute("href")))) assert(href && await page.locator(href).count() === 1, `Navigation target ${href}`);
+  assert(await page.locator(".use-case").count() === 6, "Six use cases");
+  for (const href of await page.locator(".use-case-uses a").evaluateAll(links => links.map(link => link.getAttribute("href")))) assert(href && (href.startsWith("/guides/") || await page.locator(href).count() === 1), `Use case link ${href}`);
+  assert(await page.locator(".path-steps li").count() === 4, "Four operator steps");
+  assert(await page.locator(".path-operators").textContent().then(t => t.includes("admin-access setup") && t.includes("ardent setup") && t.includes("IAM Administrator")), "Operator path names the documented commands");
+  assert(await page.locator(".dev-pieces li").count() === 6, "Six developer building blocks");
+  assert(await page.locator(".path-developers").textContent().then(t => t.includes("@hivemagnus/ardent") && t.includes("custom")), "Developer path names packages and the custom profile");
   assert(await page.locator("h1").textContent().then(t => t.includes("Full-stack") && t.includes("agent management")), "Full-stack overview");
   assert(await page.locator(".platforms").textContent().then(t => /Linux/.test(t) && /macOS.*coming/.test(t) && /Windows.*coming/.test(t)), "Platform availability");
   const command = await page.locator(".install-command code").textContent();

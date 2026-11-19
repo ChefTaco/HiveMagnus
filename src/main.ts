@@ -13,7 +13,7 @@ type DemoId = "embermend" | "hive" | "magnus" | "cindertrace" | "chattermost" | 
 // The launcher resolves the published release at install time; source reviews stay versioned.
 const HIVE_RELEASE_URL = "https://github.com/ChefTaco/hive/releases/latest";
 // The signed suite release the product details are reviewed against. Bump this one value per release.
-const HIVE_SUITE_VERSION = "3.12.3";
+const HIVE_SUITE_VERSION = "3.12.5";
 const HIVE_SUITE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_SUITE_VERSION}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
@@ -208,7 +208,7 @@ const demos: Record<DemoId, Demo> = {
       },
       {
         title: "Start setup",
-        text: "Use latest to select the published stable release, or replace it with an exact version. The launcher reports the version, verifies the signature, then asks for the installation name, directory, host, HTTPS origin, profile, bind address and certificate files. It never asks for a password on the command line. A setup that stopped after writing its configuration offers to continue with it.",
+        text: "Use latest to select the published stable release, or replace it with an exact version. The launcher reports the version, verifies the signature, then asks for the installation name, directory, host, HTTPS origin, profile, bind address and certificate files. With Tailscale, enter <code>tailscale</code> as the bind address to use the tailnet address. It never asks for a password on the command line. A setup that stopped after writing its configuration offers to continue with it.",
         code: "./hive.sh --release latest",
         note: `For example, <code>./hive.sh --release ${HIVE_SUITE_VERSION}</code> chooses that version. Use the matching release checkout for lifecycle commands and certificate renewal. If the launcher downloads one, it prints that retained path; otherwise keep using this checkout. Keep that directory. The signed services run as UID/GID 1000 (HiveXUI as 101).`,
       },
@@ -223,7 +223,7 @@ const demos: Record<DemoId, Demo> = {
         text: "Visit the HTTPS origin you configured and sign in through Oathweave. HiveXUI shows a section for each product in this installation, so a core install has no Magnus, Cindertrace or ChatterMost section.",
         code: "https://hive.example.com/",
         kind: "address",
-        note: "The install ends by naming the HTTPS origin and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. Then create your own administrator in Oathweave and run <code>./hive.sh admin-access setup</code> to give it access to each installed product. <code>./hive.sh status --config installation.json</code> reports what is running and lists the setup steps still pending, which HiveXUI also shows to administrators.",
+        note: "The install ends by naming the HTTPS origin and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. Then create your own administrator in Oathweave with the IAM Administrator role and run <code>./hive.sh admin-access setup</code> to give it access to each installed product. <code>./hive.sh status --config installation.json</code> reports what is running and lists the setup steps still pending, which HiveXUI also shows to administrators.",
       },
     ],
     guide: "/guides/hive.md",
@@ -360,6 +360,35 @@ const demos: Record<DemoId, Demo> = {
     guideLabel: "Ardent guide",
   },
 };
+
+// What the suite is for, told as outcomes. Each product link jumps to its section; Studio has only a guide.
+type UseCase = { icon: string; title: string; story: string; uses: { label: string; href: string }[] };
+const productLink = (id: ProjectId) => ({ label: projects[id].name, href: `#interface-${id}` });
+const studioLink = { label: "Ardent Project Studio", href: "/guides/ardent-studio.md" };
+const useCases: UseCase[] = [
+  { icon: "ardent", title: "Run your own assistants", story: "After a full install, <code>./hive.sh ardent setup</code> creates a first Ardent assistant through Magnus, with its own HiveMem memory. It keeps a durable journal of every task, runs scheduled jobs and can join a chat channel when you configure one.", uses: [productLink("ardent"), productLink("magnus"), productLink("hivemem"), productLink("chattermost")] },
+  { icon: "magnus", title: "Manage the hosts your agents live on", story: "Inventory Linux hosts, then run jobs, skills, agent rollouts and audit across them. Each host agent enrolls once with a one-time token and keeps its own key. The web terminal stays off unless you deploy its separate gateway.", uses: [productLink("magnus"), productLink("hiveskills"), productLink("hivexui")] },
+  { icon: "emberpath", title: "Put every model behind one endpoint", story: "Give agents and tools one OpenAI-compatible API in front of hosted providers, Ollama, llama.cpp or vLLM. Emberpath routes, fails over before the first token, enforces per-key quotas and traces every request. Inference stays yours, outside Hive.", uses: [productLink("emberpath"), productLink("oathweave")] },
+  { icon: "hivemem", title: "Give agents memory and reviewed skills", story: "Keep long-term memory in workspaces with their own access rules, distribute immutable, digest-verified skill releases, and fit the right context into the next model turn.", uses: [productLink("hivemem"), productLink("hiveskills"), productLink("emberfold")] },
+  { icon: "cindertrace", title: "Investigate and fix with a person in the loop", story: "Correlate signed observations into cases with hashed evidence. A response approval binds the exact plan, expires after ten minutes and is used once. Embermend turns findings into recommendations you decide on, and its mutation policies start disabled.", uses: [productLink("cindertrace"), productLink("embermend"), productLink("magnus")] },
+  { icon: "hivexui", title: "Put a team of agents on a project", story: "Give several Ardent agents a shared project, a conversation room and deliverable review in HiveXUI's Studio. Magnus stays the only path to the agents, and each project gets its own HiveMem workspace.", uses: [studioLink, productLink("ardent"), productLink("magnus"), productLink("hivemem")] },
+];
+type PathStep = { title: string; text: string; code?: string };
+const operatorSteps: PathStep[] = [
+  { title: "Install", text: "Run the one-line launcher on a fresh Ubuntu or Debian host. Guided setup can install Docker and the other prerequisites with your consent and request a Tailscale certificate. Choose <code>full</code>, review the plan and confirm." },
+  { title: "Sign in", text: "Open HiveXUI at your HTTPS address with the initial login. Create your own account in Oathweave with the IAM Administrator role, then give it access to every installed product.", code: "./hive.sh admin-access setup" },
+  { title: "Add hosts and an assistant", text: "If you gave setup a port for host agents, accept the Magnus host agent it offers. Add more hosts with <code>./hive.sh magnus-agent install</code>, then create a first assistant. HiveXUI's setup checklist shows what still needs a person.", code: "./hive.sh ardent setup" },
+  { title: "Keep it current", text: "Move to each new signed release with <code>./hive.sh upgrade</code>. Take backups, rehearse restores on a disposable copy, and let a single-host installation prune old backups daily." },
+];
+type DevPiece = { code: string; text: string; href: string; label: string };
+const developerPieces: DevPiece[] = [
+  { code: "npm i -g @hivemagnus/ardent", text: "A headless agent runtime with a management API, A2A, scheduled jobs and plugins.", href: "/guides/ardent.md", label: "Ardent guide" },
+  { code: "https://localhost:4020/v1", text: "Point any OpenAI-compatible client at Emberpath and let it route, fail over and trace.", href: "/guides/emberpath.md", label: "Emberpath guide" },
+  { code: "npm i @hivemagnus/hivemem-sdk", text: "TypeScript client for HiveMem's REST memory API; a Python SDK is in its repository.", href: "/guides/hivemem.md", label: "HiveMem guide" },
+  { code: "npm i @hivemagnus/hive-iam-sdk", text: "Verify Oathweave tokens and enforce roles in a Node.js or Hono service. Oathweave speaks OAuth 2.0 and OpenID Connect.", href: "/guides/oathweave.md", label: "Oathweave guide" },
+  { code: "npm i @hivemagnus/emberfold", text: "Fit context to a token budget inside your own agent loop, with protected spans kept intact.", href: "/guides/emberfold.md", label: "Emberfold guide" },
+  { code: "npx @hivemagnus/magnus init", text: "Run the fleet manager and its own console on one host, without Hive.", href: "/guides/magnus.md", label: "Magnus guide" },
+];
 
 const icon = (name: string) => {
   const paths: Record<string, string> = {
@@ -546,7 +575,7 @@ app.innerHTML = `
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header"><div class="shell header-inner">
     <a class="brand" href="#top" aria-label="Hive:Magnus home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>Hive<span class="brand-colon">:</span>Magnus</span></a>
-    <nav class="main-nav" aria-label="Main navigation"><a href="#install">Install</a><a href="#atlas">Architecture</a><a href="#projects">Products</a><a href="#walkthroughs">Guides</a></nav>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#uses">Use cases</a><a href="#paths">Deploy</a><a href="#atlas">Architecture</a><a href="#projects">Products</a><a href="#walkthroughs">Guides</a></nav>
     <a class="header-github" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">GitHub ${icon("external")}</a>
   </div></header>
   <main id="main">
@@ -554,7 +583,7 @@ app.innerHTML = `
       <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-prompt" aria-hidden="true">&gt;_</span> YOUR AGENTS. YOUR INFRASTRUCTURE.</div>
         <h1 id="hero-title">Full-stack<br/><em>agent management.</em></h1>
         <p class="hero-lede">Deploy the stack. Manage your fleet. Give your agents identity, model access, memory and skills — with security and conversation in the same browser UI.</p>
-        <div class="hero-actions"><a class="button button-primary" href="#install">Install the full stack ${icon("down")}</a><a class="text-link" href="#atlas">See how it connects ${icon("arrow")}</a></div>
+        <div class="hero-actions"><a class="button button-primary" href="#install">Install the full stack ${icon("down")}</a><a class="text-link" href="#uses">See what it’s good for ${icon("arrow")}</a></div>
         <p class="hero-proof">Open source · Apache-2.0 · Self hosted</p>
       </div>
       <figure class="hero-console"><div class="hero-console-label"><span class="status-dot" aria-hidden="true"></span> ONE BROWSER UI. THE WHOLE PICTURE.</div><div class="capture-window"><div class="window-bar"><span class="window-dots" aria-hidden="true">● ● ●</span><span>HiveXUI / Magnus</span>${icon("hivexui")}</div><img src="/captures/fleet-overview.webp" alt="HiveXUI fleet overview with synthetic hosts, health gauges and recent commands" width="2880" height="1800" fetchpriority="high" /></div><figcaption>Fleet, identity, models, memory, skills, security and chat.<span>Real HiveXUI capture · synthetic data</span></figcaption></figure>
@@ -562,6 +591,17 @@ app.innerHTML = `
     <div class="shell feature-strip" role="group" aria-label="Product features">
       <div>${icon("magnus")}<span><strong>Operate your fleet</strong><small>Hosts, jobs and agent rollouts</small></span></div><div>${icon("emberpath")}<span><strong>Connect your models</strong><small>Provider routing, quotas and traces</small></span></div><div>${icon("hivemem")}<span><strong>Give agents continuity</strong><small>Memory, skills and context</small></span></div><div>${icon("cindertrace")}<span><strong>Stay in control</strong><small>Identity, investigations and chat</small></span></div>
     </div>
+    <section class="uses-section shell" id="uses" aria-labelledby="uses-title">
+      <div class="section-head"><div><span class="section-kicker">WHAT IT'S GOOD FOR</span><h2 id="uses-title">Agents that work<br/><span>on your own ground.</span></h2></div><p>Each product has one job. Together they give your agents a place to run, models to call, memory to keep and people to answer to.</p></div>
+      <ul class="use-cases">${useCases.map(u => `<li class="use-case"><span class="use-case-icon">${icon(u.icon)}</span><h3>${u.title}</h3><p>${u.story}</p><div class="use-case-uses"><span>USES</span>${u.uses.map(l => `<a href="${l.href}">${l.label}</a>`).join("")}</div></li>`).join("")}</ul>
+    </section>
+    <section class="paths-section shell" id="paths" aria-labelledby="paths-title">
+      <div class="section-head"><div><span class="section-kicker">TWO WAYS TO DEPLOY</span><h2 id="paths-title">Run the whole suite,<br/><span>or build with the pieces.</span></h2></div><p>Operators install a tested, signed combination with Hive. Developers can use any product on its own, from its own release.</p></div>
+      <div class="paths-grid">
+        <article class="path-card path-operators" aria-labelledby="path-operators-title"><span class="mini-label">FOR OPERATORS AND TEAMS</span><h3 id="path-operators-title">From one command to a running stack.</h3><ol class="path-steps">${operatorSteps.map(step => `<li><h4>${step.title}</h4><p>${step.text}</p>${step.code ? `<code class="path-code">${step.code}</code>` : ""}</li>`).join("")}</ol><div class="path-links"><a class="button button-primary" href="#install">Get the install command ${icon("down")}</a><a class="text-link" href="/guides/hive.md">Hive guide ${icon("arrow")}</a></div></article>
+        <article class="path-card path-developers" aria-labelledby="path-developers-title"><span class="mini-label">FOR DEVELOPERS</span><h3 id="path-developers-title">Every product stands on its own.</h3><p class="path-intro">Each has its own repository, release and API, so you can use one without the rest.</p><ul class="dev-pieces">${developerPieces.map(piece => `<li><code>${piece.code}</code><p>${piece.text} <a href="${piece.href}">${piece.label}</a></p></li>`).join("")}</ul><p class="path-note">Need only part of the suite? Hive's <code>custom</code> profile installs the products you select, and a reviewed installation file runs <code>plan</code> and <code>install</code> unattended. Every repository is Apache-2.0 with an AGENTS.md for contributors and coding agents.</p><div class="path-links"><a class="text-link" href="#agents">Agent-ready docs ${icon("arrow")}</a><a class="text-link" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">Source on GitHub ${icon("external")}</a></div></article>
+      </div>
+    </section>
     <section class="quick-start shell" id="install" aria-labelledby="install-title">
       <div class="quick-start-heading"><div><span class="section-kicker">START WITH HIVE</span><h2 id="install-title">One installer. A connected stack.</h2></div><div class="platforms" role="group" aria-label="Installer platforms"><span class="platform-current">Linux</span><span>macOS <small>coming</small></span><span>Windows <small>coming</small></span></div></div>
       <p>On a fresh Ubuntu or Debian host, run this line to open guided setup. It offers to install Docker Engine and the other prerequisites with your consent. Choose the <code>full</code> profile, review the plan, and confirm to install. Replace <code>latest</code> with an exact version to choose it, such as <code>${HIVE_SUITE_VERSION}</code>.</p>
