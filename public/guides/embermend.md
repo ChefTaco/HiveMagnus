@@ -4,7 +4,7 @@ Embermend tracks continuous hardening and vulnerability remediation for Magnus-m
 
 ## Install
 
-Use a compatible signed Hive release, starting with 3.2.2, and select the optional Embermend product. It is off by default. Hive 3.12.5 pins Embermend 0.3.2 (since 3.9.3) with Magnus 3.1.3. Select compatible Magnus 2.5.0 or newer, or explicitly configure an existing Magnus with the versioned Embermend bridge.
+Use a compatible signed Hive release, starting with 3.2.2, and select the optional Embermend product. It is off by default. Hive 3.12.8 pins Embermend 0.3.3 (since 3.12.8) with Magnus 3.1.4. Select compatible Magnus 2.5.0 or newer, or explicitly configure an existing Magnus with the versioned Embermend bridge.
 
 ```sh
 git clone https://github.com/ChefTaco/hive.git && cd hive
@@ -84,3 +84,17 @@ with Embermend protocol 1. Per its changelog, 0.3.2 moves to
 credentials without a user or without a password and detail values under keys
 containing `jwt`, `bearer` or `signature`. It adds no migration. The acceptance
 record below was not reviewed again for this update.
+
+Release update, 2026-11-20: signed Hive `v3.12.8` pins Embermend 0.3.3, tag
+[`v0.3.3`](https://github.com/ChefTaco/Embermend/releases/tag/v0.3.3), commit
+`dd1b18f90c7a0cf783f2689bae38dedcb08ec2bb`, with Magnus 3.1.4, Oathweave 2.3.1
+and HiveXUI 0.10.3 (Hive 3.9.3 to 3.12.7 pinned 0.3.2). Per its
+[changelog](https://github.com/ChefTaco/Embermend/blob/v0.3.3/CHANGELOG.md),
+0.3.3 redacts private-key blocks with a linear scan instead of a regular
+expression that took quadratic time on text with many unmatched
+`-----BEGIN …PRIVATE KEY-----` markers (CodeQL `js/polynomial-redos`); the same
+blocks are redacted, with their line count kept. Its
+[README](https://github.com/ChefTaco/Embermend/blob/v0.3.3/README.md) still asks
+for Magnus 2.5.0 or newer with its explicit Embermend bridge, and the protocol
+stays 1. It adds no migration. The acceptance record below was not reviewed
+again for this update.
