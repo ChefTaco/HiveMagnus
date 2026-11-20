@@ -10,7 +10,7 @@ HiveMem gives agents, IDE tools and runtimes one server-side system for remember
 
 ## In a Hive installation
 
-HiveMem and its private Qdrant are part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.12.8 installs HiveMem 1.9.1 as a digest-pinned image. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md): memory search, sessions, webhooks, graph evidence, conflicts, consolidation and queue operations, limited by workspace. Issuer and subject mappings remain explicit product configuration.
+HiveMem and its private Qdrant are part of the core profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.12.9 installs HiveMem 1.9.1 as a digest-pinned image. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md): memory search, sessions, webhooks, graph evidence, conflicts, consolidation and queue operations, limited by workspace. Issuer and subject mappings remain explicit product configuration.
 
 From 1.8.0, a loopback-only administrator provisioning endpoint lets the installer create a separate HiveMem principal for an administrator, with a durable receipt; `hive.sh admin-access setup` from Hive 3.11.0 uses it. It is off unless the installation owner configures its own purpose-scoped secret, never adopts or resets an existing principal and issues no memory credential.
 
