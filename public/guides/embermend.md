@@ -85,7 +85,8 @@ credentials without a user or without a password and detail values under keys
 containing `jwt`, `bearer` or `signature`. It adds no migration. The acceptance
 record below was not reviewed again for this update.
 
-Release update, 2026-11-20: signed Hive `v3.12.9` pins Embermend 0.3.4, tag
+Release update, 2026-11-20: signed Hive `v3.12.9`, commit
+`353eb340634ae2fe8d63ae97360f701b9acb2a7b`, pins Embermend 0.3.4, tag
 [`v0.3.4`](https://github.com/ChefTaco/Embermend/releases/tag/v0.3.4), commit
 `24c17dcd7ae9f9a6d91b49b8b1721f3b219a8578`, with Magnus 3.1.5, Oathweave 2.3.2
 and HiveXUI 0.10.3 (Hive 3.9.3 to 3.12.7 pinned 0.3.2; the unpublished Hive
