@@ -29,7 +29,7 @@ Recovery, Ardent lineage, artifact transfer v2 and definition deploy need Magnus
 ## Requirements
 
 - Magnus with **at least one Ardent agent**, HiveMem and Oathweave. All three are required.
-- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.14.0 pins Ardent Project Studio 0.5.1 (since 3.14.0).
+- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.14.1 pins Ardent Project Studio 0.5.1 (since 3.14.0).
 - Node.js 24.22.3+ or 26.13.1+ only when running the service outside the suite.
 
 ## In a Hive installation
@@ -54,7 +54,7 @@ Expected result: fresh setup registers the HiveXUI browser client for Studio, li
 
 Sign in to HiveXUI and open **Studio**; it appears only when Studio is installed. Create at least one Ardent agent in **Magnus > Ardent** first, for example with **New Agent**. Adding Studio to an existing installation is not automated yet: follow the full-profile guide's manual entries, then select the component.
 
-**Upgrading to 0.5.** Back up the data volume first. Migrations 7 to 10 run on the first start of 0.5.x: they are additive and keep existing rows, but a database they have run on no longer starts under 0.4.x, so going back means restoring the backup. In a Hive installation, the upgrade to 3.14.0 takes and verifies that backup before it changes anything; keep it until you have checked Studio on 0.5.1. A fresh Studio in Hive 3.14.0 gets `ARDENT_STUDIO_INSTANCE_ID` set to the installation ID; an existing one keeps `local` unless you add the line to `config/ardentstudio.env` before you run `plan`, and references recorded earlier keep `local`. From 0.5.0 to 0.5.1 only the image changes. See Hive's [Suite 3.14.0](https://github.com/ChefTaco/hive/blob/v3.14.0/UPGRADING.md#suite-3140-ardent-execution-recovery-lineage-and-artifact-transfer-v2).
+**Upgrading to 0.5.** Back up the data volume first. Migrations 7 to 10 run on the first start of 0.5.x: they are additive and keep existing rows, but a database they have run on no longer starts under 0.4.x, so going back means restoring the backup. In a Hive installation, the upgrade to 3.14.0 takes and verifies that backup before it changes anything; keep it until you have checked Studio on 0.5.1. A fresh Studio in Hive 3.14.0 gets `ARDENT_STUDIO_INSTANCE_ID` set to the installation ID; an existing one keeps `local` unless you add the line to `config/ardentstudio.env` before you run `plan`, and references recorded earlier keep `local`. From 0.5.0 to 0.5.1 only the image changes. See Hive's [Suite 3.14.0](https://github.com/ChefTaco/hive/blob/v3.14.1/UPGRADING.md#suite-3140-ardent-execution-recovery-lineage-and-artifact-transfer-v2).
 
 ## Run it on its own
 
@@ -77,7 +77,7 @@ Expected result: the service listens on `127.0.0.1:8097` by default and serves i
 - [Conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/CONDUCTOR.md)
 - [Oathweave account links](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/OATHWEAVE.md)
 - [Operations and backups](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/OPERATIONS.md)
-- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.14.0/deployment/FULL.md#ardent-project-studio)
+- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.14.1/deployment/FULL.md#ardent-project-studio)
 - [Repository instructions](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/AGENTS.md)
 
 ## Source review
