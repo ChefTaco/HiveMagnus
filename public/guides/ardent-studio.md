@@ -2,7 +2,7 @@
 
 > Team projects for Ardent agents: team assignment, the conversation room and deliverable review, as the Studio section of HiveXUI.
 
-[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/ArdentStudio) · [Release 0.4.3](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.4.3) · [npm package](https://www.npmjs.com/package/@hivemagnus/ardent-studio) · [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/README.md)
+[Agent index](https://hivemagnus.com/llms.txt) · [Repository](https://github.com/ChefTaco/ArdentStudio) · [Release 0.5.1](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.5.1) · [npm package](https://www.npmjs.com/package/@hivemagnus/ardent-studio) · [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/README.md)
 
 ## Responsibility
 
@@ -11,15 +11,25 @@ Ardent Project Studio is the Hive:Magnus workspace where an operator gives sever
 A project has three areas:
 
 1. **Team Assignment**: roles, relationships and agent bindings, as draft and published revisions, started from versioned templates.
-2. **Team Conversation Room**: the canonical transcript, live agent replies, tasks, clarifications, discussions and decisions, driven by the conductor.
+2. **Team Conversation Room**: the canonical transcript, live agent replies, tasks, clarifications, discussions, decisions and workflows, driven by the conductor.
 3. **Agent Studio**: agent tuning, previews, development records and **Deliverable Review**, with verified deliverable revisions, anchored comments, revision requests, decisions and exports.
 
 Each product keeps its own records. Studio owns projects, templates, team revisions, the transcript, decisions, deliverables, reviews and its event feed. [Magnus](https://hivemagnus.com/guides/magnus.md) owns the fleet, profile lifecycle and all agent access: Studio never talks to hosts or Ardent directly. Ardent owns execution, sessions, journals and artifacts. [HiveMem](https://hivemagnus.com/guides/hivemem.md) holds one knowledge workspace per project, into which reference files are synced. [Oathweave](https://hivemagnus.com/guides/oathweave.md) signs people in and gives Studio its own service identity. A [ChatterMost](https://hivemagnus.com/guides/chattermost.md) incoming webhook for announcements is optional.
 
+## New in 0.5
+
+- **Workflows.** A workflow is a small DAG of sub-prompts (at most 16 nodes, acyclic, exactly one output) whose nodes run as ordinary tasks of team roles, branching and joining. A node starts when every node it needs is done, with their results and imported artifact references as context marked as data. A failed node blocks its dependents and the run, with `retry`, `skip` (optional nodes) and `cancel_run`; completed nodes are never resubmitted after a restart. HiveXUI shows runs in the room's **Workflows** drawer. 0.5.1 retries a turn Magnus refuses because another managed command is running on the same node, so parallel branches whose agents share a node no longer fail.
+- **Recovery decisions.** With Ardent 3.2.0 through Magnus 3.3.0, a task Ardent resumes stays `running` and shows its recovery, and a task Ardent holds for a decision becomes `unknown` with the decisions Studio can send (`POST /tasks/:id/recovery`). A continuation is followed as the same Studio task, which still ends with one completion message. Without the capability no decision is offered.
+- **Lineage.** Every task records its execution references (root, parent and self) for requests, hand-offs, reassignments, discussion turns, revisions and workflow nodes, and `GET /tasks/:id/lineage` adds each Ardent attempt's lineage and the Emberpath trace filter. `ARDENT_STUDIO_INSTANCE_ID` (default `local`) names this Studio in those references.
+- **Resumable imports with renditions.** From agents with artifact transfer v2, imports resume after a restart or a dropped connection with `Range` and `If-Range`, the whole-file digest is verified before the file enters the blob store, and the artifact's renditions are imported with it and listed on the deliverable revision. Other agents keep the whole download as before.
+- **Agent definitions from templates.** An agent template version can be exported as a sealed `hive-agent-definition/1`, a definition can be imported as a new template version, and a template version can be checked against and deployed to a node through Magnus's definition install. A Magnus before 3.3.0 answers `409 MAGNUS_UPGRADE_REQUIRED`.
+
+Recovery, Ardent lineage, artifact transfer v2 and definition deploy need Magnus 3.3.0 and agents that report those capabilities; workflows and execution references work with an older Magnus. See the [conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/CONDUCTOR.md) and the [changelog](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/CHANGELOG.md).
+
 ## Requirements
 
 - Magnus with **at least one Ardent agent**, HiveMem and Oathweave. All three are required.
-- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.13.4 pins Ardent Project Studio 0.4.3 (since 3.11.2).
+- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.14.0 pins Ardent Project Studio 0.5.1 (since 3.14.0).
 - Node.js 24.22.3+ or 26.13.1+ only when running the service outside the suite.
 
 ## In a Hive installation
@@ -44,6 +54,8 @@ Expected result: fresh setup registers the HiveXUI browser client for Studio, li
 
 Sign in to HiveXUI and open **Studio**; it appears only when Studio is installed. Create at least one Ardent agent in **Magnus > Ardent** first, for example with **New Agent**. Adding Studio to an existing installation is not automated yet: follow the full-profile guide's manual entries, then select the component.
 
+**Upgrading to 0.5.** Back up the data volume first. Migrations 7 to 10 run on the first start of 0.5.x: they are additive and keep existing rows, but a database they have run on no longer starts under 0.4.x, so going back means restoring the backup. In a Hive installation, the upgrade to 3.14.0 takes and verifies that backup before it changes anything; keep it until you have checked Studio on 0.5.1. A fresh Studio in Hive 3.14.0 gets `ARDENT_STUDIO_INSTANCE_ID` set to the installation ID; an existing one keeps `local` unless you add the line to `config/ardentstudio.env` before you run `plan`, and references recorded earlier keep `local`. From 0.5.0 to 0.5.1 only the image changes. See Hive's [Suite 3.14.0](https://github.com/ChefTaco/hive/blob/v3.14.0/UPGRADING.md#suite-3140-ardent-execution-recovery-lineage-and-artifact-transfer-v2).
+
 ## Run it on its own
 
 The repository's quick start builds and runs the service from a checkout, with its settings supplied privately through the environment:
@@ -60,12 +72,13 @@ Expected result: the service listens on `127.0.0.1:8097` by default and serves i
 
 ## Full instructions
 
-- [Configuration, architecture and API](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/README.md)
-- [Conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/docs/CONDUCTOR.md)
-- [Oathweave account links](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/docs/OATHWEAVE.md)
-- [Operations and backups](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/docs/OPERATIONS.md)
-- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.13.4/deployment/FULL.md#ardent-project-studio)
-- [Repository instructions](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/AGENTS.md)
+- [Configuration, architecture and API](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/README.md)
+- [API reference](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/API.md)
+- [Conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/CONDUCTOR.md)
+- [Oathweave account links](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/OATHWEAVE.md)
+- [Operations and backups](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/OPERATIONS.md)
+- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.14.0/deployment/FULL.md#ardent-project-studio)
+- [Repository instructions](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/AGENTS.md)
 
 ## Source review
 
@@ -80,3 +93,5 @@ Release update, 2026-11-14: [Hive 3.8.0](https://github.com/ChefTaco/hive/releas
 Release update, 2026-11-15: [Hive 3.9.3](https://github.com/ChefTaco/hive/releases/tag/v3.9.3) pins Ardent Project Studio 0.4.2, so the release and documentation links now use tag [`v0.4.2`](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.4.2), commit `bbc71a1097549a836ae3fcc2af89766340fa4841`, with the Hive full-profile guide at `v3.9.3`. The quick start in its [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.2/README.md) is unchanged from 0.4.1; its overview now names the current release and the suite audit export. Per its [changelog](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.2/CHANGELOG.md), 0.4.2 moves to `@hivemagnus/magnus-contracts` 3.0.3, whose Ardent service contract is unchanged, and `@hivemagnus/hive-common` 0.5.0; Studio behaviour does not change. No installation command was run for this update.
 
 Release update, 2026-11-17: [Hive 3.11.2](https://github.com/ChefTaco/hive/releases/tag/v3.11.2) pins Ardent Project Studio 0.4.3, so the release and documentation links now use tag [`v0.4.3`](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.4.3), commit `136c8c56121f257d37aab531febd7db6abb94be1`, with the Hive full-profile guide at `v3.11.2`. The quick start in its [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/README.md) is unchanged from 0.4.2. Per its [changelog](https://github.com/ChefTaco/ArdentStudio/blob/v0.4.3/CHANGELOG.md), 0.4.3 moves to `@hivemagnus/magnus-contracts` 3.1.2, whose Ardent service contract is unchanged; Studio behaviour does not change. No installation command was run for this update.
+
+Release update, 2026-11-24: [Hive 3.14.0](https://github.com/ChefTaco/hive/releases/tag/v3.14.0), tag `v3.14.0`, commit `d182802ce71edb17501ef68f2eaec802aca19e9a`, pins Ardent Project Studio 0.5.1 (Hive 3.11.2 to 3.13.5 pinned 0.4.3), so the release and documentation links now use tag [`v0.5.1`](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.5.1), commit `622c43fb79401e7d7721e6090907a68dc18dd0ec`, with the Hive full-profile guide at `v3.14.0`. No suite release pins [`v0.5.0`](https://github.com/ChefTaco/ArdentStudio/releases/tag/v0.5.0), commit `633b57252adc2b7bc287c54377cb7de073e79e1c`. The quick start in its [README](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/README.md) is unchanged from 0.4.3; the README adds `ARDENT_STUDIO_INSTANCE_ID` and the workflow, recovery, lineage and definition routes. The 0.5 section and the upgrade note follow the [changelog](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/CHANGELOG.md) and the [conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/CONDUCTOR.md) at that tag and Hive's [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.14.0/UPGRADING.md#suite-3140-ardent-execution-recovery-lineage-and-artifact-transfer-v2). Hive's changelog also mentions a Studio added with `hive.sh add ardentstudio`, but the `hive.sh --help` text and the full-profile guide at `v3.14.0` still list only Cindertrace and its collector for `hive.sh add`, so this guide keeps the manual path. npm resolves `@hivemagnus/ardent-studio` to `0.5.1` as `latest`. No installation command was run for this update.
