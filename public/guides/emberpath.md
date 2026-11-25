@@ -10,7 +10,7 @@ Clients talk to one endpoint. Emberpath picks an upstream provider, fails over w
 
 ## In a Hive installation
 
-Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive.md) 3.14.1 installs Emberpath 2.6.0 (pinned since 3.14.0) as a digest-pinned image, verifies external endpoints and registers verified providers. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), reached through a separate administration listener; the native model API keeps its own listener and API keys.
+Emberpath is part of the core profile. [Hive](https://hivemagnus.com/guides/hive.md) 3.14.2 installs Emberpath 2.6.0 (pinned since 3.14.0) as a digest-pinned image, verifies external endpoints and registers verified providers. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md), reached through a separate administration listener; the native model API keeps its own listener and API keys.
 
 Emberpath's HiveMem principal is `emberpath`, both for the static `HIVE_ROUTER_MEMORY_PROXY_TOKEN` fallback (minted with `hivemem-server issue-token --env-file hivemem.env --subject emberpath --role admin`) and for the `localId` of its Oathweave link; the setting keeps its Hive Router name. An installation from the Hive Router days whose memory data still belongs to `hive-router` moves it with HiveMem 1.9.0's `hivemem-server rename-agent --from hive-router --to emberpath`, then re-issues the token and updates the link. Hive does this during an upgrade from a release before 3.12.0, which then needs `--allow-migrations`; see the [Hive guide](https://hivemagnus.com/guides/hive.md#upgrade).
 
