@@ -6,8 +6,9 @@
 // published release; a security advisory link needs private vulnerability reporting. npm links
 // are checked against the registry. Other links must answer 2xx after redirects. Links inside
 // code, loopback and documentation addresses (example.com, .test, .internal) are not fetched.
+// Links to this repository's main branch are checked against the working tree.
 // Set GITHUB_TOKEN to raise the GitHub API limit; without it, advisory links are not verified.
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { headingAnchors, markdownLinks } from "./lib/markdown.mjs";
@@ -86,7 +87,14 @@ const once = (key, task) => {
   return memo.get(key);
 };
 
+// Links to this repository's main branch are checked against the working tree, so a pull request
+// can link a file it adds.
+const isSelf = (owner, repo, ref) => `${owner}/${repo}`.toLowerCase() === "cheftaco/hivemagnus" && ref === "main";
 async function rawFile(owner, repo, ref, path) {
+  if (isSelf(owner, repo, ref)) {
+    const file = join(root, decodeURIComponent(path));
+    return existsSync(file) && statSync(file).isFile() ? readFileSync(file, "utf8") : null;
+  }
   return once(`raw:${owner}/${repo}/${ref}/${path}`, async () => {
     const response = await request(`https://raw.githubusercontent.com/${owner}/${repo}/${ref}/${path}`);
     return response.ok ? await response.text() : null;
@@ -126,6 +134,7 @@ async function checkGitHub(url) {
   }
   if (kind === "tree") {
     const [ref, ...parts] = rest;
+    if (isSelf(owner, repo, ref)) return existsSync(join(root, decodeURIComponent(parts.join("/")))) ? null : `${parts.join("/")} does not exist in this repository`;
     const response = await api(`/repos/${owner}/${repo}/contents/${parts.join("/")}?ref=${encodeURIComponent(ref)}`);
     return response.ok ? null : `${parts.join("/") || "the tree"} does not exist at ${ref} (GitHub API ${response.status})`;
   }
