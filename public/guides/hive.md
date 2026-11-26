@@ -96,11 +96,19 @@ sudo ./scripts/console-certificate.sh tailscale
 
 Expected result: `install-prerequisites.sh` shows its plan and asks before changing anything. It installs Docker Engine and the Compose plugin from Docker's apt repository after checking its signing key, plus jq, OpenSSL, curl, git, iproute2 and the other tools `hive.sh` uses, adds you to the `docker` group and creates `/opt/hive`; `--check` then prints `Ready`. From 3.14.1, while another package manager, such as the unattended upgrades of a freshly booted machine, holds apt's lock, it says that it is waiting and waits up to 10 minutes instead of failing. `console-certificate.sh tailscale` writes `/etc/hive/tls/console.crt` and `console.key` for the host's MagicDNS name, owned by you. With your own certificate, check it instead with `./scripts/console-certificate.sh check --cert FILE --key FILE --name NAME`. Hive runs no ACME client itself.
 
-To install from separately downloaded files instead, pass `--manifest`, `--signature` and `--trust-key`, still from the same tag's checkout. First check the key's fingerprint against the one in the [release notes](https://github.com/ChefTaco/hive/releases/tag/v{{hm.suite}}). The fingerprint is the SHA-256 of the DER public key:
+To install from separately downloaded files instead, pass `--manifest`, `--signature` and `--trust-key`, still from the same tag's checkout. First check the key's fingerprint. The fingerprint is the SHA-256 of the DER public key:
 
 ```bash
 openssl pkey -pubin -in trust/publisher.pub -outform DER | sha256sum
 ```
+
+It must print this publisher-key fingerprint, the same value as in the Hive [README](https://github.com/ChefTaco/hive#security) and the [release notes](https://github.com/ChefTaco/hive/releases/tag/v{{hm.suite}}):
+
+```text
+c0d0665a70969f37c8f1cffbdcf8e54df13626f8dbd4b5759a7c44843d86d1b2
+```
+
+This page is published from a separate repository, so it is an independent place to compare against. If the values differ, stop and do not install. A rotated key ships with a statement signed by the key it replaces, and this guide is updated when that happens; see [rotating the key](https://github.com/ChefTaco/hive/blob/main/docs/RELEASING.md#rotating-the-key).
 
 ### Repeatable plans
 
