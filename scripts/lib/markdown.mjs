@@ -69,11 +69,20 @@ export function headingAnchors(markdown) {
   return anchors;
 }
 
+/** Drop inline HTML tags, keeping their text, as GitHub does for heading anchors. */
+function withoutTags(text) {
+  let out = "";
+  let inTag = false;
+  for (const char of text) {
+    if (char === "<") inTag = true;
+    else if (char === ">" && inTag) inTag = false;
+    else if (!inTag) out += char;
+  }
+  return out;
+}
+
 export function slug(heading) {
-  return heading
-    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
-    .replace(/<[^>]+>/g, "")
-    .replace(/[<>]/g, "")
+  return withoutTags(heading.replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1"))
     .toLowerCase()
     .replace(/[^\p{L}\p{M}\p{N}\p{Pc} -]/gu, "")
     .replace(/ /g, "-");
