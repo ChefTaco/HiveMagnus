@@ -14,8 +14,9 @@ it does not ship any of them. Each product's own repository is the source of tru
   `.well-known/security.txt` and font licenses.
 - `scripts/`: the browser check, the capture scripts, the Emberfold sample input and the
   Gitleaks tooling.
-- `docs/`: [deployment and rollback](docs/deployment.md), [media provenance](docs/media.md) and
-  [how to update the guides](docs/agent-guides.md).
+- `docs/`: [deployment and rollback](docs/deployment.md), [media provenance](docs/media.md),
+  [how to update the guides](docs/agent-guides.md) and `release-records/`, the earlier dated
+  release records of each guide (not published).
 - `deployment/node-build/`: the Node.js definition Cloudflare Pages builds with.
 
 ## Commands
