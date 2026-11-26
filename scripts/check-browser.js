@@ -20,7 +20,7 @@ async function checkBrowser(page) {
   for (const href of await page.locator(".use-case-uses a").evaluateAll(links => links.map(link => link.getAttribute("href")))) assert(href && (href.startsWith("/guides/") || await page.locator(href).count() === 1), `Use case link ${href}`);
   assert(await page.locator(".path-steps li").count() === 4, "Four operator steps");
   assert(await page.locator(".path-operators").textContent().then(t => t.includes("admin-access setup") && t.includes("ardent setup") && t.includes("IAM Administrator")), "Operator path names the documented commands");
-  assert(await page.locator(".dev-pieces li").count() === 6, "Six developer building blocks");
+  assert(await page.locator(".dev-pieces li").count() === 8, "Eight developer building blocks, including HiveCommon and canvas-word");
   assert(await page.locator(".path-developers").textContent().then(t => t.includes("@hivemagnus/ardent") && t.includes("custom")), "Developer path names packages and the custom profile");
   assert(await page.locator("h1").textContent().then(t => t.includes("Full-stack") && t.includes("agent management")), "Full-stack overview");
   assert(await page.locator(".platforms").textContent().then(t => /Linux/.test(t) && /macOS.*coming/.test(t) && /Windows.*coming/.test(t)), "Platform availability");
@@ -142,7 +142,7 @@ async function checkBrowser(page) {
     assert(response.ok() && (await response.text()).startsWith("# Hive:Magnus"), `${path} documentation`);
   }
   const metadata = JSON.parse(await page.locator("#project-metadata").textContent());
-  assert(metadata["@graph"].filter(item => item["@type"] === "SoftwareSourceCode").length === 13, "Thirteen source metadata entries");
+  assert(metadata["@graph"].filter(item => item["@type"] === "SoftwareSourceCode").length === 16, "Sixteen source metadata entries: thirteen products plus HiveCommon, canvas-word and Proser");
   assert(await page.locator('link[rel="describedby"][href="/llms.txt"]').count(), "Agent discovery metadata");
   assert(await page.locator('.ecosystem-links a').evaluateAll(links => links.map(link => link.href)).then(hasEcosystemLinks), "GitHub and npm footer links");
   const deceptiveFooterLinks = await page.locator('.ecosystem-links a').evaluateAll(links => links.map(link => { const url = new URL(link.href); return `https://example.com/?redirect=${encodeURIComponent(url.href)}`; }));
@@ -177,5 +177,5 @@ async function checkBrowser(page) {
   await walkthroughs.getByRole("tab", { name: "Hive", exact: true }).click();
   await page.locator('.atlas-node[data-project="hive"]').click();
   await page.goto(new URL("/", page.url()).href);
-  return { productSections: names.length, atlasSelections: names.length, walkthroughs: 6, steps, clipboardChecks: 9, tailscaleModal: true, accessibilityAudits, accessibilityViolations: 0, agentGuides: 13, sourceCodeEntries: 13, viewportWidths: [1440, 1024, 768, 390, 320], pageErrors: errors.length, consoleErrors: consoleErrors.length };
+  return { productSections: names.length, atlasSelections: names.length, walkthroughs: 6, steps, clipboardChecks: 9, tailscaleModal: true, accessibilityAudits, accessibilityViolations: 0, agentGuides: 13, sourceCodeEntries: 16, viewportWidths: [1440, 1024, 768, 390, 320], pageErrors: errors.length, consoleErrors: consoleErrors.length };
 }

@@ -11,7 +11,7 @@
 - Optional authenticated HTTP wrapper: `@hivemagnus/emberfold-server`.
 - Hermes context-engine plugin: runs locally and reuses Hermes's configured compression model.
 
-Ardent already imports the pinned library. Installing an additional service is unnecessary for that integration; see the [Ardent guide](https://hivemagnus.com/guides/ardent.md). In a [Hive](https://hivemagnus.com/guides/hive.md) installation, the `full` profile also runs the optional Emberfold HTTP service; Hive 3.14.2 pins it at 0.4.0 (since 3.8.0).
+Ardent already imports the library at its own pin: Ardent 3.2.1 pins `@hivemagnus/emberfold` 0.1.0, and so does the Hermes plugin 0.1.1, while the examples below use 0.4.0. Installing an additional service is unnecessary for that integration; see the [Ardent guide](https://hivemagnus.com/guides/ardent.md). In a [Hive](https://hivemagnus.com/guides/hive.md) installation, the `full` profile also runs the optional Emberfold HTTP service; Hive 3.14.3 pins it at 0.4.0 (since 3.8.0).
 
 ## Prerequisites
 
