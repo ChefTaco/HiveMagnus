@@ -149,7 +149,7 @@ async function checkNpm(url) {
   const { pathname } = new URL(url);
   const pkg = pathname.match(/^\/package\/((?:@[^/]+\/)?[^/]+)(?:\/v\/([^/]+))?/);
   if (pkg) {
-    const response = await request(`https://registry.npmjs.org/${pkg[1].replace("/", "%2F")}`);
+    const response = await request(`https://registry.npmjs.org/${pkg[1].replaceAll("/", "%2F")}`);
     if (!response.ok) return `npm registry ${response.status} for ${pkg[1]}`;
     if (pkg[2] && !(pkg[2] in (await response.json()).versions)) return `${pkg[1]} has no version ${pkg[2]}`;
     return null;
