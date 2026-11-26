@@ -6,14 +6,21 @@ import "@fontsource/space-grotesk/latin-600.css";
 import "@fontsource/space-grotesk/latin-700.css";
 import "@fontsource/ibm-plex-mono/latin-400.css";
 import "./style.css";
+import siteVersions from "virtual:hm-versions";
 
 type ProjectId = "hive" | "emberpath" | "oathweave" | "hivemem" | "hiveskills" | "hivexui" | "magnus" | "cindertrace" | "chattermost" | "emberfold" | "ardent" | "embermend";
 type GalleryId = Exclude<ProjectId, "emberfold" | "ardent">;
 type DemoId = "embermend" | "hive" | "magnus" | "cindertrace" | "chattermost" | "ardent";
 // The launcher resolves the published release at install time; source reviews stay versioned.
 const HIVE_RELEASE_URL = "https://github.com/ChefTaco/hive/releases/latest";
-// The signed suite release the product details are reviewed against. Bump this one value per release.
-const HIVE_SUITE_VERSION = "3.14.3";
+// The signed suite release the product details are reviewed against, and the versions it pins, from
+// data/versions.json (regenerate it with scripts/sync-versions.mjs when a release ships).
+const HIVE_SUITE_VERSION = siteVersions.suite;
+const pin = (component: string): string => {
+  const version = siteVersions.versions[component];
+  if (!version) throw new Error(`Hive ${HIVE_SUITE_VERSION} pins no ${component}`);
+  return version;
+};
 const HIVE_SUITE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_SUITE_VERSION}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
@@ -166,7 +173,7 @@ const demos: Record<DemoId, Demo> = {
   embermend: {
     label: "Embermend", kicker: "Security remediation", title: "Assess first. Authorize each change.",
     intro: "Add Embermend through the signed Hive installer, connect a compatible Magnus and start with bounded inventory. Each proposed mutation needs a published explanation and a matching decision or standing policy.",
-    requires: [`Hive ${HIVE_SUITE_VERSION}, which pins Embermend 0.3.4 with Magnus 3.3.6`, "Magnus from the same signed release, or an existing Magnus at that version with its explicitly scoped Embermend bridge", "An operator linked by issuer and subject with scoped Embermend access", "Approved inference and a rootless Magnus worker for code scanning"],
+    requires: [`Hive ${HIVE_SUITE_VERSION}, which pins Embermend ${pin("embermend")} with Magnus ${pin("magnus")}`, "Magnus from the same signed release, or an existing Magnus at that version with its explicitly scoped Embermend bridge", "An operator linked by issuer and subject with scoped Embermend access", "Approved inference and a rootless Magnus worker for code scanning"],
     steps: [
       { title: "Select the optional product", text: "Run the guided installer on a fresh installation and choose Embermend. Hive requires compatible Magnus, or a configured compatible external Magnus. For an existing installation, follow the upgrade guide and retain a verified backup and restore rehearsal.", code: "./hive.sh --release latest", note: "Embermend is off by default. Keep the exact signed release and immutable image references in the accepted configuration." },
       { title: "Start with scoped assessment", text: "Grant inventory and assessment only to the intended targets. Install reviewed versioned profiles and use the coordinator to assess. Unknown deployment exposure, unsupported checks and incomplete coverage remain visible.", note: "Magnus advertises actual capabilities; an unavailable action is a blocker. There is no direct SSH or arbitrary-shell fallback." },
@@ -216,7 +223,7 @@ const demos: Record<DemoId, Demo> = {
         title: "Review the plan",
         text: "Setup shows a plan and applies it only after you confirm. To repeat or automate it, keep the installation JSON and run the same reviewed configuration. Planning does not contact hosts, and retries check the exact inputs.",
         code: "./hive.sh plan --config installation.json\n./hive.sh install --config installation.json",
-        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten. Some upgrades need <code>--allow-migrations</code>, such as from 2.x with PostgreSQL stores, from a release before 3.4.0, or from one before 3.8.0 with Magnus; see the guide.",
+        note: "Run these from the matching release checkout, with the installation file setup created. That keeps planning and applying on the same exact version. Secrets and identities are generated once into protected files. Existing data, configuration and model resources are never silently adopted or overwritten. Some upgrades need <code>--allow-migrations</code>, such as every upgrade from a release before 3.14.0; see the guide and the compatibility matrix.",
       },
       {
         title: "Open HiveXUI",
@@ -272,7 +279,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the reviewed release",
         text: "Clone the public repository at the current release into a new directory. Use a fresh environment for this walkthrough.",
-        code: "git clone --branch v0.8.2 https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci",
+        code: `git clone --branch v${pin("cindertrace")} https://github.com/ChefTaco/cindertrace.git\ncd cindertrace\nnpm ci`,
         note: "Use the repository’s release notes when choosing a version. There is no npm installer for Cindertrace.",
       },
       {
@@ -308,7 +315,7 @@ const demos: Record<DemoId, Demo> = {
       {
         title: "Get the release",
         text: "Download the pinned release and its checksum file into a new temporary directory. Keep the following steps in the same terminal.",
-        code: 'VERSION=0.7.2\nDOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
+        code: `VERSION=${pin("chattermost")}\n` + 'DOWNLOAD_DIR="$(mktemp -d)"\ncd "$DOWNLOAD_DIR"\ncurl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/chattermost-$VERSION.tar.gz" &&\n  curl -fLO "https://github.com/ChefTaco/ChatterMost/releases/download/v$VERSION/SHA256SUMS"',
       },
       {
         title: "Verify before setup",
@@ -633,7 +640,7 @@ app.innerHTML = `
     <section class="install-section" id="walkthroughs" aria-labelledby="walkthroughs-title"><div class="shell"><div class="section-head"><div><span class="section-kicker">INSTALLATION GUIDES</span><h2 id="walkthroughs-title">From first host<br/><span>to your own stack.</span></h2></div><p>Start with Hive for the full suite, or follow a standalone product guide. These walkthroughs explain the commands without running them.</p></div>
       <div class="install-layout"><div class="demo-sidebar"><div class="demo-tabs" role="tablist" aria-orientation="vertical" aria-label="Choose an installation walkthrough">${demoOrder.map((id, i) => `<button type="button" role="tab" id="tab-${id}" aria-controls="demo-panel" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-demo="${id}"><span>${demos[id].label}</span>${icon("chevron")}</button>`).join("")}</div><p class="demo-disclaimer">Use a fresh host. For an existing installation, follow its upgrade guide.</p><button class="text-link" type="button" data-open-tailscale>Tailscale setup guide ${icon("arrow")}</button></div><div class="demo-panel" id="demo-panel" role="tabpanel" aria-labelledby="tab-hive" tabindex="0"></div></div>
     </div></section>
-    <section class="agents-section shell" id="agents" aria-labelledby="agents-title"><div class="section-head"><div><span class="section-kicker">FOR PEOPLE & AGENTS</span><h2 id="agents-title">Docs you can work with.</h2></div><p>Plain Markdown guides with prerequisites, commands and reviewed source revisions.</p></div><div class="agent-index-links"><a class="text-link" href="/llms.txt">Read llms.txt ${icon("arrow")}</a><a class="text-link" href="/index.md">Site overview in Markdown ${icon("arrow")}</a></div><ul class="agent-guides">${projectOrder.map(id => `<li><a href="/guides/${id}.md"><span class="agent-guide-title">${projects[id].name} ${icon("arrow")}</span><span>${projects[id].role}</span></a></li>`).join("")}<li><a href="/guides/ardent-studio.md"><span class="agent-guide-title">Ardent Project Studio ${icon("arrow")}</span><span>Team projects · HiveXUI /studio</span></a></li></ul></section>
+    <section class="agents-section shell" id="agents" aria-labelledby="agents-title"><div class="section-head"><div><span class="section-kicker">FOR PEOPLE & AGENTS</span><h2 id="agents-title">Docs you can work with.</h2></div><p>Plain Markdown guides with prerequisites, commands and reviewed source revisions.</p></div><div class="agent-index-links"><a class="text-link" href="/llms.txt">Read llms.txt ${icon("arrow")}</a><a class="text-link" href="/index.md">Site overview in Markdown ${icon("arrow")}</a><a class="text-link" href="/compatibility.md">Compatibility matrix ${icon("arrow")}</a><a class="text-link" href="/llms-full.txt">All guides in one file ${icon("arrow")}</a></div><ul class="agent-guides">${projectOrder.map(id => `<li><a href="/guides/${id}.md"><span class="agent-guide-title">${projects[id].name} ${icon("arrow")}</span><span>${projects[id].role}</span></a></li>`).join("")}<li><a href="/guides/ardent-studio.md"><span class="agent-guide-title">Ardent Project Studio ${icon("arrow")}</span><span>Team projects · HiveXUI /studio</span></a></li></ul></section>
   </main>
   <footer class="site-footer" id="links"><div class="shell"><div class="footer-top"><div><a class="brand" href="#top"><span>Hive<span class="brand-colon">:</span>Magnus</span></a><p>Full-stack agent management.<br/>Open source. On your infrastructure.</p></div><div class="ecosystem-links"><a href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer"><small>EXPLORE THE SOURCE</small><strong>GitHub / ChefTaco ${icon("external")}</strong></a><a href="https://www.npmjs.com/~hivemagnus" target="_blank" rel="noopener noreferrer"><small>PACKAGES & SDKS</small><strong>npm / hivemagnus ${icon("external")}</strong></a></div></div><div class="footer-projects">${projectOrder.map(id => `<a href="${projects[id].href}">${projects[id].name}</a>`).join("")}<a href="https://github.com/ChefTaco/HiveMagnus">Site source</a><a href="/.well-known/security.txt">Security</a></div><p class="footer-legal">Apache-2.0. Product capabilities and release status are documented in each repository. ChatterMost is independently developed and Mattermost-compatible; Mattermost, Inc. does not affiliate with, endorse, or sponsor it.</p></div></footer>
   <dialog id="tailscale-dialog" aria-labelledby="tailscale-title" aria-describedby="tailscale-intro"><div class="modal-heading"><span class="section-kicker">BEFORE YOU INSTALL</span><button class="modal-close" type="button" aria-label="Close Tailscale setup guide" data-close-tailscale>×</button></div><h2 id="tailscale-title">Get your host ready<br/>with Tailscale.</h2><p id="tailscale-intro">A recommended, optional way to reach HiveXUI privately and get its HTTPS certificate. Hive does not install or sign you into Tailscale.</p><ol class="tailscale-steps"><li><h3>Install and sign in</h3><p>Install Tailscale on your Linux host and the computer you’ll use to open HiveXUI. Sign both into the same tailnet.</p><a class="text-link" href="https://tailscale.com/download" target="_blank" rel="noopener noreferrer">Download Tailscale ${icon("external")}</a></li><li><h3>Enable MagicDNS and HTTPS</h3><p>In your Tailscale admin console’s DNS settings, turn on MagicDNS and HTTPS Certificates.</p><a class="text-link" href="https://tailscale.com/docs/how-to/set-up-https-certificates" target="_blank" rel="noopener noreferrer">Follow Tailscale’s HTTPS guide ${icon("external")}</a></li><li><h3>Request the certificate</h3><p>After cloning the Hive release and installing its prerequisites, run this from the checkout. The helper discovers this host’s Tailscale name and calls <code>tailscale cert</code>.</p><div class="modal-command"><pre tabindex="0"><code>sudo ./scripts/console-certificate.sh tailscale</code></pre><button type="button" data-copy-text="sudo ./scripts/console-certificate.sh tailscale" aria-label="Copy Tailscale certificate command">${icon("copy")}</button></div><p>It prints the HTTPS origin and writes <code>/etc/hive/tls/console.crt</code> and <code>/etc/hive/tls/console.key</code>. Enter that origin and those paths when Hive setup asks. Certificate names appear in public Certificate Transparency logs.</p></li><li><h3>Schedule renewal after installing</h3><p>Run this with the protected installation file setup created. Replace <code>FILE</code> with that path. It schedules weekly renewal and refreshes Hive’s ingress certificate; rerun it from the new checkout after upgrades.</p><div class="modal-command"><pre tabindex="0"><code>sudo ./scripts/console-certificate.sh schedule --config FILE</code></pre><button type="button" data-copy-text="sudo ./scripts/console-certificate.sh schedule --config FILE" aria-label="Copy certificate renewal command">${icon("copy")}</button></div></li></ol><div class="modal-footer"><p>Using your own DNS and certificate? <a href="/guides/hive.md#install">Follow the Hive installation guide</a>.</p><button class="button button-primary" type="button" data-close-tailscale>Back to Hive setup ${icon("arrow")}</button></div></dialog>

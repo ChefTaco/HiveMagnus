@@ -7,8 +7,8 @@ on:
   merge_group:
   workflow_dispatch:
   schedule:
-    # Weekly, to catch links that broke after the last change.
-    - cron: "17 6 * * 1"
+    # Daily, to catch links that broke and Hive releases the site does not describe yet.
+    - cron: "17 6 * * *"
 
 permissions:
   contents: read
@@ -33,10 +33,19 @@ jobs:
           cache: npm
       - name: Install
         run: npm ci
+      - name: Unit tests
+        run: npm test
       - name: Build
         run: npm run build
       - name: Check guide index, internal links, JSON-LD hash and shell syntax
         run: npm run check
+      - name: Version facts match the signed manifest of the reviewed release
+        run: npm run check:versions -- --manifest
+      - name: The reviewed release is the latest published Hive release
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: npm run check:versions -- --latest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Browser check
         run: npm run check:browser
       - name: External links

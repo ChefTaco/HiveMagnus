@@ -137,7 +137,7 @@ async function checkBrowser(page) {
     const response = await page.request.get(new URL(await link.getAttribute("href"), page.url()).href);
     assert(response.ok() && (await response.text()).includes("## Source review"), "Guide response and provenance");
   }
-  for (const path of ["/llms.txt", "/index.md"]) {
+  for (const path of ["/llms.txt", "/index.md", "/compatibility.md", "/llms-full.txt"]) {
     const response = await page.request.get(new URL(path, page.url()).href);
     assert(response.ok() && (await response.text()).startsWith("# Hive:Magnus"), `${path} documentation`);
   }
