@@ -30,13 +30,13 @@ A product release that no suite release pins yet changes only that product's gui
 - Do not rewrite dated `Release update` records or the entries under History, except to fix a link. Correct current-state text instead.
 - Do not run installation examples against an operator environment. Say in the record whether a command was run.
 - Recheck the interactive walkthroughs in `src/main.ts` whenever a documented command changes.
-- The static JSON-LD graph in `index.html` describes thirteen product repositories, Ardent and Ardent Project Studio included, and the related HiveCommon, canvas-word and Proser repositories as Schema.org `SoftwareSourceCode`, with descriptions, repository URLs, language, license and, for products, guide links. Keep its CSP SHA-256 in `public/_headers` equal to the hash of the exact script text, including whitespace; `npm run build`, then compare `public/_headers` with the output of `node -e 'const s=require("fs").readFileSync("dist/index.html","utf8");const m=s.match(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/);JSON.parse(m[1]);console.log("sha256-"+require("crypto").createHash("sha256").update(m[1]).digest("base64"))'`. Do not loosen the policy to allow arbitrary inline scripts.
+- The static JSON-LD graph in `index.html` describes thirteen product repositories, Ardent and Ardent Project Studio included, and the related HiveCommon, canvas-word and Proser repositories as Schema.org `SoftwareSourceCode`, with descriptions, repository URLs, language, license and, for products, guide links. Keep its CSP SHA-256 in `public/_headers` equal to the hash of the exact script text, including whitespace; after `npm run build`, `npm run check` parses the block and prints the expected hash when they differ. Do not loosen the policy to allow arbitrary inline scripts.
 
 ## Checks before publishing
 
-- `npm run build` and the browser check in [AGENTS.md](../AGENTS.md#commands); inspect the For agents section at desktop and mobile widths.
-- Every GitHub link resolves at the ref it names (the file exists at that tag, and a `#anchor` matches a heading), every `hivemagnus.com/guides/...` link and anchor exists, and every guide is listed in `public/llms.txt` and `public/sitemap.xml`.
-- Bash blocks pass `bash -n`, and the JSON-LD parses and matches its CSP hash.
+- `npm run build`, `npm run check`, `npm run check:browser` and `npm run check:links` ([AGENTS.md](../AGENTS.md#commands)); the `Site` workflow runs them on the pull request too. Inspect the For agents section at desktop and mobile widths.
+- `npm run check` fails unless every `hivemagnus.com` link and Markdown anchor exists, every guide is listed in `public/llms.txt`, `public/sitemap.xml`, the no-JavaScript fallback and the JSON-LD graph, Bash blocks pass `bash -n`, and the JSON-LD parses and matches its CSP hash.
+- `npm run check:links` fails unless every GitHub link resolves at the ref it names (the file exists at that tag, and a Markdown `#anchor` matches a heading), every release link names a release or tag, advisory links open a private vulnerability report, npm packages exist in the registry and other external links answer 2xx. Set `GITHUB_TOKEN` (for example `GITHUB_TOKEN=$(gh auth token)`) to verify the advisory links.
 - Review the Pages preview before merging. After deployment, verify the Markdown content types and discovery headers, the assets, and that the served pages carry the new text.
 
 ## History
