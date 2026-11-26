@@ -30,7 +30,7 @@ function fullText(docs) {
 
 /** Source files whose last commit dates a sitemap URL. */
 function sources(pathname, publicDir) {
-  if (pathname === "/") return ["index.html", "src"];
+  if (pathname === "/") return ["index.html", "src", versionsFile];
   const path = pathname.slice(1);
   if (path in generated) return [versionsFile, "scripts/lib/generate.mjs"];
   const file = join(publicDir, path);
