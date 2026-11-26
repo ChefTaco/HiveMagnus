@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "check": "node scripts/check-site.mjs",
     "check:links": "node scripts/check-links.mjs",
-    "check:browser": "bash scripts/check-browser.sh"
+    "check:browser": "bash scripts/check-browser.sh",
+    "check:versions": "node scripts/check-versions.mjs",
+    "test": "node --test scripts/*.test.mjs"
   },
   "devDependencies": {
     "@fontsource/dm-sans": "^5.2.7",

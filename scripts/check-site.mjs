@@ -3,7 +3,9 @@
 // - every guide is listed in llms.txt, sitemap.xml, the no-JavaScript fallback and the JSON-LD graph;
 // - every hivemagnus.com or root-relative link resolves to a built file, and Markdown anchors exist;
 // - the JSON-LD block parses and its SHA-256 matches the CSP in _headers;
-// - Bash blocks in the Markdown docs pass `bash -n`.
+// - Bash blocks in the Markdown docs pass `bash -n`;
+// - version tokens are filled, compatibility.md and llms-full.txt are generated, llms-full.txt holds
+//   every guide, and every sitemap URL has a <lastmod> (unless the clone is shallow).
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -90,6 +92,21 @@ for (const path of files.filter(path => path.endsWith(".html"))) {
   for (const match of text.matchAll(/\s(?:href|src)="([^"]+)"/g)) {
     if (isInternal(match[1])) checkInternal(path, text.slice(0, match.index).split("\n").length, match[1]);
   }
+}
+
+// Generated output.
+for (const path of docs) if (/\{\{hm\./.test(read(path))) fail(`${path} still contains a {{hm.*}} version token`);
+for (const path of ["compatibility.md", "llms-full.txt"]) if (!files.includes(path)) fail(`${path} was not generated`);
+if (files.includes("llms-full.txt")) {
+  const full = read("llms-full.txt");
+  for (const path of ["index.md", ...guides.map(name => `guides/${name}`)]) {
+    if (!full.includes(`Source: ${origin}/${path}\n`)) fail(`llms-full.txt does not include ${path}`);
+  }
+}
+if (!llms.includes(`](${origin}/compatibility.md)`) || !llms.includes(`](${origin}/llms-full.txt)`)) fail("llms.txt does not link compatibility.md and llms-full.txt");
+const shallow = spawnSync("git", ["-C", root, "rev-parse", "--is-shallow-repository"], { encoding: "utf8" }).stdout.trim() !== "false";
+if (!shallow) {
+  for (const match of sitemap.matchAll(/<url>(.*?)<\/url>/g)) if (!/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/.test(match[1])) fail(`sitemap.xml entry has no <lastmod>: ${match[1]}`);
 }
 
 // Shell syntax of documented commands.

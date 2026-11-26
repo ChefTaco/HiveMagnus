@@ -4,7 +4,7 @@ Embermend tracks continuous hardening and vulnerability remediation for Magnus-m
 
 ## Install
 
-Install it with a signed Hive release and select the optional Embermend product; it is off by default. The tested combination is the one a signed release pins: Hive 3.14.3 pins Embermend 0.3.4 (since 3.12.9) with Magnus 3.3.6, which speaks Embermend protocol 1. Select Magnus in the same installation, or explicitly configure an existing Magnus with the versioned Embermend bridge at the version that release pins. Embermend's README still names its oldest supported combination (Hive 3.2.2 with Magnus 2.5.0); a newer installation should use the current release, not that minimum.
+Install it with a signed Hive release and select the optional Embermend product; it is off by default. The tested combination is the one a signed release pins: Hive {{hm.suite}} pins Embermend {{hm.version:embermend}} (since {{hm.since:embermend}}) with Magnus {{hm.version:magnus}}, which speaks Embermend protocol 1. Select Magnus in the same installation, or explicitly configure an existing Magnus with the versioned Embermend bridge at the version that release pins. Embermend's README still names its oldest supported combination (Hive 3.2.2 with Magnus 2.5.0); a newer installation should use the current release, not that minimum.
 
 ```sh
 git clone https://github.com/ChefTaco/hive.git && cd hive

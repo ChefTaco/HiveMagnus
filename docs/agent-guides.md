@@ -1,6 +1,6 @@
 # Updating the agent guides
 
-`public/llms.txt` indexes the Markdown overview (`public/index.md`) and the thirteen project guides in `public/guides/`. The visual site links them in its For agents section and no-JavaScript fallback. The HTML head advertises `llms.txt` with `rel="describedby"` and the overview with `rel="alternate" type="text/markdown"`, and Markdown responses advertise the index through an HTTP Link header (`public/_headers`). The guides state facts about other repositories, so every change starts from the owning repository at its release tag. The dated review records are kept under [History](#history).
+`public/llms.txt` indexes the Markdown overview (`public/index.md`), the thirteen project guides in `public/guides/` and two generated documents: the compatibility matrix (`/compatibility.md`, from `data/versions.json`) and `/llms-full.txt` (the overview and every guide in one file). The visual site links them in its For agents section and no-JavaScript fallback. The HTML head advertises `llms.txt` with `rel="describedby"` and the overview with `rel="alternate" type="text/markdown"`, and Markdown responses advertise the index through an HTTP Link header (`public/_headers`). The guides state facts about other repositories, so every change starts from the owning repository at its release tag. The dated review records are kept under [History](#history).
 
 ## When a suite release ships
 
@@ -13,15 +13,22 @@
    ```
 
    The manifest's `components.*.version`, `components.magnus.agentPackage` and `controllerSHA256` are the pins. Compare them with the previous release's manifest to see which products changed. Verify the signature from a checkout of the tag with `openssl pkeyutl -verify -pubin -inkey trust/publisher.pub -rawin -in releases/X.Y.Z.json -sigfile releases/X.Y.Z.json.sig`. Read the tag's `CHANGELOG.md`, `UPGRADING.md`, `deployment/QUICKSTART.md`, `deployment/FULL.md`, `deployment/BACKUPS.md` and the `./hive.sh --help` text.
-2. For each product whose pin changed, read its repository at the new tag: changelog or release notes, README and the install docs the guide quotes. Check the Ardent version the Magnus host agent stages in Magnus's `packages/agent/npm-shrinkwrap.json`.
-3. Update:
-   - `HIVE_SUITE_VERSION` in `src/main.ts`, and any walkthrough command that names a product version there (the Cindertrace clone tag, the ChatterMost `VERSION`).
-   - `public/guides/hive.md`: header links, the version table, the recent-release summary (current minor line only; move older bullets to `docs/release-records/hive.md`), every `--release` command and `/blob/vX.Y.Z/` link above the source review, the upgrade notes, and its current `Release update` record (see below).
-   - `public/llms.txt` and `public/index.md`: the reviewed release, the example version and any product line that names a version or a new command.
-   - Each product guide whose pin changed: its suite sentence, example image, tag or `VERSION`, any changed behaviour, and its current `Release update` record. A guide whose pin did not change only needs its suite sentence ("Hive X installs P V (pinned since W)").
+2. Regenerate the version data from your Hive and Magnus checkouts. It verifies every manifest's signature at its tag and fails on a mismatch; set `--current` to the release you are reviewing, never to a tag without a published release:
+
+   ```bash
+   node scripts/sync-versions.mjs --hive HIVE_CHECKOUT --magnus MAGNUS_CHECKOUT --current X.Y.Z
+   ```
+
+   Every `{{hm.*}}` token, the homepage, the compatibility matrix and the sitemap dates follow `data/versions.json`. Add an `upgradeRules` entry when the release adds an `--allow-migrations` boundary, a `pathRules` entry for a new required stepping stone, and a `notes` entry for a tag that was not published.
+3. For each product whose pin changed, read its repository at the new tag: changelog or release notes, README and the install docs the guide quotes. Check the Ardent version the Magnus host agent stages in Magnus's `packages/agent/npm-shrinkwrap.json`.
+4. Update the text the tokens do not cover. `npm run build && npm run check:versions` lists every current-state link, `--release` command or "Hive X pins" sentence that still names an older release.
+   - `src/main.ts`: walkthrough text that describes a release's behaviour (product versions come from `pin()`).
+   - `public/guides/hive.md`: the recent-release summary (current minor line only; move older bullets to `docs/release-records/hive.md`), the upgrade notes, and its current `Release update` record (see below).
+   - `public/llms.txt` and `public/index.md`: any product line that names a new command or behaviour.
+   - Each product guide whose pin changed: example image, tag or `VERSION` where they are literal, any changed behaviour, and its current `Release update` record. A guide whose pin did not change needs nothing: its suite sentence ("Hive {{hm.suite}} installs P {{hm.version:p}} (pinned since {{hm.since:p}})") follows the data.
    - A guide keeps one dated `Release update` record, for the release it currently describes, at the end of its Source review, followed by the link to its earlier records and the product's changelog. When you write a new record, move the previous one verbatim to the end of `docs/release-records/<guide>.md` (make `#anchor` and `/guides/` links absolute), so agents reading the guide see only current pins.
    - A dated entry under [History](#history) listing what changed and the sources read.
-4. Run the checks below, open a pull request and confirm the deployed site after merge.
+5. Run the checks below, open a pull request and confirm the deployed site after merge.
 
 A product release that no suite release pins yet changes only that product's guide, and only where the guide describes the standalone product.
 
@@ -35,7 +42,7 @@ A product release that no suite release pins yet changes only that product's gui
 
 ## Checks before publishing
 
-- `npm run build`, `npm run check`, `npm run check:browser` and `npm run check:links` ([AGENTS.md](../AGENTS.md#commands)); the `Site` workflow runs them on the pull request too. Inspect the For agents section at desktop and mobile widths.
+- `npm test`, `npm run build`, `npm run check`, `npm run check:versions -- --manifest`, `npm run check:browser` and `npm run check:links` ([AGENTS.md](../AGENTS.md#commands)); the `Site` workflow runs them on the pull request too. Inspect the For agents section at desktop and mobile widths.
 - `npm run check` fails unless every `hivemagnus.com` link and Markdown anchor exists, every guide is listed in `public/llms.txt`, `public/sitemap.xml`, the no-JavaScript fallback and the JSON-LD graph, Bash blocks pass `bash -n`, and the JSON-LD parses and matches its CSP hash.
 - `npm run check:links` fails unless every GitHub link resolves at the ref it names (the file exists at that tag, and a Markdown `#anchor` matches a heading), every release link names a release or tag, advisory links open a private vulnerability report, npm packages exist in the registry and other external links answer 2xx. Set `GITHUB_TOKEN` (for example `GITHUB_TOKEN=$(gh auth token)`) to verify the advisory links.
 - Review the Pages preview before merging. After deployment, verify the Markdown content types and discovery headers, the assets, and that the served pages carry the new text.
@@ -440,3 +447,7 @@ Hive published 3.14.3 (tag `v3.14.3`, commit `917d2e6d7abb07e97e40949ebdfeff6cc5
 ### Release records moved out of the guides, 2026-11-26
 
 Each guide kept a dated `Release update` paragraph per suite release (21 in the Hive guide, 12 in the HiveXUI guide), and old pins such as "Hive 3.1.1 pins Emberfold 0.2.2" read like current instructions. Every guide now keeps only its latest record, followed by a link to its earlier records and the product's changelog (ChatterMost, which has no changelog file, links its release notes). The 97 earlier records, one of them a `Documentation update` note, moved verbatim to `docs/release-records/<guide>.md`, with `#anchor` and `/guides/` links made absolute; the Hive guide's release summaries for 3.8.0 to 3.13.5 and its "What 3.8.0 changes for users" section moved to `docs/release-records/hive.md`. No current-state text changed except the Embermend install paragraph and walkthrough, which now state the tested combination (Hive 3.14.3: Embermend 0.3.4 with Magnus 3.3.6) instead of the oldest supported one (Hive 3.2.2, Magnus 2.5.0), per Embermend `v0.3.4`'s README and the signed 3.14.3 manifest.
+
+### One source of version facts, 2026-11-26
+
+About thirty sentences across the guides, `index.md`, `llms.txt` and the homepage repeated the reviewed release and its pins by hand, and 3.14.3 had to be applied to each. `data/versions.json` now holds every signed 3.x Hive release up to the reviewed one (51 manifests, 3.0.0 to 3.14.3, each signature verified with `trust/publisher.pub` at its own tag; Ardent versions from the Magnus host agent's `npm-shrinkwrap.json` at the agent's tag; publication dates from the GitHub releases, so the unpublished 3.0.1, 3.2.1 and 3.12.8 tags are marked). The suite sentences, the Hive guide's header, version table, release commands and current-tag links, and the homepage's walkthrough versions are rendered from it, with output identical to the hand-written text apart from three stale references it fixed (`--release 3.14.2` in the Ardent and Magnus guides and a `v3.14.2` UPGRADING link in the Ardent Project Studio guide) the Magnus guide's lists of earlier Magnus pins, which the new compatibility matrix replaces, the ChatterMost suite sentence, which now names Hive, and the homepage's upgrade note, which now names the 3.14.0 boundary that applies to every installation. The build also generates `/compatibility.md` (pins, digests and `--allow-migrations` boundaries per release, with upgrade rules from Hive `v3.14.3`'s UPGRADING), `/llms-full.txt`, and `<lastmod>` sitemap dates from Git. `check:versions` fails on a current-state reference to an older release, on data that differs from the signed manifest, and (daily) when Hive publishes a newer release.
