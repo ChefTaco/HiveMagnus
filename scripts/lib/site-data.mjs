@@ -70,13 +70,31 @@ export function renderTokens(text, data, where = "input") {
   });
 }
 
+const isShallow = () => execFileSync("git", ["-C", root, "rev-parse", "--is-shallow-repository"], { encoding: "utf8" }).trim() !== "false";
+
+/**
+ * Fetch the full history when the build runs in a shallow clone (Cloudflare Pages clones shallowly),
+ * so the sitemap can be dated. Returns whether full history is available.
+ */
+export function ensureHistory(log = () => {}) {
+  try {
+    if (!isShallow()) return true;
+    execFileSync("git", ["-C", root, "fetch", "--unshallow", "--quiet"], { stdio: "pipe", timeout: 120000 });
+    log("Fetched the full Git history to date the sitemap.");
+    return !isShallow();
+  } catch (error) {
+    log(`Could not fetch the full Git history: ${error.message.split("\n")[0]}`);
+    return false;
+  }
+}
+
 /**
  * Date (YYYY-MM-DD) of the last commit touching any of the paths, or null in a shallow clone or
  * without Git. Paths that exist but were never committed are newer than any commit: today.
  */
 export function lastCommitDate(paths) {
   try {
-    if (execFileSync("git", ["-C", root, "rev-parse", "--is-shallow-repository"], { encoding: "utf8" }).trim() !== "false") return null;
+    if (isShallow()) return null;
     const date = execFileSync("git", ["-C", root, "log", "-1", "--format=%cs", "--", ...paths], { encoding: "utf8" }).trim();
     return date || new Date().toISOString().slice(0, 10);
   } catch {

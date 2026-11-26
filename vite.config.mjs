@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { defineConfig } from "vite";
 import { compatibilityMarkdown, llmsFull } from "./scripts/lib/generate.mjs";
-import { hasTokens, homepageVersions, lastCommitDate, loadVersions, origin, renderTokens, root, versionsFile } from "./scripts/lib/site-data.mjs";
+import { ensureHistory, hasTokens, homepageVersions, lastCommitDate, loadVersions, origin, renderTokens, root, versionsFile } from "./scripts/lib/site-data.mjs";
 
 const virtualId = "virtual:hm-versions";
 const generated = {
@@ -94,6 +94,7 @@ function siteData() {
       writeFileSync(join(outDir, "llms-full.txt"), fullText(docs));
 
       const sitemapPath = join(outDir, "sitemap.xml");
+      ensureHistory(message => config.logger.info(message));
       let undated = 0;
       const sitemap = readFileSync(sitemapPath, "utf8").replace(/<url><loc>([^<]+)<\/loc><\/url>/g, (entry, loc) => {
         const date = lastCommitDate(sources(new URL(loc).pathname, config.publicDir));
