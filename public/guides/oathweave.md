@@ -10,7 +10,7 @@ Oathweave issues RS256-signed JWTs and keeps sessions, roles, clients, service a
 
 ## In a Hive installation
 
-Oathweave and its private Redis are required in every profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.14.2 installs Oathweave 2.3.3 (pinned since 3.14.0) as a digest-pinned image. Hive provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
+Oathweave and its private Redis are required in every profile; [Hive](https://hivemagnus.com/guides/hive.md) 3.14.3 installs Oathweave 2.3.3 (pinned since 3.14.0) as a digest-pinned image. Hive provisions the initial operator and registers a public client for each selected product. Its screens are in [HiveXUI](https://hivemagnus.com/guides/hivexui.md); browser access tokens stay in memory and the identity session stays in cookies only Oathweave receives.
 
 Oathweave 2.3.3 fixes fresh suite installations. From Hive 3.13.0 the first-start bootstrap file included the Hive Registry inventory client, whose `hive-registry` audience Oathweave 2.3.2 did not accept, so a fresh installation stopped at `Bootstrap error: ZodError` and never created its initial administrator. The bootstrap now admits that audience, whose browser grants must use the `registry:` prefix. Existing installations never re-read that file and were not affected; 2.3.3 has no database migration and no settings change.
 

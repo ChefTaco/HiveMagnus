@@ -22,14 +22,14 @@ Each product keeps its own records. Studio owns projects, templates, team revisi
 - **Recovery decisions.** With Ardent 3.2.0 through Magnus 3.3.0, a task Ardent resumes stays `running` and shows its recovery, and a task Ardent holds for a decision becomes `unknown` with the decisions Studio can send (`POST /tasks/:id/recovery`). A continuation is followed as the same Studio task, which still ends with one completion message. Without the capability no decision is offered.
 - **Lineage.** Every task records its execution references (root, parent and self) for requests, hand-offs, reassignments, discussion turns, revisions and workflow nodes, and `GET /tasks/:id/lineage` adds each Ardent attempt's lineage and the Emberpath trace filter. `ARDENT_STUDIO_INSTANCE_ID` (default `local`) names this Studio in those references.
 - **Resumable imports with renditions.** From agents with artifact transfer v2, imports resume after a restart or a dropped connection with `Range` and `If-Range`, the whole-file digest is verified before the file enters the blob store, and the artifact's renditions are imported with it and listed on the deliverable revision. Other agents keep the whole download as before.
-- **Agent definitions from templates.** An agent template version can be exported as a sealed `hive-agent-definition/1`, a definition can be imported as a new template version, and a template version can be checked against and deployed to a node through Magnus's definition install. A Magnus before 3.3.0 answers `409 MAGNUS_UPGRADE_REQUIRED`, and the deploy (**Create agent from definition**) works from Magnus 3.3.4, in Hive 3.14.2: Magnus 3.3.0 to 3.3.3 failed every definition install with 500 after its preflight passed, before anything was created on the node.
+- **Agent definitions from templates.** An agent template version can be exported as a sealed `hive-agent-definition/1`, a definition can be imported as a new template version, and a template version can be checked against and deployed to a node through Magnus's definition install. A Magnus before 3.3.0 answers `409 MAGNUS_UPGRADE_REQUIRED`, and the deploy (**Create agent from definition**) works from Magnus 3.3.4 (Hive 3.14.2 and later): Magnus 3.3.0 to 3.3.3 failed every definition install with 500 after its preflight passed, before anything was created on the node.
 
 Recovery, Ardent lineage, artifact transfer v2 and definition deploy need Magnus 3.3.0 and agents that report those capabilities; workflows and execution references work with an older Magnus. See the [conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/CONDUCTOR.md) and the [changelog](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/CHANGELOG.md).
 
 ## Requirements
 
 - Magnus with **at least one Ardent agent**, HiveMem and Oathweave. All three are required.
-- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.14.2 pins Ardent Project Studio 0.5.1 (since 3.14.0).
+- In a Hive installation, a release that offers Studio: [Hive](https://hivemagnus.com/guides/hive.md) 3.14.3 pins Ardent Project Studio 0.5.1 (since 3.14.0).
 - Node.js 24.22.3+ or 26.13.1+ only when running the service outside the suite.
 
 ## In a Hive installation
@@ -77,7 +77,7 @@ Expected result: the service listens on `127.0.0.1:8097` by default and serves i
 - [Conductor](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/CONDUCTOR.md)
 - [Oathweave account links](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/OATHWEAVE.md)
 - [Operations and backups](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/docs/OPERATIONS.md)
-- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.14.2/deployment/FULL.md#ardent-project-studio)
+- [Hive full profile: Ardent Project Studio](https://github.com/ChefTaco/hive/blob/v3.14.3/deployment/FULL.md#ardent-project-studio)
 - [Repository instructions](https://github.com/ChefTaco/ArdentStudio/blob/v0.5.1/AGENTS.md)
 
 ## Source review

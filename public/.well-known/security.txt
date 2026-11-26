@@ -53,6 +53,17 @@ Policy: https://github.com/ChefTaco/ChatterMost/security/policy
 Contact: https://github.com/ChefTaco/emberfold/security/advisories/new
 Policy: https://github.com/ChefTaco/emberfold/security/policy
 
+# HiveCommon
+Contact: https://github.com/ChefTaco/HiveCommon/security/advisories/new
+Policy: https://github.com/ChefTaco/HiveCommon/security/policy
+
+# canvas-word
+Contact: https://github.com/ChefTaco/canvas-word/security/advisories/new
+
+# Proser
+Contact: https://github.com/HiveMagnus/proser/security/advisories/new
+Policy: https://github.com/HiveMagnus/proser/security/policy
+
 Expires: 2027-05-05T00:00:00Z
 Canonical: https://hivemagnus.com/.well-known/security.txt
 Preferred-Languages: en

@@ -13,7 +13,7 @@ type DemoId = "embermend" | "hive" | "magnus" | "cindertrace" | "chattermost" | 
 // The launcher resolves the published release at install time; source reviews stay versioned.
 const HIVE_RELEASE_URL = "https://github.com/ChefTaco/hive/releases/latest";
 // The signed suite release the product details are reviewed against. Bump this one value per release.
-const HIVE_SUITE_VERSION = "3.14.2";
+const HIVE_SUITE_VERSION = "3.14.3";
 const HIVE_SUITE_RELEASE_URL = `https://github.com/ChefTaco/hive/releases/tag/v${HIVE_SUITE_VERSION}`;
 type Step = { title: string; text: string; code?: string; note?: string; kind?: "address" };
 type Demo = {
@@ -388,6 +388,8 @@ const developerPieces: DevPiece[] = [
   { code: "npm i @hivemagnus/hive-iam-sdk", text: "Verify Oathweave tokens and enforce roles in a Node.js or Hono service. Oathweave speaks OAuth 2.0 and OpenID Connect.", href: "/guides/oathweave.md", label: "Oathweave guide" },
   { code: "npm i @hivemagnus/emberfold", text: "Fit context to a token budget inside your own agent loop, with protected spans kept intact.", href: "/guides/emberfold.md", label: "Emberfold guide" },
   { code: "npx @hivemagnus/magnus init", text: "Run the fleet manager and its own console on one host, without Hive.", href: "/guides/magnus.md", label: "Magnus guide" },
+  { code: "npm i @hivemagnus/hive-common", text: "The suite's shared server kit: Oathweave token verification, the error envelope, health, request context, the Hive Registry client, logging and events.", href: "https://github.com/ChefTaco/HiveCommon#readme", label: "HiveCommon README" },
+  { code: "npm i @hivemagnus/canvas-word-codec", text: "Convert DOCX to a validated Word exchange document and back, headless; its sibling engine renders and edits it on a canvas (MIT forks of canvas-editor).", href: "https://github.com/ChefTaco/canvas-word#readme", label: "canvas-word README" },
 ];
 
 const icon = (name: string) => {
@@ -599,7 +601,7 @@ app.innerHTML = `
       <div class="section-head"><div><span class="section-kicker">TWO WAYS TO DEPLOY</span><h2 id="paths-title">Run the whole suite,<br/><span>or build with the pieces.</span></h2></div><p>Operators install a tested, signed combination with Hive. Developers can use any product on its own, from its own release.</p></div>
       <div class="paths-grid">
         <article class="path-card path-operators" aria-labelledby="path-operators-title"><span class="mini-label">FOR OPERATORS AND TEAMS</span><h3 id="path-operators-title">From one command to a running stack.</h3><ol class="path-steps">${operatorSteps.map(step => `<li><h4>${step.title}</h4><p>${step.text}</p>${step.code ? `<code class="path-code">${step.code}</code>` : ""}</li>`).join("")}</ol><div class="path-links"><a class="button button-primary" href="#install">Get the install command ${icon("down")}</a><a class="text-link" href="/guides/hive.md">Hive guide ${icon("arrow")}</a></div></article>
-        <article class="path-card path-developers" aria-labelledby="path-developers-title"><span class="mini-label">FOR DEVELOPERS</span><h3 id="path-developers-title">Every product stands on its own.</h3><p class="path-intro">Each has its own repository, release and API, so you can use one without the rest.</p><ul class="dev-pieces">${developerPieces.map(piece => `<li><code>${piece.code}</code><p>${piece.text} <a href="${piece.href}">${piece.label}</a></p></li>`).join("")}</ul><p class="path-note">Need only part of the suite? Hive's <code>custom</code> profile installs the products you select, and a reviewed installation file runs <code>plan</code> and <code>install</code> unattended. Every repository is Apache-2.0 with an AGENTS.md for contributors and coding agents.</p><div class="path-links"><a class="text-link" href="#agents">Agent-ready docs ${icon("arrow")}</a><a class="text-link" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">Source on GitHub ${icon("external")}</a></div></article>
+        <article class="path-card path-developers" aria-labelledby="path-developers-title"><span class="mini-label">FOR DEVELOPERS</span><h3 id="path-developers-title">Every product stands on its own.</h3><p class="path-intro">Each has its own repository, release and API, so you can use one without the rest.</p><ul class="dev-pieces">${developerPieces.map(piece => `<li><code>${piece.code}</code><p>${piece.text} <a href="${piece.href}">${piece.label}</a></p></li>`).join("")}</ul><p class="path-note">Need only part of the suite? Hive's <code>custom</code> profile installs the products you select, and a reviewed installation file runs <code>plan</code> and <code>install</code> unattended. Every product repository is Apache-2.0 with an AGENTS.md for contributors and coding agents.</p><div class="path-links"><a class="text-link" href="#agents">Agent-ready docs ${icon("arrow")}</a><a class="text-link" href="https://github.com/ChefTaco" target="_blank" rel="noopener noreferrer">Source on GitHub ${icon("external")}</a></div></article>
       </div>
     </section>
     <section class="quick-start shell" id="install" aria-labelledby="install-title">
