@@ -24,15 +24,18 @@ Use Node.js from `.node-version` (24.22.3).
 
 ```bash
 npm ci
-npm run build        # tsc --noEmit, then vite build into dist/
-npm run preview      # serve dist/ on http://127.0.0.1:4173/
-npx @playwright/cli open http://127.0.0.1:4173/
-npx @playwright/cli run-code --filename scripts/check-browser.js
+npm run build          # tsc --noEmit, then vite build into dist/
+npm run check          # guide index, internal links and anchors, JSON-LD CSP hash, bash -n
+npm run check:browser  # scripts/check-browser.js in the pinned Playwright CLI against the preview
+npm run check:links    # external links, GitHub links at their refs; set GITHUB_TOKEN
+npm run preview        # serve dist/ on http://127.0.0.1:4173/
 bash scripts/gitleaks.sh --staged
 ```
 
-Run `npm run build` before every commit. For UI changes, run the browser check against the
-preview and inspect desktop and mobile captures under the ignored `output/playwright/`.
+Run `npm run build` and `npm run check` before every commit. The `Site` workflow runs the build
+and all three checks on every pull request and push to `main`, and the link check weekly. For UI
+changes, also inspect desktop and mobile captures under the ignored `output/playwright/`
+(`npx playwright-cli open http://127.0.0.1:4173/` uses the pinned CLI).
 Activate the hooks once per clone with `git config core.hooksPath .githooks` after
 `bash scripts/install-gitleaks.sh`; see [CONTRIBUTING](CONTRIBUTING.md). Never use `--no-verify`.
 
@@ -61,8 +64,9 @@ Activate the hooks once per clone with `git config core.hooksPath .githooks` aft
 ## Gotchas
 
 - Editing the JSON-LD `<script>` in `index.html` changes its CSP hash: update the exact
-  SHA-256 in `public/_headers`. Do not loosen the policy.
-- Every Markdown guide must also be listed in `public/llms.txt` and `public/sitemap.xml`.
+  SHA-256 in `public/_headers` (`npm run check` prints the expected value). Do not loosen the policy.
+- Every Markdown guide must also be listed in `public/llms.txt`, `public/sitemap.xml`, the
+  no-JavaScript fallback and the JSON-LD graph in `index.html`; `npm run check` enforces it.
 - `public/404.html` must stay: without it Pages answers unknown paths with `index.html` and 200.
 - Keep the build static: no Pages Functions, bindings or analytics.
 - Cloudflare Pages deploys `main` automatically; branches get preview deployments. See
