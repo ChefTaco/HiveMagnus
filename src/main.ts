@@ -199,7 +199,7 @@ const demos: Record<DemoId, Demo> = {
         title: "Get the launcher",
         text: "Clone Hive. Its launcher selects the requested release and runs the matching tagged controller, which verifies the signed manifest and its controller source digest.",
         code: "git clone https://github.com/ChefTaco/hive.git && cd hive",
-        note: `Each <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">published release</a> attaches its manifest, signature and publisher key. To install from downloaded copies, check the key's fingerprint against the release notes first.`,
+        note: `Each <a href="${HIVE_RELEASE_URL}" target="_blank" rel="noopener noreferrer">published release</a> attaches its manifest, signature and publisher key. To install from downloaded copies, first check that the key's SHA-256 fingerprint is <code>c0d0665a70969f37c8f1cffbdcf8e54df13626f8dbd4b5759a7c44843d86d1b2</code>, as in the release notes.`,
       },
       {
         title: "Install the prerequisites",
