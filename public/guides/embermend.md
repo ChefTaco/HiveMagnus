@@ -4,7 +4,7 @@ Embermend tracks continuous hardening and vulnerability remediation for Magnus-m
 
 ## Install
 
-Use a compatible signed Hive release, starting with 3.2.2, and select the optional Embermend product. It is off by default. Hive 3.14.3 pins Embermend 0.3.4 (since 3.12.9) with Magnus 3.3.6. Select compatible Magnus 2.5.0 or newer, or explicitly configure an existing Magnus with the versioned Embermend bridge.
+Install it with a signed Hive release and select the optional Embermend product; it is off by default. The tested combination is the one a signed release pins: Hive 3.14.3 pins Embermend 0.3.4 (since 3.12.9) with Magnus 3.3.6, which speaks Embermend protocol 1. Select Magnus in the same installation, or explicitly configure an existing Magnus with the versioned Embermend bridge at the version that release pins. Embermend's README still names its oldest supported combination (Hive 3.2.2 with Magnus 2.5.0); a newer installation should use the current release, not that minimum.
 
 ```sh
 git clone https://github.com/ChefTaco/hive.git && cd hive
@@ -57,33 +57,7 @@ Signed Hive `v3.3.0` keeps Embermend 0.1.0, Magnus 2.5.0 and Oathweave 2.2.0
 unchanged and pins HiveXUI 0.4.0.
 The public example uses no operational configuration or credentials.
 
-Release update, 2026-11-13: signed Hive `v3.7.0` pins Embermend 0.3.0, tag
-[`v0.3.0`](https://github.com/ChefTaco/Embermend/releases/tag/v0.3.0), commit
-`b9b522b7ac750cb3160a3abd9a0e15906e44adf2`, with Magnus 2.9.1, Oathweave 2.2.0
-and HiveXUI 0.7.0. Per its changelog, 0.2.0 adds the event feed for the HiveXUI
-inbox and 0.3.0 adds the suite audit export, its database migration and an
-opt-in `emberpath` inference preset. The acceptance record below was not
-reviewed again for this update.
-
 Operational acceptance was reviewed at documentation commit `31390ff520d13ed0faf598b4151dba424e095aea`: [AC-01–AC-24 ledger](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/ACCEPTANCE.md), [production scope and restore proof](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/acceptance/2026-11-12-production-assessment.json), and [permissions and operations](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/OPERATIONS.md). All three profiles completed after the signed upgrade; the Ubuntu baseline retains three unassessed checks. Initial production access is scoped assessment with mutation policies disabled.
-
-Release update, 2026-11-14: signed Hive `v3.8.0` pins Embermend 0.3.1, tag
-[`v0.3.1`](https://github.com/ChefTaco/Embermend/releases/tag/v0.3.1), commit
-`be7e60b09a1f1db6a234c904d1a4875dba3e2259`, with Magnus 2.10.0, Oathweave 2.3.0
-and HiveXUI 0.8.0. Per its changelog, 0.3.1 keeps a policy authorization's ID
-in the suite audit export and skips a source file that is not UTF-8 in a
-repository scan instead of failing the scan. It adds no migration. The
-acceptance record below was not reviewed again for this update.
-
-Release update, 2026-11-15: signed Hive `v3.9.3` pins Embermend 0.3.2, tag
-[`v0.3.2`](https://github.com/ChefTaco/Embermend/releases/tag/v0.3.2), commit
-`0aefa2b1c87a95b32864a63bf20a090fe2bf6e36`, with Magnus 3.0.3, Oathweave 2.3.0
-and HiveXUI 0.9.1. Its `compatibility.json` still asks for Magnus 2.5.0 or newer
-with Embermend protocol 1. Per its changelog, 0.3.2 moves to
-`@hivemagnus/hive-common` 0.5.0, so the suite audit export also masks URL
-credentials without a user or without a password and detail values under keys
-containing `jwt`, `bearer` or `signature`. It adds no migration. The acceptance
-record below was not reviewed again for this update.
 
 Release update, 2026-11-20: signed Hive `v3.12.9`, commit
 `353eb340634ae2fe8d63ae97360f701b9acb2a7b`, pins Embermend 0.3.4, tag
@@ -102,3 +76,5 @@ Its [README](https://github.com/ChefTaco/Embermend/blob/v0.3.4/README.md) still
 asks for Magnus 2.5.0 or newer with its explicit Embermend bridge, and the
 protocol stays 1. Neither adds a migration. The acceptance record below was not
 reviewed again for this update.
+
+Earlier release records for this guide are kept in the site repository's [embermend release records](https://github.com/ChefTaco/HiveMagnus/blob/main/docs/release-records/embermend.md); what each Embermend release changed is in its [changelog](https://github.com/ChefTaco/Embermend/blob/main/CHANGELOG.md).
