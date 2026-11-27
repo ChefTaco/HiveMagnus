@@ -27,3 +27,21 @@ with Embermend protocol 1. Per its changelog, 0.3.2 moves to
 credentials without a user or without a password and detail values under keys
 containing `jwt`, `bearer` or `signature`. It adds no migration. The acceptance
 record below was not reviewed again for this update.
+
+Release update, 2026-11-20: signed Hive `v3.12.9`, commit
+`353eb340634ae2fe8d63ae97360f701b9acb2a7b`, pins Embermend 0.3.4, tag
+[`v0.3.4`](https://github.com/ChefTaco/Embermend/releases/tag/v0.3.4), commit
+`24c17dcd7ae9f9a6d91b49b8b1721f3b219a8578`, with Magnus 3.1.5, Oathweave 2.3.2
+and HiveXUI 0.10.3 (Hive 3.9.3 to 3.12.7 pinned 0.3.2; the unpublished Hive
+3.12.8 pinned 0.3.3). Per its
+[changelog](https://github.com/ChefTaco/Embermend/blob/v0.3.4/CHANGELOG.md),
+0.3.3 redacts private-key blocks with a linear scan instead of a regular
+expression that took quadratic time on text with many unmatched
+`-----BEGIN …PRIVATE KEY-----` markers (CodeQL `js/polynomial-redos`), keeping
+the same blocks and their line count, and 0.3.4 forces `effect` to 3.22.1
+through an npm override, fixing CVE-2026-121707 in the container images, where
+its only consumer is the Prisma CLI configuration loader used for migrations.
+Its [README](https://github.com/ChefTaco/Embermend/blob/v0.3.4/README.md) still
+asks for Magnus 2.5.0 or newer with its explicit Embermend bridge, and the
+protocol stays 1. Neither adds a migration. The acceptance record below was not
+reviewed again for this update.
