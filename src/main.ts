@@ -65,7 +65,7 @@ const projects: Record<
   emberpath: {
     name: "Emberpath", role: "Models · routing · telemetry",
     summary: "Route model requests to the providers you choose.",
-    detail: "An OpenAI-compatible model gateway with a separate administration API. Clients talk to one endpoint; Emberpath picks an upstream provider, fails over when it is safe to, enforces per-key quotas and records a trace for every request. Inference services stay external: it routes to them and never installs or manages them.",
+    detail: "An OpenAI-compatible model gateway with a separate administration API. Clients talk to one endpoint; Emberpath picks an upstream provider, fails over when it is safe to, enforces per-key quotas and records a trace for every request. Administrators sign in through Oathweave in the browser, with passkeys and MFA; it no longer relays passwords. Inference services stay external: it routes to them and never installs or manages them.",
     href: "https://github.com/ChefTaco/Emberpath",
     connections: [{ to: "HiveXUI", how: "models, providers, tests and traces through its administration API" }, { to: "Oathweave", how: "resource-specific suite access; native API keys remain separate" }, { to: "External inference", how: "OpenAI-compatible and native provider protocols" }],
   },
@@ -227,7 +227,7 @@ const demos: Record<DemoId, Demo> = {
       },
       {
         title: "Open HiveXUI",
-        text: "Visit the HTTPS origin you configured and sign in through Oathweave. HiveXUI shows a section for each product in this installation, so a core install has no Magnus, Cindertrace or ChatterMost section.",
+        text: "Visit the HTTPS origin you configured and sign in on Oathweave's page, with a passkey or your password and MFA code; re-authentication before a sensitive action goes there too. HiveXUI shows a section for each product in this installation, so a core install has no Magnus, Cindertrace or ChatterMost section.",
         code: "https://hive.example.com/",
         kind: "address",
         note: "The install ends by naming the HTTPS origin and the sign-in file: a fresh install stores the initial username and password in <code>/opt/hive/config/initial-credentials.env</code> on the identity host. <code>sudo ./scripts/console-certificate.sh schedule --config FILE</code> renews a Tailscale certificate weekly through <code>hive.sh tls-refresh</code>. An installation moved over with <code>hive.sh migrate-native</code> keeps its accounts and sets the administrator password once with a reset token; see the guide. Then create your own administrator in Oathweave with the IAM Administrator role and run <code>./hive.sh admin-access setup</code> to give it access to each installed product. <code>./hive.sh status --config installation.json</code> reports what is running and lists the setup steps still pending, which HiveXUI also shows to administrators.",

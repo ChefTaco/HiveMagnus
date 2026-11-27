@@ -13,11 +13,11 @@ git clone https://github.com/ChefTaco/hive.git && cd hive
 
 The launcher verifies the signed manifest and matching controller. Replace `latest` with an exact compatible release when reproducing an installation. Follow the [Hive guide](/guides/hive.md) for prerequisites, TLS, protected configuration and recovery. Inference services and model storage remain external.
 
-For an existing installation, update its reviewed configuration, retain a verified backup and restore rehearsal, and use the owning installer's upgrade path with explicit migration approval. The 3.2.2 signed release also verifies and repairs the omitted database-format registration that can affect a new Embermend selection in 3.2.0. It refuses unknown database majors, runtime receipts or failed checksums. Embermend 0.3.0 adds a database migration, so upgrading an installation that already includes Embermend from a release before 3.6.0 needs `--allow-migrations`; see the [Hive guide](/guides/hive.md#upgrade).
+For an existing installation, update its reviewed configuration, retain a verified backup and restore rehearsal, and use the owning installer's upgrade path with explicit migration approval. The 3.2.2 signed release also verifies and repairs the omitted database-format registration that can affect a new Embermend selection in 3.2.0. It refuses unknown database majors, runtime receipts or failed checksums. Embermend 0.3.0 adds a database migration, so upgrading an installation that already includes Embermend from a release before 3.6.0 needs `--allow-migrations`; see the [Hive guide](/guides/hive.md#upgrade). Embermend 0.5.0 adds the additive migration `list_paging`, which Hive 3.15.0 applies through Embermend's signed initialization, so an upgrade from Hive 3.14.x also needs `--allow-migrations`. Read Hive's [Suite 3.15.0 notes](https://github.com/ChefTaco/hive/blob/v3.15.1/UPGRADING.md#suite-3150-product-security-round) first: from Embermend 0.4.0, queued work and scheduled occurrences whose stored operator grant no longer matches `EMBERMEND_IDENTITY_GRANTS` fail with an `ACTOR_*` code or are blocked, so review the `job.authority-*` and `schedule.blocked` audit entries after the upgrade. From 0.5.0 an identity-provider outage answers 503 `IDENTITY_PROVIDER_UNAVAILABLE` instead of 401, the API health check reads `/health/ready`, which checks PostgreSQL, and list endpoints page with cursors.
 
 ## Start with assessment
 
-Link the existing Oathweave operator by issuer and subject. Grant only the intended Embermend operations and application/target scopes; a broad role name is neither automatic approval nor a reason to reject an otherwise valid identity. A useful starting grant is `read`, `evidence` and `assess`. Browser permission ceilings and receiving-product grants both apply.
+Link the existing Oathweave operator by issuer and subject. Grant only the intended Embermend operations and application/target scopes; a broad role name is neither automatic approval nor a reason to reject an otherwise valid identity. A useful starting grant is `read`, `evidence` and `assess`. Browser permission ceilings and receiving-product grants both apply. Grants come from `EMBERMEND_IDENTITY_GRANTS` or, from 0.5.0, a grants file (`EMBERMEND_IDENTITY_GRANTS_FILE`) that the API and worker reload within seconds; removing or narrowing a grant stops the operator's stored work too. From 0.6.0 operator authority can instead come from Oathweave roles (`EMBERMEND_AUTHORITY_SOURCE=oathweave`); it is opt-in, the default stays the grants list, and Embermend's changelog says it is not yet exercised against a live Oathweave installation.
 
 Publish reviewed, versioned profiles through an authorized operator, then request an assessment through the coordinator. Magnus must advertise the actual capabilities of each enrolled target. Missing support blocks the affected operation. Initial production rollout uses bounded inventory and assessment; it does not enable production mutation policies.
 
@@ -27,7 +27,7 @@ Ubuntu 24.04, GitHub TypeScript/JavaScript monorepos and Docker Compose are the 
 
 The Embermend section of HiveXUI shows a concise recommendation, exact revision, service impact, progress and evidence. Its durable explanation must be published before covered mutation. An explicit matching decision or deterministic standing policy authorizes only the bound targets, revision, parameters or patch, action versions and impact.
 
-Preparation, branch/PR writing, host changes, merge, artifact publication, deployment, exception acceptance and recovery are separate permissions. The Ardent plugin supplies typed investigation and planning tools; coordinator credentials cannot approve their own work or edit standing policy.
+Preparation, branch/PR writing, host changes, merge, artifact publication, deployment, exception acceptance and recovery are separate permissions. The Ardent plugin supplies typed investigation and planning tools (from 0.6.1 also on npm as `@hivemagnus/embermend-ardent-plugin`); coordinator credentials cannot approve their own work or edit standing policy.
 
 Campaigns retain ordering, canaries, disruption limits and pause state. Source correction, build success, immutable image publication, deployed correction, security verification and operational health remain separate facts. Unknown outcomes retain their original operation identities; recovery never silently repeats them. Credential exposure stays outstanding until the owning system proves invalidation and required consumer migration.
 
@@ -59,22 +59,28 @@ The public example uses no operational configuration or credentials.
 
 Operational acceptance was reviewed at documentation commit `31390ff520d13ed0faf598b4151dba424e095aea`: [AC-01–AC-24 ledger](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/ACCEPTANCE.md), [production scope and restore proof](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/acceptance/2026-11-12-production-assessment.json), and [permissions and operations](https://github.com/ChefTaco/Embermend/blob/31390ff520d13ed0faf598b4151dba424e095aea/docs/OPERATIONS.md). All three profiles completed after the signed upgrade; the Ubuntu baseline retains three unassessed checks. Initial production access is scoped assessment with mutation policies disabled.
 
-Release update, 2026-11-20: signed Hive `v3.12.9`, commit
-`353eb340634ae2fe8d63ae97360f701b9acb2a7b`, pins Embermend 0.3.4, tag
-[`v0.3.4`](https://github.com/ChefTaco/Embermend/releases/tag/v0.3.4), commit
-`24c17dcd7ae9f9a6d91b49b8b1721f3b219a8578`, with Magnus 3.1.5, Oathweave 2.3.2
-and HiveXUI 0.10.3 (Hive 3.9.3 to 3.12.7 pinned 0.3.2; the unpublished Hive
-3.12.8 pinned 0.3.3). Per its
-[changelog](https://github.com/ChefTaco/Embermend/blob/v0.3.4/CHANGELOG.md),
-0.3.3 redacts private-key blocks with a linear scan instead of a regular
-expression that took quadratic time on text with many unmatched
-`-----BEGIN …PRIVATE KEY-----` markers (CodeQL `js/polynomial-redos`), keeping
-the same blocks and their line count, and 0.3.4 forces `effect` to 3.22.1
-through an npm override, fixing CVE-2026-121707 in the container images, where
-its only consumer is the Prisma CLI configuration loader used for migrations.
-Its [README](https://github.com/ChefTaco/Embermend/blob/v0.3.4/README.md) still
-asks for Magnus 2.5.0 or newer with its explicit Embermend bridge, and the
-protocol stays 1. Neither adds a migration. The acceptance record below was not
-reviewed again for this update.
+Release update, 2026-11-27: signed Hive `v3.15.1`, commit
+`ac79185031440e1b76f5c62d4c8d0f83f19b98b7`, pins Embermend 0.6.1 (API and
+worker), tag [`v0.6.1`](https://github.com/ChefTaco/Embermend/releases/tag/v0.6.1),
+commit `22dd9816aa8450b0ab0d254e19b9b99a43460f37`, with Magnus 3.4.1,
+Oathweave 2.7.0 and HiveXUI 0.14.0, as signed Hive `v3.15.0`, commit
+`4055623fc57b804a27237e5e493bd2985dcd3cd6`, first did with Oathweave 2.6.0 and
+HiveXUI 0.13.0 (Hive 3.12.9 to 3.14.3 pinned 0.3.4). Per its
+[changelog](https://github.com/ChefTaco/Embermend/blob/v0.6.1/CHANGELOG.md),
+0.4.0 checks stored work against the current grants, 0.5.0 adds the
+`list_paging` migration, the hot-reloaded grants file, cursor paging, the 503
+for identity-provider outages and the readiness health check, 0.6.0 adds opt-in
+Oathweave role authority with no migration, and 0.6.1 changes only npm
+publication, so its Ardent plugin, contracts and integrations packages are the
+first on npm (checked with `npm view`). The upgrade text above also follows
+Hive's [UPGRADING](https://github.com/ChefTaco/hive/blob/v3.15.1/UPGRADING.md#suite-3150-product-security-round).
+Its [README](https://github.com/ChefTaco/Embermend/blob/v0.6.1/README.md)
+still asks for Magnus 2.5.0 or newer with its explicit Embermend bridge, the
+release's compatibility record and contracts keep protocol 1, and Magnus
+`v3.4.1` still serves Embermend protocol 1. The
+[acceptance ledger](https://github.com/ChefTaco/Embermend/blob/v0.6.1/docs/ACCEPTANCE.md)
+is unchanged at that tag since the documentation commit above and was not
+reviewed again; production access stays scoped assessment with mutation
+policies disabled. No installation command was run for this update.
 
 Earlier release records for this guide are kept in the site repository's [embermend release records](https://github.com/ChefTaco/HiveMagnus/blob/main/docs/release-records/embermend.md); what each Embermend release changed is in its [changelog](https://github.com/ChefTaco/Embermend/blob/main/CHANGELOG.md).
